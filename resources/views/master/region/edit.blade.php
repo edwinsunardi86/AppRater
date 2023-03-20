@@ -30,8 +30,8 @@
                                 <div class="form-group row">
                                     <label for="inputClientName" class="col-sm-2 col-form-label">Client Name</label>
                                     <div class="col-sm-4">
-                                        <input type="text" class="form-control" name="client_name" id="client_name" readonly>
-                                        <input type="hidden" class="form-control" name="client_id" id="client_id" readonly>
+                                        <input type="text" class="form-control" name="client_name" id="client_name" value="{{ $region->client_name }}" readonly>
+                                        <input type="hidden" class="form-control" name="client_id" id="client_id" value="{{ $region->client_id }}">
                                     </div>
                                     <div class="col-sm-2">
                                         <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#modal-xl">Cari</button>
@@ -40,19 +40,24 @@
                                 <div class="form-group row">
                                     <label for="inputClientDescription" class="col-sm-2 col-form-label">Client Description</label>
                                     <div class="col-sm-4">
-                                        <textarea class="form-control" name="client_description" id="client_description" rows="5" readonly></textarea>
+                                        <textarea class="form-control" name="client_description" id="client_description" rows="5" readonly>{{ $region->client_description }}</textarea>
                                     </div>
                                 </div>
-                                <button type="button" id="addRow" class="btn btn-xl btn-primary mb-5 ml-2">Add New Row</button>
-                                <table id="table_add_region" class="table table-bordered table-stripped" style="width:100%">
-                                    <thead>
-                                        <tr>
-                                            <th>Nama Region</th>
-                                            <th>Description</th>
-                                        </tr>
-                                    </thead>
-                                </table>
-                                <button type="submit" class="btn btn-primary btn-md">Submit</button> 
+                                <div class="form-group row">
+                                    <label for="inputRegionName" class="col-sm-2 col-form-label">Region Name</label>
+                                    <div class="col-sm-4">
+                                        <input type="text" class="form-control" name="region_name" id="region_name" value="{{ $region->region_name }}">
+                                        <input type="hidden" class="form-control" name="region_id" id="region_id" value="{{ $region->region_id }}">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="inputRegionDescription" class="col-sm-2 col-form-label">Region Description</label>
+                                    <div class="col-sm-4">
+                                        <textarea class="form-control" name="region_description" id="region_description" rows="5">{{ $region->region_description }}</textarea>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-md btn-primary">Submit</button>
+                                <a href="{{ url()->previous() }}" class="btn bg-purple btn-md">Back</a>
                             </div>
                         </form>
                     </div>
@@ -100,7 +105,7 @@
 </div>
 <script>
 $(document).ready(function(){
-        var i = 1;
+    var i = 1;
         var tb_client = $('#table_client').DataTable({
         processing:true,
         serverSide:true,
@@ -119,17 +124,12 @@ $(document).ready(function(){
             { data: 'action', name: 'action'}
         ],
     });
-
-    var tb_region = $('#table_add_region').DataTable();
-
-    var counter = 1;
-
-    $('#addRow').on('click',function(){
-        tb_region.row.add(['<input type="text" name="region_name[]" id="region_name'+counter+'" class="form-control form-control-sm"/>','<textarea class="form-control form-control-sm " id="region_description'+counter+'" name="region_description[]" rows="7" cols="20">']).draw(false);
-        counter++;
-    });
-    $('#addRow').click();
-
+    $(document).on('click','.pilih_client',function(){
+    $('#client_id').val(($(this).attr('data-id')));
+    $('#client_name').val(($(this).attr('data-client_name')));
+    $('#client_description').val($(this).attr('data-client-description'));
+    $('#modal-xl').modal('toggle');
+});
     $('#form_region').validate({
         rules:{
             client_name:{
@@ -153,29 +153,19 @@ $(document).ready(function(){
             $(element).removeClass('is-invalid');
         },
         submitHandler: function() {
-            var region_name = $('input[name^="region_name[]"]').length;
-            var arr_region = new Array();
-            for(var i = 1;i <= region_name;i++){
-                arr_region.push({
-                    'region_name': $('#region_name'+i).val(),
-                    'region_description': $('#region_description'+i).val(),
-                });
-            }
-
-            // var data = {
-            //     'client_id':$('#client_id').val(),
-            //     'region':arr_region
-            // };
             $.ajax({
                 headers:{
                     'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
                 },
-                url:"/region/store_region",
+                url:"/region/update_region",
                 type:"POST",
                 dataType:"JSON",
                 data:{
                     client_id:$('#client_id').val(),
-                    region:arr_region
+                    region_description:$('#region_description').val(),
+                    region_name:$('#region_name').val(),
+                    region_id:$('#region_id').val()
+                    
                 },
                 processData:true,
                 success: function(data){
@@ -192,24 +182,5 @@ $(document).ready(function(){
         }
     });
 });
-$(document).on('click','.pilih_client',function(){
-    $('#client_id').val(($(this).attr('data-id')));
-    $('#client_name').val(($(this).attr('data-client_name')));
-    $('#client_description').val($(this).attr('data-client-description'));
-    $('#modal-xl').modal('toggle');
-});
-// $('#form_region').submit(function(e){
-//     e.preventDefault();
-//     var region_name = $('input[name^="region_name[]"]').length;
-//     var arr_region = [];
-//     for(var i = 1;i <= region_name;i++){
-//         arr_region.push({
-//             'region_name': $('#region_name'+i).val(),
-//             'region_description': $('#region_description'+i).val(),
-//         });
-//     }
-// });
-
-
 </script>
 @endsection

@@ -5,12 +5,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Master Region</h1>
+                    <h1>Master Location</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="#">Master</a></li>
-                    <li class="breadcrumb-item active">Region</li>
+                    <li class="breadcrumb-item active">Location</li>
                     </ol>
                 </div>
             </div>
@@ -22,20 +22,19 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <a href="region/add_region" class="btn btn-block bg-gradient-primary col-md-2"><i class="fas fa-user-plus"></i> Add Region</a>
+                            <a href="location/add_location" class="btn btn-block bg-gradient-primary col-md-2"><i class="fas fa-user-plus"></i>Add Location</a>
                         </div>
                         <div class="card-body">
-                            <table id="table_region" class="table table-bordered table-stripped" style="width:100%">
-                                <thead>
-                                    <th>No.</th>
-                                    <th>Region</th>
-                                    <th>Region Description</th>
-                                    <th>Nama Client</th>
-                                    <th>Client Description</th>
-                                    <th>Action</th>
-                                </thead>
-                                <tbody>
-                                </tbody>
+                            <table id="table_location" class="table table-bordered table-stripped" style="width:100%">
+                            <thead>
+                                <th>No.</th>
+                                <th>Location Name</th>
+                                <th>Address</th>
+                                <th>Description</th>
+                                <th>Region Name</th>
+                                <th>Client Name</th>
+                                <th>Action</th>
+                            </thead>
                             </table>
                         </div>
                     </div>
@@ -47,32 +46,33 @@
 <script>
 $(document).ready(function(){
     var i = 1;
-    var tb_region = $('#table_region').DataTable({
+    var tb_location = $('#table_location').DataTable({
         processing:true,
         serverSide:true,
         destroy: true,
-        ajax:'{!! route("data_region:dt") !!}',
+        ajax:'{!! route("data_location:dt") !!}',
         columns:[
             {data:'', name:'', render:function(row, type, set){
                 return i++;
             }},
-            { data:'region_name', name:'region_name' },
-            { data: 'region_description', name:'region_description'},
+            { data:'location_name', name:'location_name' },
+            { data: 'address', name:'address'},
+            { data: 'description', name:'description'},
+            { data: 'region_name', name:'region_name'},
             {data: 'client_name', name:'client_name'},
-            {data: 'client_description', name: 'client_description'},
             { data: 'action', name: 'action'}
         ],
         "scrollX": true,
     });
 });
-function deleteRegion(id,regionName){
-    $('#deleteRegion_'+id).submit(function(){
+function deleteLocation(id,locationName){
+    $('#deleteLocation_'+id).submit(function(){
         var formData = new FormData();
-        formData.append('region_id',id);
-        formData.append('region_name',regionName);
+        formData.append('location_id',id);
+        formData.append('location_name',locationName);
         Swal.fire({
             title: 'Perhatian!',
-            html: 'Apakah anda yakin ingin menghapus data region ini?',
+            html: 'Apakah anda yakin ingin menghapus data lokasi ini?',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText:'Delete',
@@ -82,7 +82,7 @@ function deleteRegion(id,regionName){
                     headers:{
                         'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr("content")
                     },
-                    url:'region/delete_region',
+                    url:'location/delete_location',
                     data:formData,
                     type:'POST',
                     dataType:'JSON',

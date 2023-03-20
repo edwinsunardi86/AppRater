@@ -36,11 +36,64 @@ class RegionController extends Controller
           'active_m'=>'region'
         ]);
     }
-    public function get_datatable_client_to_selected(){
-        $db = DB::table('m_client')->select('id','client_name','address','contact1','contact2',DB::raw('concat(dial_code_mobile,mobile) as contact_mobile'),'description')->orderBy('client_name','asc')->get();
-        return DataTables::of($db)->addColumn('action',function($row){
-          $btn = "<button type=\"button\" class=\"btn bg-orange btn-xs pilih_client\" id=\"pilih_client\" data-id=\"$row->id\" data-client_name=\"$row->client_name\" data-client-description=\"$row->description\">Pilih</button>";
-          return $btn;
-        })->make();
+
+    public function store_region(Request $request){
+        for($i=0;$i<count($request->region);$i++){
+            $post = array(
+                'region_name'=>$request->region[$i]['region_name'],
+                'client_id'=>$request->client_id,
+                'description'=>$request->region[$i]['region_description']
+            );
+            DB::table('m_region')->insert($post);
+        }
+        $confirmation = ['message' => 'Data Region success added','icon' => 'success', 'redirect'=>'/region'];
+        return response()->json($confirmation);
+    }
+
+    public function detail_region($id){
+        $get_region = DB::table('m_region')->select('client_name','region_name',DB::Raw('m_client.description AS client_description,m_region.description AS region_description'))->join('m_client','m_region.client_id','=','m_client.id')->where('m_region.id',$id)->first();
+        return view('master.region.detail',[
+            'region' => $get_region,
+            'title' => 'Master Region',
+            'active_gm' => 'Master',
+            'active_m'=>'region'
+        ]);
+    }
+
+    public function edit_region($id){
+        $get_region = DB::table('m_region')->select('client_id','client_name','region_name',DB::Raw('m_region.id AS region_id,m_client.description AS client_description,m_region.description AS region_description'))->join('m_client','m_region.client_id','=','m_client.id')->where('m_region.id',$id)->first();
+        return view('master.region.edit',[
+            'region' => $get_region,
+            'title' => 'Master Region',
+            'active_gm' => 'Master',
+            'active_m'=>'region'
+        ]);
+    }
+
+    public function update_region(Request $request){
+        $post = array(
+            'region_name'=>$request->region_name,
+            'description'=>$request->region_description,
+            'client_id'=>$request->client_id
+        );
+        DB::table('m_region')->where('id',$request->region_id)->update($post);
+        $confirmation = ['message' => 'Data Region success updated','icon' => 'success', 'redirect'=>'/region'];
+        return response()->json($confirmation);
+    }
+    public function delete_region(Request $request){
+        $region_id = $request->region_id;
+        $get_data_region = DB::table('m_region')->where('id',$region_id)->first();
+        $delete_data_region = DB::table('m_region')->where('id',$region_id)->delete($region_id);
+        if($delete_data_region){
+          $confirmation = ['message' => 'Data region ' . $get_data_region->region_name . ' berhasil dihapus', 'icon' => 'success', 'redirect' => '/region'];
+        }else{
+          $confirmation = ['message' => 'Data region ' . $get_data_region->region_name . ' berhasil dihapus', 'icon' => 'success', 'redirect' => '/region'];
+        }
+        return response()->json($confirmation);
+      }
+
+    public function get_data_region_to_selected(Request $request){
+        $db = DB::table('m_region')->select('id','region_name','description')->where('client_id',$request->client_id)->get();
+        return response()->json($db);
     }
 }

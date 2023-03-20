@@ -102,5 +102,13 @@ class ClientController extends Controller
       }
       return response()->json($confirmation);
     }
+
+    public function get_datatable_client_to_selected(){
+      $db = DB::table('m_client')->select('id','client_name','address','contact1','contact2',DB::raw('concat(dial_code_mobile,mobile) as contact_mobile'),'description')->orderBy('client_name','asc')->get();
+      return DataTables::of($db)->addColumn('action',function($row){
+        $btn = "<button type=\"button\" class=\"btn bg-orange btn-xs pilih_client\" id=\"pilih_client\" data-id=\"$row->id\" data-client_name=\"$row->client_name\" data-client-description=\"$row->description\">Pilih</button>";
+        return $btn;
+      })->make();
+    }
 }
 ?>

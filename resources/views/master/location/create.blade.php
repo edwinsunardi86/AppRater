@@ -5,12 +5,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Master Region</h1>
+                    <h1>Master Location</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="#">Master</a></li>
-                    <li class="breadcrumb-item active">Region</li>
+                    <li class="breadcrumb-item active">Location</li>
                     </ol>
                 </div>
             </div>
@@ -22,9 +22,9 @@
                 <div class="col-12">
                     <div class="card card-primary">
                         <div class="card-header">
-                            <h3 class="card-title">Form Region</h3>
+                            <h3 class="card-title">Form Location</h3>
                         </div>
-                        <form method="post" id="form_region" class="form-horizontal">
+                        <form method="post" id="form_location" class="form-horizontal">
                             @csrf
                             <div class="card-body">
                                 <div class="form-group row">
@@ -43,14 +43,31 @@
                                         <textarea class="form-control" name="client_description" id="client_description" rows="5" readonly></textarea>
                                     </div>
                                 </div>
+                                <div class="form-group row">
+                                    <label for="selectRegionName" class="col-sm-2 col-form-label">Region Name</label>
+                                    <div class="col-sm-4">
+                                        <select name="region_name" id="region_name" class="form-control select2">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="inputRegionDescription" class="col-sm-2 col-form-label">Region Description</label>
+                                    <div class="col-sm-4">
+                                        <textarea class="form-control" name="region_description" id="region_description" rows="5" readonly></textarea>
+                                    </div>
+                                </div>
                                 <button type="button" id="addRow" class="btn btn-xl btn-primary mb-5 ml-2">Add New Row</button>
-                                <table id="table_add_region" class="table table-bordered table-stripped" style="width:100%">
+                                <table id="table_add_location" class="table table-bordered table-stripped" style="width:100%">
                                     <thead>
                                         <tr>
-                                            <th>Nama Region</th>
+                                            <th>Location Name</th>
+                                            <th>Address</th>
                                             <th>Description</th>
                                         </tr>
                                     </thead>
+                                    <tbody>
+                                    
+                                    </tbody>
                                 </table>
                                 <button type="submit" class="btn btn-primary btn-md">Submit</button> 
                             </div>
@@ -91,7 +108,6 @@
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -99,9 +115,15 @@
     <!-- /.modal-dialog -->
 </div>
 <script>
+$(document).on('click','.pilih_client',function(){
+    $('#client_id').val(($(this).attr('data-id')));
+    $('#client_name').val(($(this).attr('data-client_name')));
+    $('#client_description').val($(this).attr('data-client-description'));
+    $('#modal-xl').modal('toggle');
+});
 $(document).ready(function(){
-        var i = 1;
-        var tb_client = $('#table_client').DataTable({
+    var i = 1;
+    var tb_client = $('#table_client').DataTable({
         processing:true,
         serverSide:true,
         destroy: true,
@@ -119,28 +141,30 @@ $(document).ready(function(){
             { data: 'action', name: 'action'}
         ],
     });
-
-    var tb_region = $('#table_add_region').DataTable();
-
     var counter = 1;
-
+    var tb_location = $('#table_add_location').DataTable();
     $('#addRow').on('click',function(){
-        tb_region.row.add(['<input type="text" name="region_name[]" id="region_name'+counter+'" class="form-control form-control-sm"/>','<textarea class="form-control form-control-sm " id="region_description'+counter+'" name="region_description[]" rows="7" cols="20">']).draw(false);
+        tb_location.row.add(['<input type="text" name="location_name[]" id="location_name'+counter+'" class="form-control form-control-sm"/>','<textarea class="form-control form-control-sm " id="address'+counter+'" name="address[]" rows="7" cols="20">','<textarea class="form-control form-control-sm " id="location_description'+counter+'" name="location_description[]" rows="7" cols="20">']).draw(false);
         counter++;
     });
-    $('#addRow').click();
 
-    $('#form_region').validate({
+    $('#form_location').validate({
         rules:{
             client_name:{
-                required:true
-            }
+                required: true,
+            },
+            region_name: {
+                required: true,
+            },
         },
-        messages:{
-            client_name:{
-                required:"Please Choice Client"
-            }
-        },
+        messages: {
+                client_name:{
+                    required: "Mohon Pilih Client Anda",
+                },
+                region_name:{
+                    required: "Mohon Pilih Region Anda"
+                }
+            },
         errorElement: 'span',
             errorPlacement: function (error, element) {
             error.addClass('invalid-feedback');
@@ -153,29 +177,25 @@ $(document).ready(function(){
             $(element).removeClass('is-invalid');
         },
         submitHandler: function() {
-            var region_name = $('input[name^="region_name[]"]').length;
-            var arr_region = new Array();
-            for(var i = 1;i <= region_name;i++){
-                arr_region.push({
-                    'region_name': $('#region_name'+i).val(),
-                    'region_description': $('#region_description'+i).val(),
+            var location_name = $('input[name^="location_name[]"]').length;
+            var arr_location = new Array();
+            for(var i = 1;i <= location_name;i++){
+                arr_location.push({
+                    'location_name': $('#location_name'+i).val(),
+                    'address' : $('#address'+i).val(),
+                    'location_description': $('#location_description'+i).val(),
                 });
             }
-
-            // var data = {
-            //     'client_id':$('#client_id').val(),
-            //     'region':arr_region
-            // };
             $.ajax({
                 headers:{
                     'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
                 },
-                url:"/region/store_region",
+                url:"/location/store_location",
                 type:"POST",
                 dataType:"JSON",
                 data:{
-                    client_id:$('#client_id').val(),
-                    region:arr_region
+                    region_id:$('#region_name').val(),
+                    location:arr_location
                 },
                 processData:true,
                 success: function(data){
@@ -190,26 +210,37 @@ $(document).ready(function(){
                 }
             });
         }
+    });        
+});
+
+$(document).on('click','.pilih_client',function(){
+    $.ajax({
+        headers:{
+            'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+        },
+        url:"/region/get_data_region_to_selected",
+        type:"POST",
+        dataType:"JSON",
+        data:{
+            client_id:$('#client_id').val()
+        },
+        processData:true,
+        success: function(data){
+            $('select#region_name').find('option').remove();
+            $.each(data, function(i,item){
+                $('#region_name').append($('<option>',{
+                    value:data[i].id,
+                    text:data[i].region_name
+                }));
+                $('#region_name option').each(function(){
+                    if(this.selected){
+                        $('#region_description').val(data[i].description);
+                    }
+                });
+            });
+        }
     });
 });
-$(document).on('click','.pilih_client',function(){
-    $('#client_id').val(($(this).attr('data-id')));
-    $('#client_name').val(($(this).attr('data-client_name')));
-    $('#client_description').val($(this).attr('data-client-description'));
-    $('#modal-xl').modal('toggle');
-});
-// $('#form_region').submit(function(e){
-//     e.preventDefault();
-//     var region_name = $('input[name^="region_name[]"]').length;
-//     var arr_region = [];
-//     for(var i = 1;i <= region_name;i++){
-//         arr_region.push({
-//             'region_name': $('#region_name'+i).val(),
-//             'region_description': $('#region_description'+i).val(),
-//         });
-//     }
-// });
-
-
+    
 </script>
 @endsection
