@@ -75,11 +75,24 @@
                                         <textarea class="form-control" name="location_description" id="location_description" rows="5" readonly></textarea>
                                     </div>
                                 </div>
+                                <div class="form-group row">
+                                    <label for="selectAreaName" class="col-sm-2 col-form-label">Area Name</label>
+                                    <div class="col-sm-4">
+                                        <select name="area_name" id="area_name" class="form-control select2">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="inputAreaDescription" class="col-sm-2 col-form-label">Area Description</label>
+                                    <div class="col-sm-4">
+                                        <textarea class="form-control" name="area_description" id="area_description" rows="5" readonly></textarea>
+                                    </div>
+                                </div>
                                 <button type="button" id="addRow" class="btn btn-xl btn-primary mb-5 ml-2">Add New Row</button>
-                                <table id="table_add_area" class="table table-bordered table-stripped" style="width:100%">
+                                <table id="table_add_sub_area" class="table table-bordered table-stripped" style="width:100%">
                                     <thead>
                                         <tr>
-                                            <th>Area Name</th>
+                                            <th>Sub Area Name</th>
                                             <th>Description</th>
                                         </tr>
                                     </thead>

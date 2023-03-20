@@ -22,7 +22,7 @@
                 <div class="col-12">
                     <div class="card card-primary">
                         <div class="card-header">
-                            <h3 class="card-title">Form Area</h3>
+                            <h3 class="card-title">Form Update Area</h3>
                         </div>
                         <form method="post" id="form_area" class="form-horizontal">
                             @csrf
@@ -31,6 +31,8 @@
                                     <label for="inputAreaName" class="col-sm-2 col-form-label">Area Name</label>
                                     <div class="col-sm-4">
                                         <input type="text" class="form-control" name="area_name" id="area_name" value="{{ $area->area_name }}" readonly>
+                                        <input type="hidden" name="area_id" id="area_id" value="{{ $area->area_id }}">
+
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -83,6 +85,7 @@
                                         <textarea class="form-control" name="location_description" id="location_description" rows="5" readonly>{{ $area->location_description}}</textarea>
                                     </div>
                                 </div>
+                                <button type="submit" class="btn btn-primary btn-md">Submit</button>
                                 <a href="{{ url()->previous() }}" class="btn bg-purple btn-md">Back</a>
                             </div>
                         </form>
@@ -155,6 +158,67 @@ $(document).ready(function(){
             { data: 'action', name: 'action'}
         ],
     });
+
+    $('#form_area').validate({
+        rules:{
+            client_name:{
+                required:true,
+            },
+            region_name:{
+                required:true,
+            },
+            location_name:{
+                required:true,
+            }
+        },
+        messages:{
+            client_name:{
+                required: "Please input Client Name"
+            },
+            region_name:{
+                required: "Please input Region Name"
+            },
+            location_name: "Please input Location Name"
+        },
+        errorElement: 'span',
+            errorPlacement: function (error, element) {
+            error.addClass('invalid-feedback');
+            element.closest('.form-group').append(error);
+        },
+        highlight: function (element, errorClass, validClass) {
+            $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element, errorClass, validClass) {
+            $(element).removeClass('is-invalid');
+        },
+        submitHandler: function() {
+            $.ajax({
+                headers:{
+                    'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+                },
+                url:"/area/update_area",
+                type:"POST",
+                dataType:"JSON",
+                data:{
+                    area_id:$('#area_id').val(),
+                    client_id:$('#client_id').val(),
+                    region_id:$('#region_name').val(),
+                    location_id:$('#location_name').val()
+                },
+                processData:true,
+                success: function(data){
+                    Swal.fire({
+                        title:data.title,
+                        html:data.message,
+                        icon:data.icon
+                    });
+                    setTimeout(() => {
+                        window.location.href=data.redirect;
+                    }, 1500);
+                }
+            });
+        }
+    });
 });
 $(document).on('click','.pilih_client',function(){
     $.ajax({
@@ -202,6 +266,7 @@ $(document).on('change','#region_name',function(){
         processData:true,
         success: function(data){
             $('select#location_name').find('option').remove();
+            $('#location_description').val("");
             $('select#location_name').append($('<option>',{
                 value:"",
                 text:"Choice Location"
@@ -224,11 +289,12 @@ $(document).on('change','#region_name',function(){
         type:"POST",
         dataType:"JSON",
         data:{
-            region_id:$('#region_id').val()
+            region_id:$('#region_name').val(),
+            client_id:$('#client_id').val()
         },
         processData:true,
         success: function(data){
-                // $('#region_description').html(data[i].region_description);
+                $('#region_description').val(data[0]['description']);
         }
     });
 });

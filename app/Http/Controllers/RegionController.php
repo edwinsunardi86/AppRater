@@ -80,6 +80,7 @@ class RegionController extends Controller
         $confirmation = ['message' => 'Data Region success updated','icon' => 'success', 'redirect'=>'/region'];
         return response()->json($confirmation);
     }
+    
     public function delete_region(Request $request){
         $region_id = $request->region_id;
         $get_data_region = DB::table('m_region')->where('id',$region_id)->first();
@@ -93,7 +94,12 @@ class RegionController extends Controller
       }
 
     public function get_data_region_to_selected(Request $request){
-        $db = DB::table('m_region')->select('id','region_name','description')->where('client_id',$request->client_id)->get();
-        return response()->json($db);
+        // echo $request->region_id; die();
+        $db = DB::table('m_region')->select('id','region_name','description')->where('client_id',$request->client_id);
+        if($request->region_id <> ""){
+            $db = $db->where('id',$request->region_id);
+        }
+        // var_dump($db);
+        return response()->json($db->get());
     }
 }

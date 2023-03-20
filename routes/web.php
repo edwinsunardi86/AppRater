@@ -1,5 +1,5 @@
 <?php
-
+use App\Http\Controllers\SubAreaController;
 use App\Http\Controllers\AreaController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\RegionController;
@@ -89,4 +89,14 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'area'],function(
     Route::post('/store_area',[AreaController::class,'store_area']);
     Route::get('/detail_area/{id}',[AreaController::class,'detail_area']);
     Route::get('/edit_area/{id}',[AreaController::class,'edit_area']);
+    Route::post('/update_area',[AreaController::class,'update_area']);
+    Route::post('/delete_area',[AreaController::class,'delete_area']);
+    Route::get('/get_data_area_to_selected',[AreaController::class,'get_data_area_to_selected']);
+});
+
+
+Route::group(['middleware'=>['auth','authorization'],'prefix'=>'sub_area'],function(){
+    Route::get('/',[SubAreaController::class,'index']);
+    Route::get('/getDatatableSubArea',[SubAreaController::class,'get_datatable_sub_area'])->name('data_sub_area:dt');
+    Route::get('/add_sub_area',[SubAreaController::class,'add_sub_area']);
 });
