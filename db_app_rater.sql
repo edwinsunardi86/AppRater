@@ -241,9 +241,13 @@ CREATE TABLE `m_area` (
   `updated_at` datetime DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `m_area` */
+
+insert  into `m_area`(`id`,`area_name`,`location_id`,`description`,`created_at`,`created_by`,`updated_at`,`updated_by`) values 
+(1,'test123',2,'test123','2023-03-20 16:35:58',NULL,NULL,NULL),
+(2,'yugioh',2,'123area','2023-03-20 16:49:23',NULL,NULL,NULL);
 
 /*Table structure for table `m_client` */
 
@@ -263,12 +267,13 @@ CREATE TABLE `m_client` (
   `updated_at` datetime DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `m_client` */
 
 insert  into `m_client`(`id`,`client_name`,`address`,`contact1`,`contact2`,`dial_code_mobile`,`mobile`,`description`,`created_at`,`created_by`,`updated_at`,`updated_by`) values 
-(2,'Edwin Budiyanto Sunardi','test address','(452) 523-4324','(324) 324-3244',62,'45345423432','trewd','2023-03-15 10:39:39',NULL,NULL,NULL);
+(2,'Edwin Budiyanto Sunardi','test address','(452) 523-4324','(324) 324-3244',62,'45345423432','trewd','2023-03-15 10:39:39',NULL,NULL,NULL),
+(3,'Dewa Permata','Bogor','(346) 563-5435','(454) 353-4535',91,'45345345435','test aja ayah','2023-03-20 17:15:56',NULL,NULL,NULL);
 
 /*Table structure for table `m_location` */
 
@@ -277,15 +282,21 @@ DROP TABLE IF EXISTS `m_location`;
 CREATE TABLE `m_location` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `location_name` varchar(50) DEFAULT NULL,
+  `region_id` int(11) DEFAULT NULL,
   `address` text DEFAULT NULL,
+  `description` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `created_by` int(11) DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `m_location` */
+
+insert  into `m_location`(`id`,`location_name`,`region_id`,`address`,`description`,`created_at`,`created_by`,`updated_at`,`updated_by`) values 
+(2,'324324',2,'3432432','324332432','2023-03-20 07:30:57',NULL,NULL,NULL),
+(3,'test3243',2,'test aja','test aja','2023-03-20 16:07:39',NULL,NULL,NULL);
 
 /*Table structure for table `m_project` */
 
@@ -318,12 +329,13 @@ CREATE TABLE `m_region` (
   `updated_at` datetime DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `m_region` */
 
 insert  into `m_region`(`id`,`region_name`,`client_id`,`description`,`created_at`,`created_by`,`updated_at`,`updated_by`) values 
-(1,'Jakarta',2,NULL,'2023-03-15 10:40:51',NULL,NULL,NULL);
+(2,'test2123213',2,'des2223213','2023-03-16 12:26:51',NULL,NULL,NULL),
+(3,'pasti ada',2,'ya gitu deh','2023-03-20 17:32:35',NULL,NULL,NULL);
 
 /*Table structure for table `m_sub_area` */
 
@@ -369,8 +381,8 @@ insert  into `menu`(`menu_parent_id`,`nama_menu`,`font_icon`,`path`,`created_at`
 (3,'Client','fas fa-solid fa-building','client','2023-03-14 08:25:44',NULL,NULL,NULL,4),
 (32767,'Project','fas fa-solid fa-diagram-project','','2023-03-15 10:35:40',NULL,NULL,NULL,5),
 (3,'Region','fas fa-solid fa-map','region','2023-03-15 10:35:56',NULL,NULL,NULL,6),
-(3,'Location','fas fa-solid fa-map','','2023-03-13 17:29:40',NULL,NULL,NULL,7),
-(3,'Area','fas fa-solid fa-map','','2023-03-14 07:30:20',NULL,NULL,NULL,8),
+(3,'Location','fas fa-solid fa-map','location','2023-03-16 14:28:32',NULL,NULL,NULL,7),
+(3,'Area','fas fa-solid fa-map','area','2023-03-20 11:15:14',NULL,NULL,NULL,8),
 (3,'Sub Area','fas fa-solid fa-map','','2023-03-14 07:30:22',NULL,NULL,NULL,9);
 
 /*Table structure for table `service_location` */
@@ -459,18 +471,17 @@ CREATE TABLE `usersprivilege` (
   `updated_by` int(11) DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `usersprivilege` */
 
 insert  into `usersprivilege`(`id`,`user_id`,`menu_id`,`created_by`,`created_at`,`updated_by`,`updated_at`) values 
-(20,1,2,1,'2023-03-14 01:03:55',NULL,NULL),
-(21,1,4,1,'2023-03-14 01:03:55',NULL,NULL),
-(22,1,5,1,'2023-03-14 01:03:55',NULL,NULL),
-(23,1,6,1,'2023-03-14 01:03:55',NULL,NULL),
-(24,1,7,1,'2023-03-14 01:03:55',NULL,NULL),
-(25,1,8,1,'2023-03-14 01:03:55',NULL,NULL),
-(26,1,9,1,'2023-03-14 01:03:55',NULL,NULL);
+(27,1,2,1,'2023-03-20 04:03:56',NULL,NULL),
+(28,1,4,1,'2023-03-20 04:03:56',NULL,NULL),
+(29,1,6,1,'2023-03-20 04:03:56',NULL,NULL),
+(30,1,7,1,'2023-03-20 04:03:56',NULL,NULL),
+(31,1,8,1,'2023-03-20 04:03:56',NULL,NULL),
+(32,1,9,1,'2023-03-20 04:03:56',NULL,NULL);
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
