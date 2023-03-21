@@ -10,7 +10,7 @@
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="#">Master</a></li>
-                    <li class="breadcrumb-item active">Area</li>
+                    <li class="breadcrumb-item active">Sub Area</li>
                     </ol>
                 </div>
             </div>
@@ -22,9 +22,9 @@
                 <div class="col-12">
                     <div class="card card-primary">
                         <div class="card-header">
-                            <h3 class="card-title">Form Add Area</h3>
+                            <h3 class="card-title">Form Sub Area</h3>
                         </div>
-                        <form method="post" id="form_area" class="form-horizontal">
+                        <form method="post" id="form_sub_area" class="form-horizontal">
                             @csrf
                             <div class="card-body">
                                 <div class="form-group row">
@@ -172,13 +172,13 @@ $(document).ready(function(){
         ],
     });
     var counter = 1;
-    var tb_location = $('#table_add_area').DataTable();
+    var tb_sub_area = $('#table_add_sub_area').DataTable();
     $('#addRow').on('click',function(){
-        tb_location.row.add(['<input type="text" name="area_name[]" id="area_name'+counter+'" class="form-control form-control-sm" required/>','<textarea class="form-control form-control-sm " id="area_description'+counter+'" name="area_description[]" rows="7" cols="20">']).draw(false);
+        tb_sub_area.row.add(['<input type="text" name="sub_area_name[]" id="sub_area_name'+counter+'" class="form-control form-control-sm" required/>','<textarea class="form-control form-control-sm " id="sub_area_description'+counter+'" name="sub_area_description[]" rows="7" cols="20">']).draw(false);
         counter++;
     });
 
-    $('#form_area').validate({
+    $('#form_sub_area').validate({
         rules:{
             client_name:{
                 required:true,
@@ -187,6 +187,9 @@ $(document).ready(function(){
                 required:true,
             },
             location_name:{
+                required:true,
+            },
+            area_name:{
                 required:true,
             }
         },
@@ -197,7 +200,12 @@ $(document).ready(function(){
             region_name:{
                 required: "Please input Region Name"
             },
-            location_name: "Please input Location Name"
+            location_name: {
+                required: "Please input Location Name"
+            },
+            area_name:{
+                required:"Please input Area Name",
+            }
         },
         errorElement: 'span',
             errorPlacement: function (error, element) {
@@ -211,24 +219,24 @@ $(document).ready(function(){
             $(element).removeClass('is-invalid');
         },
         submitHandler: function() {
-            var area_name = $('input[name^="area_name[]"]').length
-            var arr_area = new Array();
-            for(var i = 1;i <= area_name;i++){
-                arr_area.push({
-                    'area_name': $('#area_name'+i).val(),
-                    'area_description': $('#area_description'+i).val(),
+            var sub_area_name = $('input[name^="sub_area_name[]"]').length
+            var arr_sub_area = new Array();
+            for(var i = 1;i <= sub_area_name;i++){
+                arr_sub_area.push({
+                    'sub_area_name': $('#sub_area_name'+i).val(),
+                    'sub_area_description': $('#sub_area_description'+i).val(),
                 });
             }
             $.ajax({
                 headers:{
                     'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
                 },
-                url:"/area/store_area",
+                url:"/sub_area/store_sub_area",
                 type:"POST",
                 dataType:"JSON",
                 data:{
-                    location_id:$('#location_name').val(),
-                    area:arr_area
+                    area_id:$('#area_name').val(),
+                    sub_area:arr_sub_area
                 },
                 processData:true,
                 success: function(data){
@@ -271,11 +279,6 @@ $(document).on('click','.pilih_client',function(){
                     value:data[i].id,
                     text:data[i].region_name
                 }));
-                $('#region_name option').each(function(){
-                    if(this.selected){
-                        $('#region_description').val(data[i].description);
-                    }
-                });
             });
         }
     });
@@ -286,15 +289,45 @@ $(document).on('change','#region_name',function(){
         headers:{
             'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
         },
-        url:'/location/get_data_location_to_selected',
+        url:'/region/get_data_region_to_selected',
         type:'POST',
         dataType:"JSON",
         data:{
-            region_id:$('#region_name').val(),
+            region_id:$('#region_name').select2().val(),
             client_id:$('#client_id').val()
         },
         processData:true,
         success: function(data){
+            $('#region_description').val(data[0].region_description);
+            $('select#location_name').find('option').remove();
+            $('select#location_name').append($('<option>',{
+                value:"",
+                text:"Choice Location"
+            }));
+            $.each(data, function(i,item){
+                $('#location_name').append($('<option>', {
+                    value:data[i].id,
+                    text:data[i].location_name
+                }));
+            });
+        }
+    });
+
+    $.ajax({
+        headers:{
+            'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+        },
+        url:'/location/get_data_location_to_selected',
+        type:'POST',
+        dataType:"JSON",
+        data:{
+            region_id:$('#location_name').select2().val(),
+            client_id:$('#client_id').val(),
+            region_id:$('#region_name').select2().val(),
+        },
+        processData:true,
+        success: function(data){
+            // $('#location_description').val(data[0].location_description);
             $('select#location_name').find('option').remove();
             $('select#location_name').append($('<option>',{
                 value:"",
@@ -318,10 +351,14 @@ $(document).on('change','#location_name',function(){
         type:'POST',
         dataType:"JSON",
         data:{
-            location_id:$('#location_name').val()
+            location_id:$('#location_name').select2().val(),
+            region_id:$('#region_name').val(),
+            client_id:$('#client_id').val()
         },
         processData:true,
         success: function(data){
+            // $('select#area_name').find('<option>').remove();
+                
             $.each(data, function(i,item){
                 $('#location_name option').each(function(){
                     $('#address').val(data[i].address);
@@ -330,9 +367,52 @@ $(document).on('change','#location_name',function(){
             });
         }
     });
+    $.ajax({
+        headers:{
+            'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+        },
+        url:'/area/get_data_area_to_selected',
+        type:'POST',
+        dataType:"JSON",
+        data:{
+            location_id:$('#location_name').select2().val(),
+        },
+        processData:true,
+        success: function(data){
+            $('select#area_name').find('option').remove();
+            $('select#area_name').append($('<option>',{
+                value:"",
+                text:"Choice Location"
+            }));
+            $.each(data, function(i,item){
+                $('#area_name').append($('<option>', {
+                    value:data[i].id,
+                    text:data[i].area_name
+                }));
+            });
+        }
+    });
 });
-
-
-    
+$(document).on('change','#area_name',function(){
+    $.ajax({
+        headers:{
+            'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+        },
+        url:'/area/get_data_area_to_selected',
+        type:'POST',
+        dataType:"JSON",
+        data:{
+            area_id:$('#area_name').val()
+        },
+        processData:true,
+        success: function(data){
+            $.each(data, function(i,item){
+                $('#area_name option').each(function(){
+                    $('#area_description').val(data[i].area_description);
+                });
+            });
+        }
+    });
+});
 </script>
 @endsection

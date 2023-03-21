@@ -82,5 +82,51 @@ $(document).ready(function(){
         "scrollX": true,
     });
 });
+
+function deleteSubArea(id,subAreaName){
+    $('#deleteSubArea_'+id).submit(function(){
+        var formData = new FormData();
+        formData.append('sub_area_id',id);
+        formData.append('sub_area_name',subAreaName);
+        Swal.fire({
+            title: 'Perhatian!',
+            html: 'Apakah anda yakin ingin menghapus data sub area ini?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText:'Delete',
+        }).then((result)=>{
+            if(result.isConfirmed){
+                $.ajax({
+                    headers:{
+                        'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr("content")
+                    },
+                    url:'sub_area/delete_sub_area',
+                    data:formData,
+                    type:'POST',
+                    dataType:'JSON',
+                    processData:false,
+                    contentType:false,
+                    success: function(data){
+                        Swal.fire({
+                            title:'Perhatian',
+                            html:data.message,
+                            icon:data.icon,
+                            showConfirmButton:false,
+                            timer:1500
+                        });
+                        if(data.icon == 'success'){
+                            setTimeout(() => {
+                                window.location.href = data.redirect 
+                            }, 2000);
+                        }
+                    },
+                    error: function(xhr,error,errorThrown){
+
+                    }
+                });
+            }
+        });
+    });
+}
 </script>
 @endsection

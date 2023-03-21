@@ -93,12 +93,15 @@ class AreaController extends Controller
     }
 
     public function get_data_area_to_selected(Request $request){
-        $db = DB::table('m_area')->join('m_location','m_location.id','=','m_area.location_id')->join('m_region','m_location.region_id','=','m_region.id')->join('m_client','m_client.id','=','m_region.client_id')->select('m_area.id','m_area.area_name',DB::raw('m_area.description AS sub_area_description'));
-        // if($request->location_id != ""){
-        //     $db = $db->where('m_location.id',$request->location_id)->get();
-        // }else{
-        //     $db = $db->where('m_region.id',$request->region_id)->where('m_client.id',$request->client_id)->get();
-        // }
+        // echo $request->location_id; die();
+        $db = DB::table('m_area')->join('m_location','m_location.id','=','m_area.location_id')->select('m_location.address',DB::Raw('m_location.description AS location_description'),'m_area.id','m_area.area_name',DB::raw('m_area.description AS area_description'));
+        if($request->area_id != ""){
+            $db = $db->where('m_area.id',$request->area_id);
+        }else{
+            $db = $db->where('m_location.id',$request->location_id);
+        }
+        // echo $request->client_id; die();
+        // var_dump($db->get());
         return response()->json($db->get());
     }
 }

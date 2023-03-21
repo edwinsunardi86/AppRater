@@ -94,8 +94,7 @@ class RegionController extends Controller
       }
 
     public function get_data_region_to_selected(Request $request){
-        // echo $request->region_id; die();
-        $db = DB::table('m_region')->select('id','region_name','description')->where('client_id',$request->client_id);
+        $db = DB::table('m_region')->select('m_region.id','region_name',DB::Raw('m_region.description AS region_description'))->where('client_id',$request->client_id);
         if($request->region_id <> ""){
             $db = $db->where('id',$request->region_id);
         }

@@ -91,7 +91,7 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'area'],function(
     Route::get('/edit_area/{id}',[AreaController::class,'edit_area']);
     Route::post('/update_area',[AreaController::class,'update_area']);
     Route::post('/delete_area',[AreaController::class,'delete_area']);
-    Route::get('/get_data_area_to_selected',[AreaController::class,'get_data_area_to_selected']);
+    Route::post('/get_data_area_to_selected',[AreaController::class,'get_data_area_to_selected']);
 });
 
 
@@ -99,4 +99,8 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'sub_area'],funct
     Route::get('/',[SubAreaController::class,'index']);
     Route::get('/getDatatableSubArea',[SubAreaController::class,'get_datatable_sub_area'])->name('data_sub_area:dt');
     Route::get('/add_sub_area',[SubAreaController::class,'add_sub_area']);
+    Route::post('/store_sub_area',[SubAreaController::class,'store_sub_area']);
+    Route::get('/edit_sub_area/{id}',[SubAreaController::class,'edit_sub_area']);
+    Route::post('/update_sub_area',[SubAreaController::class,'update_sub_area']);
+    Route::post('/delete_sub_area',[SubAreaController::class,'delete_sub_area']);
 });

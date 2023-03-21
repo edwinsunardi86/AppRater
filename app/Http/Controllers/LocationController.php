@@ -94,12 +94,13 @@ class LocationController extends Controller
     }
 
     public function get_data_location_to_selected(Request $request){
-        $db = DB::table('m_location')->join('m_region','m_location.region_id','=','m_region.id')->join('m_client','m_client.id','=','m_region.client_id')->select('m_location.id','m_location.location_name','m_location.address',DB::Raw('m_location.description AS location_description'));
+        $db = DB::table('m_location')->join('m_region','m_location.region_id','=','m_region.id')->join('m_client','m_client.id','=','m_region.client_id')->select('m_location.id','m_location.location_name','m_location.address',DB::Raw('m_location.description AS location_description,m_region.description AS region_description'));
         if($request->location_id != ""){
             $db = $db->where('m_location.id',$request->location_id)->get();
         }else{
             $db = $db->where('m_region.id',$request->region_id)->where('m_client.id',$request->client_id)->get();
         }
+        // var_dump($db);
         return response()->json($db);
     }
 }
