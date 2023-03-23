@@ -80,6 +80,7 @@
                                     <thead>
                                         <tr>
                                             <th>Area Name</th>
+                                            <th>Service</th>
                                             <th>Description</th>
                                         </tr>
                                     </thead>
@@ -161,7 +162,24 @@ $(document).ready(function(){
     var counter = 1;
     var tb_location = $('#table_add_area').DataTable();
     $('#addRow').on('click',function(){
-        tb_location.row.add(['<input type="text" name="area_name[]" id="area_name'+counter+'" class="form-control form-control-sm" required/>','<textarea class="form-control form-control-sm " id="area_description'+counter+'" name="area_description[]" rows="7" cols="20">']).draw(false);
+        $.ajax({
+            headers:{
+                'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+            },
+            url:"/area/getDataService",
+            type:"GET",
+            dataType:"JSON",
+            processData:true,
+            success: function(data){
+               $.each(data, function(i,item){
+                $('.service').append($('<option>',{
+                    value:data[i].service_code,
+                    text:data[i].service_name
+                }));
+               });
+            }
+        });
+        tb_location.row.add(['<input type="text" name="area_name[]" id="area_name'+counter+'" class="form-control form-control-sm" required/>','<select class="form-control service" name="service[]" id="service'+counter+'">','<textarea class="form-control form-control-sm " id="area_description'+counter+'" name="area_description[]" rows="7" cols="20">']).draw(false);
         counter++;
     });
 
@@ -204,6 +222,7 @@ $(document).ready(function(){
                 arr_area.push({
                     'area_name': $('#area_name'+i).val(),
                     'area_description': $('#area_description'+i).val(),
+                    'service' : $('#service'+i).val(),
                 });
             }
             $.ajax({

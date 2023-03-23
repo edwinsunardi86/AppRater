@@ -31,13 +31,14 @@
                                         <th>No.</th>
                                         <th>Area Name</th>
                                         <th>Area Description</th>
+                                        <th>Service Name</th>
                                         <th>Location Name</th>
                                         <th>Address</th>
                                         <th>Location Description</th>
                                         <th>Region Name</th>
                                         <th>Region Description</th>
                                         <th>Client Name</th>
-                                        <th>Description</th>
+                                        <th>Client Description</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -66,6 +67,7 @@ $(document).ready(function(){
             }},
             { data: 'area_name', name: 'area_name'},
             { data: 'description', name: 'description'},
+            { data: 'service_name', name: 'service_name'},
             { data:'location_name', name: 'location_name'},
             { data: 'address', name: 'address'},
             { data: 'location_description', name: 'location_description'},

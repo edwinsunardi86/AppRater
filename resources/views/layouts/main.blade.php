@@ -12,7 +12,7 @@
   <!-- icheck bootstrap -->
   <link rel="stylesheet" href="/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
   <!-- Theme style -->
-  <link rel="stylesheet" href="/dist/css/adminlte.css">
+  <link rel="stylesheet" href="/dist/css/adminlte.min.css">
   <!-- DataTables -->
   <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
   <link rel="stylesheet" href="/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
@@ -20,6 +20,7 @@
   <link rel="stylesheet" href="/plugins/sweetalert2/sweetalert2.min.css">
   {{-- <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css"> --}}
   <!-- Select2 -->
+  <link rel="stylesheet" href="/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
   <link rel="stylesheet" href="/plugins/select2/css/select2.min.css">
   <!-- daterange picker -->
   <link rel="stylesheet" href="/plugins/daterangepicker/daterangepicker.css">
@@ -121,6 +122,14 @@ $('[data-mask]').inputmask();
 //Date picker
 $('#dateFormat').datetimepicker({
         format: 'L'
+});
+$('#dateContract').daterangepicker({
+  locale: {
+    format:'YYYY/MM/DD'
+  }
+});
+$(document).on('change','#dateContract',function(){
+  console.log($('#dateContract').val());
 });
 </script>
 </body>

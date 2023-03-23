@@ -40,21 +40,31 @@
                                     <input type="email" name="email" id="email" value="{{ $user->email }}" class="form-control" placeholder="Email">
                                 </div>
                             </div>
-                            {{-- <div class="form-group row">
-                                <label for="inputLevel" class="col-sm-2 col-form-label">Level</label>
-                                <div class="col-sm-4">
-                                    <select class="form-control" name="level" id="level" style="width: 100%;">
-                                        <option value="1" {{ $user->level == 1 ? 'selected' : '' }}>1</option>
-                                        <option value="2" {{ $user->level == 2 ? 'selected' : '' }}>2</option>
-                                        <option value="3" {{ $user->level == 3 ? 'selected' : '' }}>3</option>
-                                        <option value="4" {{ $user->level == 4 ? 'selected' : '' }}>4</option>
-                                    </select>
-                                </div>
-                            </div> --}}
                             <div class="form-group row">
                                 <label for="inputFullName" class="col-sm-2 col-form-label">Full Name</label>
                                 <div class="col-sm-4">
                                     <input type="text" name="fullname" id="fullname" class="form-control" value="{{ $user->fullname }}" placeholder="Full Name">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="inputEmail" class="col-sm-2 col-form-label">Role</label>
+                                <div class="col-sm-4">
+                                    <select name="role" id="role" class="form-control"">
+                                        <option value="">Pilih</option>
+                                        <option value="1" {{ $user->role == 1 ? 'selected': ''}}>Super Administrator</option>
+                                        <option value="2" {{ $user->role == 2 ? 'selected': ''}}>Administrator</option>
+                                        <option value="3" {{ $user->role == 3 ? 'selected': '' }}>User</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row div_client" style="display:none">
+                                <label for="inputClient" class="col-sm-2 col-form-label">Client</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" name="client_name" id="client_name" readonly>
+                                    <input type="hidden" class="form-control" name="client_id" id="client_id" readonly>
+                                </div>
+                                <div class="col-sm-2">
+                                    <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#modal-xl">Cari</button>
                                 </div>
                             </div>
                             <div class="col-md-12">
@@ -68,7 +78,82 @@
         </div>
     </section>
 </div>
+<div class="modal fade" id="modal-xl">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Data Client</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table id="table_client" class="diplay table table-bordered table-striped table-hover" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Client Name</th>
+                            <th>Address</th>
+                            <th>Contact 1</th>
+                            <th>Contact 2</th>
+                            <th>Mobile</th>
+                            <th>Description</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
 <script>
+$(document).on('change','#role', function(){
+    if($('#role').val() != "" && $('#role').val() != '1'){
+        $('.div_client').show();
+    }else{
+        $('.div_client').hide();
+        $('#client_name').val("");
+        $('#client_id').val("");
+    }
+});
+$(document).on('click','.pilih_client',function(){
+    $('#client_id').val(($(this).attr('data-id')));
+    $('#client_name').val(($(this).attr('data-client_name')));
+    $('#client_description').val($(this).attr('data-client-description'));
+    $('#modal-xl').modal('toggle');
+});
+
+$(document).ready(function(){
+    var i = 1;
+    var tb_client = $('#table_client').DataTable({
+    processing:true,
+    serverSide:true,
+    destroy: true,
+    ajax:'{!! route("data_client_to_selected:dt") !!}',
+    columns:[
+        {data:'', name:'', render:function(row, type, set){
+            return i++;
+        }},
+        { data:'client_name', name:'client_name' },
+        { data:'address', name:'address' },
+        { data: 'contact1', name:'contact1' },
+        { data: 'contact2', name: 'contact2' },
+        { data: 'contact_mobile', name: 'contact_mobile'},
+        { data: 'description', name: 'description'},
+        { data: 'action', name: 'action'}
+        ],
+    });
+});
+
     $(function(){
         $('#form_user').validate({
             rules :{
@@ -84,6 +169,9 @@
                     required:true,
                     minlength:5
                 },
+                client_name : {
+                    required:true
+                }
             },
             messages:{
                 username:{
@@ -97,6 +185,9 @@
                 fullname:{
                     required:"Please enter a full name",
                     minlength:"Full name must be at least 4 characters long"
+                }
+                client_name : {
+                    required:"Please choice client"
                 }
             },
             errorElement: 'span',
@@ -116,7 +207,8 @@
         let data = {
             username : $('#username').val(),
             email : $('#email').val(),
-            // level : $('#level').val(),
+            role : $('#role').val(),
+            client_id : $('#client_id').val(),
             fullname : $('#fullname').val() 
         };
         $.ajax({

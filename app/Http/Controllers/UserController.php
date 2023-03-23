@@ -19,7 +19,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = User::All();
+            $data = DB::table('users')->join('m_client','m_client.id','=','users.client_id','left');
             return DataTables::of($data)->addIndexColumn()->addColumn('action', function ($row) {
                 $btn = '<a href="/users/' . $row->username . '" class="btn btn-primary btn-sm"><i class="fas fa-eye"></i> View</a>
                 <a href="users/edit_user/' . $row->username . '" class="edit btn btn-secondary btn-sm"><i class="fas fa-user-edit"></i> Edit</a>
@@ -60,6 +60,9 @@ class UserController extends Controller
             'username' => $request->username,
             'email' => $request->email,
             'fullname' => $request->fullname,
+            'password' => bcrypt('sos123'),
+            'role' => $request->role,
+            'client_id' => $request->client_id
         ];
         $validator = Validator::make($request->all(), [
             'username' => 'required|max:50|unique:users',
@@ -72,7 +75,7 @@ class UserController extends Controller
             $username = $errors->first('username');
             $confirmation = ['username' => $username, 'email' => $email, 'icon' => 'error'];
         } else {
-            User::create($data);
+            DB::table('users')->insert($data);
             $confirmation = ['message' => 'Data user sukses ditambahkan', 'icon' => 'success', 'redirect' => '/users'];
         }
         return response()->json($confirmation);
@@ -127,6 +130,8 @@ class UserController extends Controller
             'username' => $request->username,
             'email' => $request->email,
             'fullname' => $request->fullname,
+            'role' => $request->role,
+            'client_id' => $request->client_id
         ];
         $rules = [];
         if($check_valid > 0){

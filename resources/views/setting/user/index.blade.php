@@ -37,6 +37,8 @@
                     <th>Username</th>
                     <th>Email</th>
                     <th>Full Name</th>
+                    <th>Role</th>
+                    <th>Author</th>
                     <th>Action</th>
                   </thead>
                   <tbody>
@@ -51,22 +53,34 @@
 </div>
 <script>
 jQuery(document).ready(function(){
+  var i = 1;
   $('#user-table').DataTable({
     processing: true,
     serverSide: true,
     ajax:'/users/',
     columns:[
-      {data:'id', name:'id'},
+      {data:'', name:'', render:function(row, type, set){
+        return i++;
+      }},
       {data:'username', name:'username'},
       {data:'email', name:'email'},
       {data:'fullname', name:'fullname'},
+      {data:'role', name:'role', render:function(row, type, set){
+        if(row==1){
+          return 'Super Administrator';
+        }else if(row==2){
+          return 'Administrator';
+        }else{
+          return 'User';
+        }
+      }},
+      {data:'client_name', name:'client_name'},
       {data:'action', name:'action'}
     ],
-    "columnDefs": [ {
+    "columnDefs": [{
       "targets": 0,
       "orderable": false
     }]
-    
   }).draw();
 
   

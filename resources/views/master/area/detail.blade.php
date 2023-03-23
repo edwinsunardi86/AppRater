@@ -75,6 +75,12 @@
                                         <textarea class="form-control" name="location_description" id="location_description" rows="5" readonly>{{ $area->location_description}}</textarea>
                                     </div>
                                 </div>
+                                <div class="form-group row">
+                                    <label for="inputService" class="col-sm-2 col-form-label">Service</label>
+                                    <div class="col-sm-4">
+                                        <input type="text" class="form-control" name="service" id="service" value="{{ $area->service_name }}" readonly>
+                                    </div>
+                                </div>
                                 <a href="{{ url()->previous() }}" class="btn bg-purple btn-md">Back</a>
                             </div>
                         </form>

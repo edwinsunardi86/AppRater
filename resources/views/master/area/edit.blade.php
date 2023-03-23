@@ -45,10 +45,6 @@
                                     <label for="inputClientName" class="col-sm-2 col-form-label">Client Name</label>
                                     <div class="col-sm-4">
                                         <input type="text" class="form-control" name="client_name" id="client_name" value="{{ $area->client_name }}" readonly>
-                                        <input type="hidden" name="client_id" id="client_id" value="{{ $area->client_id }}">
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#modal-xl">Cari</button>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -60,9 +56,7 @@
                                 <div class="form-group row">
                                     <label for="selectRegionName" class="col-sm-2 col-form-label">Region Name</label>
                                     <div class="col-sm-4">
-                                        <select name="region_name" id="region_name" class="form-control select2">
-                                            <option value="{{ $area->region_id }}">{{ $area->region_name }}</option>
-                                        </select>
+                                        <input type="text" class="form-control" name="region_name" id="region_name" value="{{ $area->region_name }}" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -72,11 +66,19 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
+                                    <label for="inputService" class="col-sm-2 col-form-label">Service</label>
+                                    <div class="col-sm-4">
+                                        <select class="form-control" name="service" id="service">
+                                            @foreach($service as $row)
+                                                <option value="{{ $row->service_code }}" {{ $area->service_code == $row->service_code ? 'selected' : '' }}>{{ $row->service_name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
                                     <label for="inputLocationName" class="col-sm-2 col-form-label">Location Name</label>
                                     <div class="col-sm-4">
-                                        <select name="location_name" id="location_name" class="form-control select2">
-                                            <option value="{{ $area->location_id }}">{{ $area->location_name }}</option>
-                                        </select>
+                                        <input type="text" class="form-control" name="location_name" id="location_name" value="{{ $area->location_name }}" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -203,7 +205,8 @@ $(document).ready(function(){
                     area_id:$('#area_id').val(),
                     client_id:$('#client_id').val(),
                     region_id:$('#region_name').val(),
-                    location_id:$('#location_name').val()
+                    location_id:$('#location_name').val(),
+                    service:$('#service').val()
                 },
                 processData:true,
                 success: function(data){

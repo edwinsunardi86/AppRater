@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\SetupProjectController;
 use App\Http\Controllers\UserController;
 
 /*
@@ -92,6 +93,7 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'area'],function(
     Route::post('/update_area',[AreaController::class,'update_area']);
     Route::post('/delete_area',[AreaController::class,'delete_area']);
     Route::post('/get_data_area_to_selected',[AreaController::class,'get_data_area_to_selected']);
+    Route::get('/getDataService',[AreaController::class,'get_data_service']);
 });
 
 
@@ -103,4 +105,11 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'sub_area'],funct
     Route::get('/edit_sub_area/{id}',[SubAreaController::class,'edit_sub_area']);
     Route::post('/update_sub_area',[SubAreaController::class,'update_sub_area']);
     Route::post('/delete_sub_area',[SubAreaController::class,'delete_sub_area']);
+});
+
+Route::group(['middleware'=>['auth','authorization'],'prefix'=>'setup_project'],function(){
+    Route::get('/',[SetupProjectController::class,'form_setup_project']);
+    Route::post('/getDetailRegion',[SetupProjectController::class,'get_detail_region']);
+    Route::get('/getDetailLocation/{id}',[SetupProjectController::class,'get_detail_location']);
+    Route::post('/storeProjectSetup',[SetupProjectController::class,'store_project_setup']);
 });
