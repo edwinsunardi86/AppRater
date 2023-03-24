@@ -6,6 +6,7 @@ use App\Http\Controllers\RegionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EvaluationController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\SetupProjectController;
 use App\Http\Controllers\UserController;
@@ -112,4 +113,11 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'setup_project'],
     Route::post('/getDetailRegion',[SetupProjectController::class,'get_detail_region']);
     Route::get('/getDetailLocation/{id}',[SetupProjectController::class,'get_detail_location']);
     Route::post('/storeProjectSetup',[SetupProjectController::class,'store_project_setup']);
+    Route::post('/getProjectSetupToSelected',[SetupProjectController::class,'get_project_setup_to_selected']);
+    Route::post('/getRegionSetupProject',[SetupProjectController::class,'get_region_setup_project']);
+    Route::post('/getLocationSetupProject',[SetupProjectController::class,'get_location_setup_project']);
+});
+
+Route::group(['middleware'=>['auth','authorization'],'prefix'=>'evaluation'],function(){
+    Route::get('/form_evaluation',[EvaluationController::class,'form_evaluation']);
 });

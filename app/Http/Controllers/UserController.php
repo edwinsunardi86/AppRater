@@ -19,11 +19,11 @@ class UserController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = DB::table('users')->join('m_client','m_client.id','=','users.client_id','left');
+            $data = DB::table('users')->join('m_client','m_client.id','=','users.client_id','left')->select('username','email','fullname','role','client_name',DB::Raw('users.id AS user_id'));
             return DataTables::of($data)->addIndexColumn()->addColumn('action', function ($row) {
                 $btn = '<a href="/users/' . $row->username . '" class="btn btn-primary btn-sm"><i class="fas fa-eye"></i> View</a>
                 <a href="users/edit_user/' . $row->username . '" class="edit btn btn-secondary btn-sm"><i class="fas fa-user-edit"></i> Edit</a>
-                <a href="users/access/' . $row->id . '" class="edit btn bg-purple btn-sm"><i class="fas fa-universal-access"></i> Access</a>';
+                <a href="users/access/' . $row->user_id . '" class="edit btn bg-purple btn-sm"><i class="fas fa-universal-access"></i> Access</a>';
                 return $btn;
             })->rawColumns(['action'])->make(true);
         }

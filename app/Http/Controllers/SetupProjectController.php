@@ -33,12 +33,12 @@ class SetupProjectController extends Controller
         $exp_date_contract = explode(" - ",$request->date_contract);
         $contract_start = str_replace("/","-",$exp_date_contract[0]);
         $contract_finish = str_replace("/","-",$exp_date_contract[1]);
-        $project_code = $request->project_name.date('Ymdhis');
+        $project_code = $request->project_name.date('Ymd');
         $post = array(
             'client_id' => $request->client_id,
-            'project_code' => $request->project_code,
+            'project_code' => $project_code,
             'project_name' => $request->project_name,
-            'project_code' => $request->project_code,
+            'project_code' => $project_code,
             'contract_start' => $contract_start,
             'contract_finish' => $contract_finish,
             'created_by' => Auth::id()
@@ -47,6 +47,28 @@ class SetupProjectController extends Controller
         foreach($exp_region_id as $row){
             DB::select("call genSetupProject(?,?,?)",array($project_code,$row,Auth::id()));
         }
-        
+
+        $confirmation = ['message' => 'Setup Project berhasil digenerate', 'icon' => 'success', 'redirect' => '/setup_project'];
+        return response()->json($confirmation);
+    }
+
+    function get_project_setup_to_selected(Request $request){
+       $get_client = DB::table('setup_project')->select('project_code','project_name')->where('client_id',$request->client_id)->get();
+       return response()->json($get_client);
+    }
+
+    function get_region_setup_project(Request $request){
+        $get_region = DB::table('setup_project_detail')->join('m_region','m_region.id','=','setup_project_detail.region_id')->join('setup_project','setup_project.project_code','=','setup_project_detail.project_code')->select('setup_project_detail.region_id','region_name')->where('setup_project.client_id',$request->client_id)->groupBy('setup_project_detail.region_id','region_name')->get();
+        return response()->json($get_region);
+    }
+
+    function get_location_setup_project(Request $request){
+        $get_location = DB::table('setup_project_detail')->join('m_region','m_region.id','=','setup_project_detail.region_id')->join('m_location','m_location.id','=','setup_project_detail.location_id')->join('setup_project','setup_project.project_code','=','setup_project_detail.project_code')->select('setup_project_detail.location_id','location_name')->where('setup_project_detail.region_id',$request->region_id)->groupBy('setup_project_detail.location_id','location_name')->get();
+        return response()->json($get_location);
+    }
+
+    function get_area_sub_area_project(Request $request){
+        // $get_area_sub_area = DB::table('setup_project_detail')->join('m_location','m_location.id','=','setup_project_detail.location_id')->join('m_area','m_area.location_id','=','m_location.id')->join('m_area',)->join('m_sub_area','m_sub_area.area_id','=','m_area.id')->join('m_service','m_service.service_code','=','m_area.service_code')->select('');
+        $get_area_sub_area = DB::table('setup_project_detail')->join('m_sub_area','m_sub_area.id','setup_project_detail.sub_area_id')->join('m_area','m_area.id','=','m_sub_area.area_id')->join('m_location','m_location.id','=','m_area.location_id')->where('m_location.id',$request->location_id)->select('m_sub_area.');
     }
 }
