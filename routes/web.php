@@ -116,6 +116,7 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'setup_project'],
     Route::post('/getProjectSetupToSelected',[SetupProjectController::class,'get_project_setup_to_selected']);
     Route::post('/getRegionSetupProject',[SetupProjectController::class,'get_region_setup_project']);
     Route::post('/getLocationSetupProject',[SetupProjectController::class,'get_location_setup_project']);
+    Route::post('/getAreaSubAreaSetupProject',[SetupProjectController::class,'get_area_sub_area_setup_project']);
 });
 
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'evaluation'],function(){

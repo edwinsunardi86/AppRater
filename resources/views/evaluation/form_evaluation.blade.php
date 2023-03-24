@@ -65,10 +65,8 @@
                                 <div class="card-header">
                                     <h3 class="card-title">{{ $row->service_name }}</h3>
                                 </div>
-                                <div class="card-body">
-                                    <div class="card-body">
-                                        
-                                    </div>
+                                <div class="card-body {{ $row->service_code }}">
+                                
                                 </div>
                             </div>
                             @endforeach
@@ -192,7 +190,7 @@ $(document).on('change','#project_code',function(){
             $.each(data,function(i,item){
                 $('select#region_name').append($('<option>',{
                     text:data[i].region_name,
-                    value:data[i].region_id
+                    value:data[i].id
                 }));
             });
         }
@@ -220,8 +218,28 @@ $(document).on('change','#region_name',function(){
             $.each(data,function(i,item){
                 $('select#location_name').append($('<option>',{
                     text:data[i].location_name,
-                    value:data[i].location_id
+                    value:data[i].id
                 }));
+            });
+        }
+    });
+});
+
+$(document).on('change','#location_name',function(){
+    $.ajax({
+        headers:{
+            'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+        },
+        url:"/setup_project/getAreaSubAreaSetupProject",
+        type:"POST",
+        dataType:"JSON",
+        data:{
+            location_id:$('#location_name').val()
+        },
+        processData:true,
+        success: function(data){
+            $.each(data,function(i,item){
+                $('.'+data[i].service_code).append(data[i].sub_area_name);
             });
         }
     });
