@@ -45,19 +45,19 @@
                             <div class="form-group row">
                                 <label for="projectName" class="col-sm-2 col-form-label">Project Name</label>
                                 <div class="col-sm-4">
-                                    <select name="project_code" id="project_code" class="form-control select2"></select>
+                                    <select name="project_code" id="project_code" class="form-control select2 col-sm-4"></select>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label for="regionName" class="col-sm-2 col-form-label">Region</label>
                                 <div class="col-sm-4">
-                                    <select name="region_name" id="region_name" class="form-control select2"></select>
+                                    <select name="region_name" id="region_name" class="form-control select2 col-sm-4"></select>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label for="locationName" class="col-sm-2 col-form-label">Location</label>
                                 <div class="col-sm-4">
-                                    <select name="location_name" id="location_name" class="form-control select2"></select>
+                                    <select name="location_name" id="location_name" class="form-control select2 col-sm-4"></select>
                                 </div>
                             </div>
                             @foreach($service as $row)
@@ -65,11 +65,20 @@
                                 <div class="card-header">
                                     <h3 class="card-title">{{ $row->service_name }}</h3>
                                 </div>
-                                <div class="card-body {{ $row->service_code }}">
-                                
+                                <div class="card-body">
+                                    <table class="table table-striped table-bordered {{ $row->service_code }}" id="{{ $row->service_code }}">
+                                    <thead>
+                                        <th style="width:10%">No.</th>
+                                        <th style="width:30%">Area</th>
+                                        <th style="width:30%">Sub Area</th>
+                                        <th style="width:30%">Score</th>
+                                    </thead>
+                                    <tbody></tbody>
+                                    </table>
                                 </div>
                             </div>
                             @endforeach
+                            <button type="submit" class="btn btn-lg btn-primary">Submit</button>
                         </div>
                         </form>
                     </div>
@@ -238,9 +247,18 @@ $(document).on('change','#location_name',function(){
         },
         processData:true,
         success: function(data){
+            var a=1;
+            $('.table > tbody').empty();
             $.each(data,function(i,item){
-                $('.'+data[i].service_code).append(data[i].sub_area_name);
+                //alert($('.'+data[i].service_code).attr('id'));
+                //$('.'+data[i].service_code).append(data[i].sub_area_name);
+                if($('.'+data[i].service_code).attr('id') == data[i].service_code){
+                    var content = "<tr><td>"+a+"</td><td>"+data[i].area_name+"<input type=\"hidden\" name=\"area_id[]\" id=\"area_id"+a+"\" value="+data[i].area_id+"></td><td>"+data[i].sub_area_name+"<input type=\"hidden\" name=\"area_id[]\" id=\"area_id"+a+"\" value="+data[i].sub_area_id+"></td><td><input type=\"number\" name=\"score\" id=\"score\" class=\"form-control col-sm-3\"></td></tr>";
+                    $('.'+data[i].service_code+" > tbody").append(content);
+                }
+                a++;
             });
+            console.log();
         }
     });
 });
