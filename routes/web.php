@@ -121,4 +121,5 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'setup_project'],
 
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'evaluation'],function(){
     Route::get('/form_evaluation',[EvaluationController::class,'form_evaluation']);
+    Route::post('/storeEvaluation',[EvaluationController::class,'store_evaluation']);
 });

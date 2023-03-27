@@ -49,6 +49,18 @@
                                 </div>
                             </div>
                             <div class="form-group row">
+                                <label for="dateEvaluation" class="col-sm-2 col-form-label">Date Evaluation:</label>
+                                <div class="input-group col-sm-4">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="far fa-calendar-alt"></i>
+                                        </span>
+                                    </div>
+                                    <input type="text" class="form-control float-right" id="dateEvaluation" name="dateEvaluation">
+                                </div>
+                                <!-- /.input group -->
+                            </div>
+                            <div class="form-group row">
                                 <label for="regionName" class="col-sm-2 col-form-label">Region</label>
                                 <div class="col-sm-4">
                                     <select name="region_name" id="region_name" class="form-control select2 col-sm-4"></select>
@@ -78,6 +90,7 @@
                                 </div>
                             </div>
                             @endforeach
+                            <div class="rating-sub-area"></div>
                             <button type="submit" class="btn btn-lg btn-primary">Submit</button>
                         </div>
                         </form>
@@ -202,7 +215,7 @@ $(document).on('change','#project_code',function(){
                     value:data[i].id
                 }));
             });
-        }
+        },
     });
 });
 
@@ -250,15 +263,140 @@ $(document).on('change','#location_name',function(){
             var a=1;
             $('.table > tbody').empty();
             $.each(data,function(i,item){
-                //alert($('.'+data[i].service_code).attr('id'));
-                //$('.'+data[i].service_code).append(data[i].sub_area_name);
                 if($('.'+data[i].service_code).attr('id') == data[i].service_code){
-                    var content = "<tr><td>"+a+"</td><td>"+data[i].area_name+"<input type=\"hidden\" name=\"area_id[]\" id=\"area_id"+a+"\" value="+data[i].area_id+"></td><td>"+data[i].sub_area_name+"<input type=\"hidden\" name=\"area_id[]\" id=\"area_id"+a+"\" value="+data[i].sub_area_id+"></td><td><input type=\"number\" name=\"score\" id=\"score\" class=\"form-control col-sm-3\"></td></tr>";
+                    var content = "<tr><td>"+a+"</td><td>"+data[i].area_name+"<input type=\"hidden\" name=\"area_id[]\" id=\"area_id"+a+"\" value="+data[i].area_id+"></td><td>"+data[i].sub_area_name+"<input type=\"hidden\" name=\"sub_area_id[]\" id=\"sub_area_id"+a+"\" value="+data[i].sub_area_id+"></td><td>"+
+                    "<div class=\"col-sm-12\">"+
+                        "<div class=\"form-group row clearfix\">"+
+                            "<div class=\"icheck-primary d-inline m-1\">"+
+                                "<input class=\"score\" type=\"radio\" id=\"ratingsb"+a+"\" name=\"score"+a+"[]\" value=\"100\">"+
+                                "<label for=\"ratingsb"+a+"\">SB"+
+                                "</label>"+
+                            "</div>"+
+                            "<div class=\"icheck-primary d-inline m-1\">"+
+                                "<input class=\"score\" type=\"radio\" id=\"ratingb"+a+"\" name=\"score"+a+"[]\" value=\"95\">"+
+                                "<label for=\"ratingb"+a+"\">B"+
+                                "</label>"+
+                            "</div>"+
+                            "<div class=\"icheck-primary d-inline m-1\">"+
+                                "<input class=\"score\" type=\"radio\" id=\"ratingcb"+a+"\" name=\"score"+a+"[]\" value=\"89\">"+
+                                "<label for=\"ratingcb"+a+"\">CB"+
+                                "</label>"+
+                            "</div>"+
+                            "<div class=\"icheck-primary d-inline m-1\">"+
+                                "<input class=\"score\" type=\"radio\" id=\"ratingkb"+a+"\" name=\"score"+a+"[]\" value=\"74\">"+
+                                "<label for=\"ratingkb"+a+"\">KB"+
+                                "</label>"+
+                            "</div>"+
+                        "</div>"+
+                    "</div>"+
+                    "</td></tr>";
                     $('.'+data[i].service_code+" > tbody").append(content);
                 }
                 a++;
             });
-            console.log();
+            var rating_count="<input type=\"hidden\" name=\"count_sub_area\" id=\"count_sub_area\" value="+ parseInt(a-1) +">";
+            $('.rating-sub-area').append(rating_count);
+        }
+    });
+});
+$(document).ready(function(){
+    var startDate=($('#dateEvaluation').data('daterangepicker').startDate);
+    $('#form_evaluation').validate({
+        rules:{
+            client_name:{
+                required:true
+            },
+            project_code:{
+                required:true
+            },
+            region_name:{
+                required:true
+            },
+            location_name:{
+                required:true
+            },
+        },
+        messages:{
+            client_name:{
+                required:"Please choice client name"
+            },
+            project_code:{
+                required:"Please choice project name"
+            },
+            region_name:{
+                required:"Please choice region name"
+            },
+            location_name:{
+                required:"Please choice location name"
+            },
+        },
+        errorElement: 'span',
+            errorPlacement: function (error, element) {
+            error.addClass('invalid-feedback');
+            element.closest('.form-group').append(error);
+        },
+        highlight: function (element, errorClass, validClass) {
+            $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element, errorClass, validClass) {
+            $(element).removeClass('is-invalid');
+        },
+        submitHandler: function() {
+            var score = [];
+            $('input[class="score"]:checked').each(function(){
+                if($(this).val() !=""){
+                    score.push($(this).val());
+                }
+            });
+
+            if(score.length == $('#count_sub_area').val()){
+                var formData = new FormData();
+                formData.append('client_id',$('#client_id').val());
+                formData.append('project_code',$('#project_code').val());
+                formData.append('date_evaluation',$('#dateEvaluation').val())
+                formData.append('region_id',$('#region_name').val());
+                formData.append('location_id',$('#location_name').val());
+                var sub_area_id = [];
+                    
+                for(var i = 1;i<=$('input[name="count_sub_area"]').length;i++){
+                    score.push($('input[name="score'+i+']').val());
+                }
+                for(var i = 1;i<=$('input[name="sub_area_id[]"]').length;i++){
+                    sub_area_id.push($('#sub_area_id'+i).val());
+                }
+                formData.append('score',score);
+                formData.append('sub_area_id',sub_area_id);
+
+                $.ajax({
+                    headers:{
+                        'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+                    },
+                    url:"/evaluation/storeEvaluation",
+                    type:"POST",
+                    dataType:"JSON",
+                    data: formData,
+                    processData:false,
+                    contentType:false,
+                    success: function(data){
+                        Swal.fire({
+                            title:data.title,
+                            html:data.message,
+                            icon:data.icon
+                        });
+                        setTimeout(() => {
+                            window.location.href=data.redirect;
+                        }, 1500);
+                    }
+                });
+            }else{
+                Swal.fire({
+                    title:"Perhatian!!",
+                    html:"Mohon input semua score sub area",
+                    icon:"error"
+                });
+            }
+            
+
         }
     });
 });

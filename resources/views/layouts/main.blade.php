@@ -18,7 +18,7 @@
   <link rel="stylesheet" href="/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
   <link rel="stylesheet" href="/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
   <link rel="stylesheet" href="/plugins/sweetalert2/sweetalert2.min.css">
-  {{-- <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css"> --}}
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
   <!-- Select2 -->
   <link rel="stylesheet" href="/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
   <link rel="stylesheet" href="/plugins/select2/css/select2.min.css">
@@ -126,8 +126,28 @@ $('#dateFormat').datetimepicker({
 $('#dateContract').daterangepicker({
   locale: {
     format:'YYYY/MM/DD'
-  }
+  },
+  minDate: new Date(currentYear, currentMonth, currentDate),
+  dateFormat: 'yy-mm-dd',
+  startDate: moment(date).add(1,'days'),
+  endDate: moment(date).add(2,'days')
 });
+
+var date = new Date();
+var currentMonth = date.getMonth();
+var currentDate = date.getDate();
+var currentYear = date.getFullYear();
+
+var minDate = -20;
+var maxDate = "+1M +10D"
+$('#dateEvaluation').daterangepicker({
+  locale: {
+    format:'YYYY/MM/DD'
+  },
+});
+
+
+
 $(document).on('change','#dateContract',function(){
   console.log($('#dateContract').val());
 });

@@ -56,6 +56,8 @@ $(document).ready(function(){
             }},
             { data:'region_name', name:'region_name' },
             { data: 'region_description', name:'region_description'},
+            {data: 'client_name', name:'client_name'},
+            {data: 'client_description', name: 'client_description'},
             { data: 'action', name: 'action'}
         ],
         "scrollX": true,

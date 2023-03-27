@@ -63,7 +63,7 @@
                                     <div class="col-sm-4">
                                         <button type="button" class="btn btn-md bg-purple preview">Preview</button>
                                     </div>
-                                  </div>
+                                </div>
                                   <button type="submit" class="btn btn-md btn-primary">Submit</button>
                             </div>
                         </div>

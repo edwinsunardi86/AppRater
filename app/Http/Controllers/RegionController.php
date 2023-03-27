@@ -17,7 +17,7 @@ class RegionController extends Controller
     }
 
     function get_datatable_region(){
-        $db = DB::table('m_region')->join('m_client','m_region.client_id','=','m_client.id')->select('m_region.id','region_name','client_name',DB::raw('m_client.description AS client_description'),DB::raw('m_region.description AS region_description'))->get();
+        $db = DB::table('m_region')->select('m_region.id','region_name',DB::raw('m_region.description AS region_description'))->get();
         return DataTables::of($db)->addColumn('action',function($row){
             $btn = "<a href='/region/detail_region/$row->id' class='btn btn-primary btn-xs'><i class='fas fa-eye'></i> View</a>
             <a href='/region/edit_region/".$row->id."' class=\"btn btn-secondary btn-xs\"><i class=\"fas fa-user-edit\"></i> Edit</a>
@@ -41,7 +41,6 @@ class RegionController extends Controller
         for($i=0;$i<count($request->region);$i++){
             $post = array(
                 'region_name'=>$request->region[$i]['region_name'],
-                'client_id'=>$request->client_id,
                 'description'=>$request->region[$i]['region_description']
             );
             DB::table('m_region')->insert($post);
