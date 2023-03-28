@@ -51,7 +51,7 @@ class SubAreaController extends Controller
     }
 
     public function detail_sub_area($id){
-        $get_sub_area = DB::table('m_sub_area')->join('m_area','m_area.id','=','m_sub_area.area_id')->join('m_location','m_area.location_id','=','m_location.id')->join('m_region','m_location.region_id','=','m_region.id')->join('m_client','m_client.id','=','m_region.client_id')->select(DB::Raw('m_area.id AS area_id'),'m_area.area_name',DB::Raw('m_area.description AS area_description,m_location.id AS location_id'),'location_name','m_location.address',DB::Raw('m_location.description AS location_description,m_region.id AS region_id'),'region_name',DB::Raw('m_region.description AS region_description,m_client.id AS client_id'),'client_name',DB::Raw('m_client.description AS client_description'))->where('m_area.id',$id)->first();
+        $get_sub_area = DB::table('m_sub_area')->join('m_area','m_area.id','=','m_sub_area.area_id')->join('m_location','m_area.location_id','=','m_location.id')->join('m_region','m_location.region_id','=','m_region.id')->select(DB::Raw('m_area.id AS area_id'),'area_name',DB::Raw('m_area.description AS area_description,m_location.id AS location_id,m_sub_area.id AS sub_area_id,m_sub_area.description AS sub_area_description'),'sub_area_name')->where('m_sub_area.id',$id)->first();
         return view('master.sub_area.detail',[
             'sub_area' => $get_sub_area,
             'title' => 'Master Sub Area',
@@ -61,7 +61,7 @@ class SubAreaController extends Controller
     }
 
     public function edit_sub_area($id){
-        $get_sub_area = DB::table('m_sub_area')->join('m_area','m_area.id','=','m_sub_area.area_id')->join('m_location','m_area.location_id','=','m_location.id')->join('m_region','m_location.region_id','=','m_region.id')->join('m_client','m_client.id','=','m_region.client_id')->select(DB::Raw('m_sub_area.id AS sub_area_id'),'m_sub_area.sub_area_name',DB::Raw('m_sub_area.description AS sub_area_description,m_area.id AS area_id'),'m_area.area_name',DB::Raw('m_area.description AS area_description,m_location.id AS location_id'),'location_name','m_location.address',DB::Raw('m_location.description AS location_description,m_region.id AS region_id'),'region_name',DB::Raw('m_region.description AS region_description,m_client.id AS client_id'),'client_name',DB::Raw('m_client.description AS client_description'))->where('m_area.id',$id)->first();
+        $get_sub_area = DB::table('m_sub_area')->join('m_area','m_area.id','=','m_sub_area.area_id')->join('m_location','m_area.location_id','=','m_location.id')->join('m_region','m_location.region_id','=','m_region.id')->select(DB::Raw('m_area.id AS area_id'),'area_name',DB::Raw('m_area.description AS area_description,m_location.id AS location_id,m_sub_area.id AS sub_area_id,m_sub_area.description AS sub_area_description'),'sub_area_name')->where('m_sub_area.id',$id)->first();
         return view('master.sub_area.edit',[
             'sub_area' => $get_sub_area,
             'title' => 'Master Sub Area',

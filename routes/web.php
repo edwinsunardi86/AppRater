@@ -108,6 +108,7 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'sub_area'],funct
     Route::get('/edit_sub_area/{id}',[SubAreaController::class,'edit_sub_area']);
     Route::post('/update_sub_area',[SubAreaController::class,'update_sub_area']);
     Route::post('/delete_sub_area',[SubAreaController::class,'delete_sub_area']);
+    Route::get('/detail_sub_area/{id}',[SubAreaController::class,'detail_sub_area']);
 });
 
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'setup_project'],function(){

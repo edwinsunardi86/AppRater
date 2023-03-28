@@ -40,19 +40,7 @@
                                         <textarea class="form-control" name="area_description" id="area_description" rows="5" readonly></textarea>
                                     </div>
                                 </div>
-                                {{-- <div class="form-group row">
-                                    <label for="inputSubAreaName" class="col-sm-2 col-form-label"> Sub Area Name</label>
-                                    <div class="col-sm-4">
-                                        <input type="text" class="form-control" name="sub_area_name">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="inputAreaDescription" class="col-sm-2 col-form-label">Area Description</label>
-                                    <div class="col-sm-4">
-                                        <textarea class="form-control" name="area_description" id="area_description" rows="5" readonly></textarea>
-                                    </div>
-                                </div> --}}
-                                <button type="button" id="addRow" class="btn btn-xl btn-primary mb-5 ml-2">Add New Row</button>
+                                <button type="button" value="add" id="addRow" class="btn btn-xl btn-primary mb-5 ml-2">Add New Row</button>
                                 <button type="button" id="removeRow" class="btn btn-xl btn-primary mb-5 ml-2">Remove Row</button>
                                 <table id="table_add_sub_area" class="table table-bordered table-stripped" style="width:100%">
                                     <thead>
@@ -79,25 +67,22 @@ $(document).ready(function(){
     var counter = 1;
     var tb_sub_area = $('#table_add_sub_area').DataTable();
     $('#addRow').on('click',function(){
-        tb_sub_area.row.add(['<input type="text" name="sub_area_name[]" id="sub_area_name'+counter+'" class="form-control form-control-sm" required/>','<textarea class="form-control form-control-sm " id="sub_area_description'+counter+'" name="sub_area_description[]" rows="7" cols="20">']).draw(false);
+        tb_sub_area.row.add(['<input type="text" name="sub_area_name[]" id="sub_area_name'+counter+'" class="form-control form-control-sm sub_area_id"/>','<textarea class="form-control form-control-sm" id="sub_area_description'+counter+'" name="sub_area_description[]" rows="7" cols="20">']).draw(false);
         counter++;
     });
-
+    $('#addRow').click();
     $('#form_sub_area').validate({
         rules:{
-            location_name:{
-                required:true,
-            },
             area_name:{
                 required:true,
-            }
+            },
         },
         messages:{
-            location_name: {
-                required: "Please input Location Name"
-            },
             area_name:{
                 required:"Please input Area Name",
+            },
+            'sub_area_name[]':{
+                required:"Please input sub area"
             }
         },
         errorElement: 'span',
@@ -120,29 +105,43 @@ $(document).ready(function(){
                     'sub_area_description': $('#sub_area_description'+i).val(),
                 });
             }
-            $.ajax({
-                headers:{
-                    'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
-                },
-                url:"/sub_area/store_sub_area",
-                type:"POST",
-                dataType:"JSON",
-                data:{
-                    area_id:$('#area_name').val(),
-                    sub_area:arr_sub_area
-                },
-                processData:true,
-                success: function(data){
-                    Swal.fire({
-                        title:data.title,
-                        html:data.message,
-                        icon:data.icon
-                    });
-                    setTimeout(() => {
-                        window.location.href=data.redirect;
-                    }, 1500);
-                }
+            var count_not_empty = 0;
+
+            $('input.sub_area_id').each(function(){
+                count_not_empty = $('input.sub_area_id').val() != "" ? count_not_empty += 1 : count_not_empty;
             });
+
+            if(count_not_empty == $('input.sub_area_id').length){
+                $.ajax({
+                    headers:{
+                        'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+                    },
+                    url:"/sub_area/store_sub_area",
+                    type:"POST",
+                    dataType:"JSON",
+                    data:{
+                        area_id:$('#area_name').val(),
+                        sub_area:arr_sub_area
+                    },
+                    processData:true,
+                    success: function(data){
+                        Swal.fire({
+                            title:data.title,
+                            html:data.message,
+                            icon:data.icon
+                        });
+                        setTimeout(() => {
+                            window.location.href=data.redirect;
+                        }, 1500);
+                    }
+                });
+            }else{
+                Swal.fire({
+                    title:"Warning",
+                    html:"Please complete input sub area",
+                    icon:"error"
+                });
+            }
         }
     });
 });
