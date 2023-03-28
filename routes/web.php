@@ -69,7 +69,7 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'region'],functio
     Route::get('/edit_region/{id}',[RegionController::class,'edit_region']);
     Route::post('/update_region',[RegionController::class,'update_region']);
     Route::post('/delete_region',[RegionController::class,'delete_region']);
-    Route::post('/get_data_region_to_selected',[RegionController::class,'get_data_region_to_selected']);
+    Route::get('/geDataRegionToSelected',[RegionController::class,'get_data_region_to_selected']);
 });
 
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'location'],function(){
@@ -81,7 +81,7 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'location'],funct
     Route::get('/edit_location/{id}',[LocationController::class,'edit_location']);
     Route::post('/update_location',[LocationController::class,'update_location']);
     Route::post('/delete_location',[LocationController::class,'delete_location']);
-    Route::post('/get_data_location_to_selected',[LocationController::class,'get_data_location_to_selected']);
+    Route::get('/getDataLocationToSelected',[LocationController::class,'get_data_location_to_selected']);
 });
 
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'area'],function(){
@@ -93,8 +93,10 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'area'],function(
     Route::get('/edit_area/{id}',[AreaController::class,'edit_area']);
     Route::post('/update_area',[AreaController::class,'update_area']);
     Route::post('/delete_area',[AreaController::class,'delete_area']);
-    Route::post('/get_data_area_to_selected',[AreaController::class,'get_data_area_to_selected']);
+    Route::get('/getDataAreaSelected',[AreaController::class,'get_data_area_to_selected']);
+    Route::get('/getDataDescriptionById/{id}',[AreaController::class,'get_data_description_area_by_id']);
     Route::get('/getDataService',[AreaController::class,'get_data_service']);
+    
 });
 
 

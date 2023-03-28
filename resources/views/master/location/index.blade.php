@@ -32,7 +32,6 @@
                                 <th>Address</th>
                                 <th>Description</th>
                                 <th>Region Name</th>
-                                <th>Client Name</th>
                                 <th>Action</th>
                             </thead>
                             </table>
@@ -59,7 +58,6 @@ $(document).ready(function(){
             { data: 'address', name:'address'},
             { data: 'description', name:'description'},
             { data: 'region_name', name:'region_name'},
-            {data: 'client_name', name:'client_name'},
             { data: 'action', name: 'action'}
         ],
         "scrollX": true,

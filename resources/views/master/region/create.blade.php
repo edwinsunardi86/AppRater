@@ -49,7 +49,6 @@
 <script>
 $(document).ready(function(){
         
-
     var tb_region = $('#table_add_region').DataTable();
 
     var counter = 1;
@@ -107,23 +106,7 @@ $('#form_region').submit(function(e){
      });
 });
 
-$(document).on('click','.pilih_client',function(){
-    $('#client_id').val(($(this).attr('data-id')));
-    $('#client_name').val(($(this).attr('data-client_name')));
-    $('#client_description').val($(this).attr('data-client-description'));
-    $('#modal-xl').modal('toggle');
-});
-// $('#form_region').submit(function(e){
-//     e.preventDefault();
-//     var region_name = $('input[name^="region_name[]"]').length;
-//     var arr_region = [];
-//     for(var i = 1;i <= region_name;i++){
-//         arr_region.push({
-//             'region_name': $('#region_name'+i).val(),
-//             'region_description': $('#region_description'+i).val(),
-//         });
-//     }
-// });
+
 
 
 </script>

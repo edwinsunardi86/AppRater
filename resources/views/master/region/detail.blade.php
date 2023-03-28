@@ -36,19 +36,7 @@
                                 <div class="form-group row">
                                     <label for="inputRegionDescription" class="col-sm-2 col-form-label">Region Description</label>
                                     <div class="col-sm-4">
-                                        <textarea class="form-control" name="region_description" id="region_description" rows="5" readonly>{{ $region->region_description }}</textarea>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="inputClientName" class="col-sm-2 col-form-label">Client Name</label>
-                                    <div class="col-sm-4">
-                                        <input type="text" class="form-control" name="client_name" id="client_name" value="{{ $region->client_name }}" readonly>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="inputClientDescription" class="col-sm-2 col-form-label">Client Description</label>
-                                    <div class="col-sm-4">
-                                        <textarea class="form-control" name="client_description" id="client_description" rows="5" readonly>{{ $region->client_description }}</textarea>
+                                        <textarea class="form-control" name="description" id="description" rows="5" readonly>{{ $region->description }}</textarea>
                                     </div>
                                 </div>
                                 <a href="{{ url()->previous() }}" class="btn bg-purple btn-md">Back</a>

@@ -37,8 +37,6 @@
                                         <th>Location Description</th>
                                         <th>Region Name</th>
                                         <th>Region Description</th>
-                                        <th>Client Name</th>
-                                        <th>Client Description</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -73,8 +71,6 @@ $(document).ready(function(){
             { data: 'location_description', name: 'location_description'},
             { data: 'region_name', name: 'region_name'},
             { data: 'region_description', name: 'region_description'},
-            { data: 'client_name', name: 'client_name'},
-            { data: 'client_description', name: 'client_description'},
             { data: 'action', name: 'action'}
         ],
         "scrollX": true,

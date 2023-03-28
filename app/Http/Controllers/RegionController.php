@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables as DataTables;
+use Illuminate\Support\Facades\Auth;
 
 class RegionController extends Controller
 {
@@ -50,7 +51,7 @@ class RegionController extends Controller
     }
 
     public function detail_region($id){
-        $get_region = DB::table('m_region')->select('client_name','region_name',DB::Raw('m_client.description AS client_description,m_region.description AS region_description'))->join('m_client','m_region.client_id','=','m_client.id')->where('m_region.id',$id)->first();
+        $get_region = DB::table('m_region')->select('region_name','description')->where('m_region.id',$id)->first();
         return view('master.region.detail',[
             'region' => $get_region,
             'title' => 'Master Region',
@@ -60,7 +61,7 @@ class RegionController extends Controller
     }
 
     public function edit_region($id){
-        $get_region = DB::table('m_region')->select('client_id','client_name','region_name',DB::Raw('m_region.id AS region_id,m_client.description AS client_description,m_region.description AS region_description'))->join('m_client','m_region.client_id','=','m_client.id')->where('m_region.id',$id)->first();
+        $get_region = DB::table('m_region')->select('id','region_name','description')->where('m_region.id',$id)->first();
         return view('master.region.edit',[
             'region' => $get_region,
             'title' => 'Master Region',
@@ -72,10 +73,10 @@ class RegionController extends Controller
     public function update_region(Request $request){
         $post = array(
             'region_name'=>$request->region_name,
-            'description'=>$request->region_description,
-            'client_id'=>$request->client_id
+            'description'=>$request->description,
+            'updated_by'=>Auth::id(),
         );
-        DB::table('m_region')->where('id',$request->region_id)->update($post);
+        DB::table('m_region')->where('id',$request->id)->update($post);
         $confirmation = ['message' => 'Data Region success updated','icon' => 'success', 'redirect'=>'/region'];
         return response()->json($confirmation);
     }
@@ -84,20 +85,22 @@ class RegionController extends Controller
         $region_id = $request->region_id;
         $get_data_region = DB::table('m_region')->where('id',$region_id)->first();
         $delete_data_region = DB::table('m_region')->where('id',$region_id)->delete($region_id);
-        if($delete_data_region){
-          $confirmation = ['message' => 'Data region ' . $get_data_region->region_name . ' berhasil dihapus', 'icon' => 'success', 'redirect' => '/region'];
+        $getLocationByRegion = DB::table('m_location')->where('region_id',$request->region_id)->get();
+        if($getLocationByRegion->count() > 0){
+            $confirmation = ['message' => 'Data region ' . $get_data_region->region_name . ' contains one or several locations', 'icon' => 'success', 'redirect' => '/region'];
         }else{
-          $confirmation = ['message' => 'Data region ' . $get_data_region->region_name . ' berhasil dihapus', 'icon' => 'success', 'redirect' => '/region'];
+            if($delete_data_region){
+                $confirmation = ['message' => 'Data region ' . $get_data_region->region_name . ' berhasil dihapus', 'icon' => 'success', 'redirect' => '/region'];
+            }else{
+                $confirmation = ['message' => 'Data region ' . $get_data_region->region_name . ' gagal dihapus', 'icon' => 'error', 'redirect' => '/region'];
+            }
         }
+        
         return response()->json($confirmation);
-      }
+    }
 
-    public function get_data_region_to_selected(Request $request){
-        $db = DB::table('m_region')->select('m_region.id','region_name',DB::Raw('m_region.description AS region_description'))->where('client_id',$request->client_id);
-        if($request->region_id <> ""){
-            $db = $db->where('id',$request->region_id);
-        }
-        // var_dump($db);
-        return response()->json($db->get());
+    public function get_data_region_to_selected(){
+        $db = DB::table('m_region')->select('.id','region_name','description')->get();
+        return response()->json($db);
     }
 }

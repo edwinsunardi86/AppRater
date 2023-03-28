@@ -40,18 +40,6 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="inputClientName" class="col-sm-2 col-form-label">Client Name</label>
-                                    <div class="col-sm-4">
-                                        <input type="text" class="form-control" name="client_name" id="client_name" value="{{ $area->client_name }}" readonly>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="inputClientDescription" class="col-sm-2 col-form-label">Client Description</label>
-                                    <div class="col-sm-4">
-                                        <textarea class="form-control" name="client_description" id="client_description" rows="5" readonly>{{ $area->client_description}}</textarea>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
                                     <label for="selectRegionName" class="col-sm-2 col-form-label">Region Name</label>
                                     <div class="col-sm-4">
                                         <input type="text" class="form-control" name="client_name" id="client_name" value="{{ $area->region_name }}" readonly>

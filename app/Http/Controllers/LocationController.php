@@ -17,7 +17,7 @@ class LocationController extends Controller
     }
 
     public function get_datatable_location(){
-        $db = DB::table('m_location')->join('m_region','m_location.region_id','=','m_region.id')->join('m_client','m_region.client_id','=','m_client.id')->select('m_location.id','m_location.location_name','m_location.description','m_location.address','m_region.region_name','m_client.client_name')->get();
+        $db = DB::table('m_location')->join('m_region','m_location.region_id','=','m_region.id')->select('m_location.id','m_location.location_name','m_location.description','m_location.address','m_region.region_name')->get();
         return DataTables::of($db)->addColumn('action',function($row){
             $btn = "<a href='/location/detail_location/$row->id' class='btn btn-primary btn-xs'><i class='fas fa-eye'></i> View</a>
             <a href='/location/edit_location/".$row->id."' class=\"btn btn-secondary btn-xs\"><i class=\"fas fa-user-edit\"></i> Edit</a>
@@ -32,7 +32,7 @@ class LocationController extends Controller
         return view('master.location.create',[
           'title' => 'Master Location',
           'active_gm' => 'Master',
-          'active_m'=>'location'
+          'active_m'=>'location',
         ]);
     }
 
@@ -51,7 +51,7 @@ class LocationController extends Controller
     }
 
     public function detail_location($id){
-        $get_location = DB::table('m_location')->join('m_region','m_region.id','=','m_location.region_id')->join('m_client','m_client.id','=','m_region.client_id')->select('location_name','m_location.address',DB::Raw('m_location.description AS location_description'),'region_name',DB::Raw('m_region.description AS region_description'),'client_name',DB::Raw('m_client.description AS client_description'))->where('m_location.id',$id)->first();
+        $get_location = DB::table('m_location')->join('m_region','m_region.id','=','m_location.region_id')->select('location_name','m_location.address',DB::Raw('m_location.description AS location_description'),'region_name',DB::Raw('m_region.description AS region_description'))->where('m_location.id',$id)->first();
         return view('master.location.detail',[
             'location' => $get_location,
             'title' => 'Master Location',
@@ -61,7 +61,7 @@ class LocationController extends Controller
     }
     
     public function edit_location($id){
-        $get_location = DB::table('m_location')->join('m_region','m_region.id','=','m_location.region_id')->join('m_client','m_client.id','=','m_region.client_id')->select('m_location.id','location_name','m_location.address',DB::Raw('m_location.description AS location_description'),DB::Raw('m_region.id AS region_id'),'region_name',DB::Raw('m_region.description AS region_description'),'client_name',DB::Raw('m_client.id AS client_id,m_client.description AS client_description'))->where('m_location.id',$id)->first();
+        $get_location = DB::table('m_location')->join('m_region','m_region.id','=','m_location.region_id')->select('m_location.id','location_name','m_location.address',DB::Raw('m_location.description AS location_description'),DB::Raw('m_region.id AS region_id'),'region_name')->where('m_location.id',$id)->first();
         return view('master.location.edit',[
             'location' => $get_location,
             'title' => 'Master Location',
@@ -71,29 +71,44 @@ class LocationController extends Controller
     }
 
     public function update_location(Request $request){
+        $getArea = DB::table('m_area')->join('m_location','m_area.location_id','=','m_location.id')->get();
         $post = array(
             'region_id'  => $request->region_name,
             'address'    => $request->address,
             'description'=> $request->location_description
         );
-        DB::table('m_location')->where('id',$request->location_id)->update($post);
-        $confirmation = ['message' => 'Data Location success updated','icon' => 'success', 'redirect'=>'/location'];
-        return response()->json($confirmation);
-    }
-
-    public function delete_location(Request $request){
-        $location_id = $request->location_id;
-        $get_data_location = DB::table('m_location')->where('id',$location_id)->first();
-        $delete_data_location = DB::table('m_location')->where('id',$location_id)->delete($location_id);
-        if($delete_data_location){
-          $confirmation = ['message' => 'Data Location ' . $get_data_location->location_name . ' berhasil dihapus', 'icon' => 'success', 'redirect' => '/location'];
+        if($getArea->count() > 0){
+            $confirmation = ['message' => 'Data Location contains one or several area','icon' => 'error', 'redirect'=>'/location'];
         }else{
-          $confirmation = ['message' => 'Data Location ' . $get_data_location->location_name . ' berhasil dihapus', 'icon' => 'success', 'redirect' => '/location'];
+            $update = DB::table('m_location')->where('id',$request->location_id)->update($post);
+            if($update){
+                $confirmation = ['message' => 'Data Location success updated','icon' => 'success', 'redirect'=>'/location'];
+            }else{
+                $confirmation = ['message' => 'Data Location failed updated','icon' => 'error', 'redirect'=>'/location'];
+            }
+           
         }
         return response()->json($confirmation);
     }
 
-    public function get_data_location_to_selected(Request $request){
+    public function delete_location(Request $request){
+        $getArea = DB::table('m_area')->join('m_location','m_area.location_id','=','m_location.id')->get();
+        $location_id = $request->location_id;
+        $get_data_location = DB::table('m_location')->where('id',$location_id)->first();
+        if($getArea->count() > 0){
+            $confirmation = ['message' => 'Data Location contains one or several area','icon' => 'error', 'redirect'=>'/location'];
+        }else{
+            $delete_data_location = DB::table('m_location')->where('id',$location_id)->delete($location_id);
+            if($delete_data_location){
+                $confirmation = ['message' => 'Data Location ' . $get_data_location->location_name . ' success deleted', 'icon' => 'success', 'redirect' => '/location'];
+              }else{
+                $confirmation = ['message' => 'Data Location ' . $get_data_location->location_name . 'failed deleted', 'icon' => 'success', 'redirect' => '/location'];
+              }
+        }
+        return response()->json($confirmation);
+    }
+
+    public function get_data_location_to_selected_by_region(Request $request){
         $db = DB::table('m_location')->join('m_region','m_location.region_id','=','m_region.id')->join('m_client','m_client.id','=','m_region.client_id')->select('m_location.id','m_location.location_name','m_location.address',DB::Raw('m_location.description AS location_description,m_region.description AS region_description'));
         if($request->location_id != ""){
             $db = $db->where('m_location.id',$request->location_id)->get();
@@ -101,6 +116,11 @@ class LocationController extends Controller
             $db = $db->where('m_region.id',$request->region_id)->where('m_client.id',$request->client_id)->get();
         }
         // var_dump($db);
+        return response()->json($db);
+    }
+
+    public function get_data_location_to_selected(Request $request){
+        $db = DB::table('m_location')->select('m_location.id','m_location.location_name','m_location.address','m_location.description AS location_description')->get();
         return response()->json($db);
     }
 }
