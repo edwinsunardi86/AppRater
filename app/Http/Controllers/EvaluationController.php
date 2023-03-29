@@ -22,14 +22,12 @@ class EvaluationController extends Controller
         $arr_sub_area_id = explode(",",$request->sub_area_id);
         $arr_score = explode(",",$request->score);
         $project_code = $request->project_code;
-        $exp_date_evaluation = explode(" - ",$request->date_evaluation);
-        $evaluation_start = str_replace("/","-",$exp_date_evaluation[0]);
-        $evaluation_finish = str_replace("/","-",$exp_date_evaluation[1]);
+        $exp_date_evaluation = explode("/",$request->date_evaluation);
+        
         for($i=0;$i<count($arr_sub_area_id);$i++){
             $post = array(
                 'project_code' => $project_code,
-                'start_date'   => $evaluation_start,
-                'finish_date'  => $evaluation_finish,
+                'appraisal_date'   => $exp_date_evaluation[2]."-".$exp_date_evaluation[0]."-".$exp_date_evaluation[1],
                 'sub_area_id'  => $arr_sub_area_id[$i],
                 'score'        => $arr_score[$i],
                 'created_by'   => Auth::id()   

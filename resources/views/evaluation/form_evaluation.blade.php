@@ -49,17 +49,14 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label for="dateEvaluation" class="col-sm-2 col-form-label">Date Evaluation:</label>
-                                <div class="input-group col-sm-4">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">
-                                            <i class="far fa-calendar-alt"></i>
-                                        </span>
-                                    </div>
-                                    <input type="text" class="form-control float-right" id="dateEvaluation" name="dateEvaluation">
-                                </div>
-                                <!-- /.input group -->
-                            </div>
+                                <label for="InputDateEvaluation" class="col-sm-2 col-form-label">Date Evaluation:</label>
+                                  <div class="col-sm-4 input-group date" id="dateFormat" data-target-input="nearest">
+                                      <input type="text" class="form-control datetimepicker-input col-sm-4" id="date_evaluation" name="date_evaluation" data-target="#dateFormat"/>
+                                      <div class="input-group-append" data-target="#dateFormat" data-toggle="datetimepicker">
+                                          <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                      </div>
+                                  </div>
+                              </div>
                             <div class="form-group row">
                                 <label for="regionName" class="col-sm-2 col-form-label">Region</label>
                                 <div class="col-sm-4">
@@ -78,7 +75,7 @@
                                     <h3 class="card-title">{{ $row->service_name }}</h3>
                                 </div>
                                 <div class="card-body">
-                                    <table class="table table-striped table-bordered {{ $row->service_code }}" id="{{ $row->service_code }}">
+                                    <table class="table tb_sub_area table-striped table-bordered {{ $row->service_code }}" id="{{ $row->service_code }}">
                                     <thead>
                                         <th style="width:10%">No.</th>
                                         <th style="width:30%">Area</th>
@@ -176,6 +173,7 @@ $(document).on('click','.pilih_client',function(){
         },
         processData:true,
         success:function(data){
+            $('.tb_sub_area > tbody').empty();
             $('select#project_code option').remove();
             $('select#project_code').append($('<option>',{
                     text:"Choice Project",
@@ -204,6 +202,7 @@ $(document).on('change','#project_code',function(){
         },
         processData:true,
         success: function(data){
+            $('.tb_sub_area > tbody').empty();
             $('select#region_name option').remove();
             $('select#region_name').append($('<option>',{
                     text:"Choice Region",
@@ -228,10 +227,12 @@ $(document).on('change','#region_name',function(){
         type:"POST",
         dataType:"JSON",
         data:{
+            project_code:$('#project_code').val(),
             region_id:$('#region_name').val()
         },
         processData:true,
         success: function(data){
+            $('.tb_sub_area > tbody').empty();
             $('select#location_name option').remove();
             $('select#location_name').append($('<option>',{
                 text:"Choice Location",
@@ -256,12 +257,13 @@ $(document).on('change','#location_name',function(){
         type:"POST",
         dataType:"JSON",
         data:{
+            project_code:$('#project_code').val(),
             location_id:$('#location_name').val()
         },
         processData:true,
         success: function(data){
             var a=1;
-            $('.table > tbody').empty();
+            $('.tb_sub_area > tbody').empty();
             $.each(data,function(i,item){
                 if($('.'+data[i].service_code).attr('id') == data[i].service_code){
                     var content = "<tr><td>"+a+"</td><td>"+data[i].area_name+"<input type=\"hidden\" name=\"area_id[]\" id=\"area_id"+a+"\" value="+data[i].area_id+"></td><td>"+data[i].sub_area_name+"<input type=\"hidden\" name=\"sub_area_id[]\" id=\"sub_area_id"+a+"\" value="+data[i].sub_area_id+"></td><td>"+
@@ -300,7 +302,6 @@ $(document).on('change','#location_name',function(){
     });
 });
 $(document).ready(function(){
-    var startDate=($('#dateEvaluation').data('daterangepicker').startDate);
     $('#form_evaluation').validate({
         rules:{
             client_name:{
@@ -353,7 +354,7 @@ $(document).ready(function(){
                 var formData = new FormData();
                 formData.append('client_id',$('#client_id').val());
                 formData.append('project_code',$('#project_code').val());
-                formData.append('date_evaluation',$('#dateEvaluation').val())
+                formData.append('date_evaluation',$('#date_evaluation').val())
                 formData.append('region_id',$('#region_name').val());
                 formData.append('location_id',$('#location_name').val());
                 var sub_area_id = [];

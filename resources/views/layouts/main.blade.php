@@ -123,6 +123,7 @@ $('[data-mask]').inputmask();
 $('#dateFormat').datetimepicker({
         format: 'L'
 });
+
 $('#dateContract').daterangepicker({
   locale: {
     format:'YYYY/MM/DD'
@@ -138,19 +139,6 @@ var currentMonth = date.getMonth();
 var currentDate = date.getDate();
 var currentYear = date.getFullYear();
 
-var minDate = -20;
-var maxDate = "+1M +10D"
-$('#dateEvaluation').daterangepicker({
-  locale: {
-    format:'YYYY/MM/DD'
-  },
-});
-
-
-
-$(document).on('change','#dateContract',function(){
-  console.log($('#dateContract').val());
-});
 </script>
 </body>
 </html>

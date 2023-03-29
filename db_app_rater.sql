@@ -227,6 +227,23 @@ insert  into `dial_country`(`id`,`country`,`dial_code`) values
 (195,'Zambia','260'),
 (196,'Zimbabwe','263');
 
+/*Table structure for table `evaluation` */
+
+DROP TABLE IF EXISTS `evaluation`;
+
+CREATE TABLE `evaluation` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `project_code` varchar(25) NOT NULL,
+  `appraisal_date` date DEFAULT NULL,
+  `sub_area_id` int(11) NOT NULL,
+  `score` smallint(6) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `created_by` int(25) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=200 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+/*Data for the table `evaluation` */
+
 /*Table structure for table `m_area` */
 
 DROP TABLE IF EXISTS `m_area`;
@@ -235,19 +252,24 @@ CREATE TABLE `m_area` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `area_name` varchar(50) DEFAULT NULL,
   `location_id` int(11) DEFAULT NULL,
+  `service_code` char(11) DEFAULT NULL,
   `description` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `created_by` int(11) DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  PRIMARY KEY (`id`),
+  KEY `service_code` (`service_code`),
+  CONSTRAINT `m_area_ibfk_1` FOREIGN KEY (`service_code`) REFERENCES `m_service` (`service_code`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `m_area` */
 
-insert  into `m_area`(`id`,`area_name`,`location_id`,`description`,`created_at`,`created_by`,`updated_at`,`updated_by`) values 
-(1,'test123',2,'test123','2023-03-20 16:35:58',NULL,NULL,NULL),
-(2,'yugioh',2,'123area','2023-03-20 16:49:23',NULL,NULL,NULL);
+insert  into `m_area`(`id`,`area_name`,`location_id`,`service_code`,`description`,`created_at`,`created_by`,`updated_at`,`updated_by`) values 
+(1,'Security',1,'ses','mantap','2023-03-28 13:23:55',NULL,NULL,NULL),
+(2,'Driver',1,'las','jhgjh','2023-03-28 15:51:59',1,NULL,NULL),
+(3,'Gedung Pameran',1,'cls','gedung pameran','2023-03-28 11:17:33',1,NULL,NULL),
+(4,'Gedung Utama',1,'cls','sdsadsad','2023-03-28 15:48:07',1,NULL,NULL);
 
 /*Table structure for table `m_client` */
 
@@ -266,8 +288,9 @@ CREATE TABLE `m_client` (
   `created_by` int(11) DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `client_name` (`client_name`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `m_client` */
 
@@ -289,31 +312,16 @@ CREATE TABLE `m_location` (
   `created_by` int(11) DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `location_name` (`location_name`),
+  KEY `region_id` (`region_id`),
+  CONSTRAINT `m_location_ibfk_1` FOREIGN KEY (`region_id`) REFERENCES `m_region` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `m_location` */
 
 insert  into `m_location`(`id`,`location_name`,`region_id`,`address`,`description`,`created_at`,`created_by`,`updated_at`,`updated_by`) values 
-(2,'324324',2,'3432432','324332432','2023-03-20 07:30:57',NULL,NULL,NULL),
-(3,'test3243',2,'test aja','test aja','2023-03-20 16:07:39',NULL,NULL,NULL);
-
-/*Table structure for table `m_project` */
-
-DROP TABLE IF EXISTS `m_project`;
-
-CREATE TABLE `m_project` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `project_name` varchar(50) DEFAULT NULL,
-  `customer_id` int(11) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `created_by` int(11) DEFAULT NULL,
-  `updated_at` datetime DEFAULT NULL,
-  `updated_by` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
-/*Data for the table `m_project` */
+(1,'Gedung Artefak Punung',1,'-','test saja1','2023-03-28 09:30:02',NULL,NULL,NULL);
 
 /*Table structure for table `m_region` */
 
@@ -322,43 +330,79 @@ DROP TABLE IF EXISTS `m_region`;
 CREATE TABLE `m_region` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `region_name` varchar(50) DEFAULT NULL,
-  `client_id` int(11) DEFAULT NULL,
   `description` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `created_by` int(11) DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `region_name` (`region_name`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `m_region` */
 
-insert  into `m_region`(`id`,`region_name`,`client_id`,`description`,`created_at`,`created_by`,`updated_at`,`updated_by`) values 
-(2,'test2123213',2,'des2223213','2023-03-16 12:26:51',NULL,NULL,NULL),
-(3,'pasti ada',2,'ya gitu deh','2023-03-20 17:32:35',NULL,NULL,NULL);
+insert  into `m_region`(`id`,`region_name`,`description`,`created_at`,`created_by`,`updated_at`,`updated_by`) values 
+(1,'Jawa Timur','- Arkenas Gedung Artefak Punung','2023-03-27 15:37:39',NULL,NULL,NULL);
+
+/*Table structure for table `m_service` */
+
+DROP TABLE IF EXISTS `m_service`;
+
+CREATE TABLE `m_service` (
+  `service_code` char(10) NOT NULL,
+  `service_name` varchar(50) DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `updated_by` int(11) DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`service_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+/*Data for the table `m_service` */
+
+insert  into `m_service`(`service_code`,`service_name`,`description`,`created_by`,`created_at`,`updated_by`,`updated_at`) values 
+('cls','Cleaning Service',NULL,NULL,'2023-03-22 08:19:59',NULL,NULL),
+('las','Labor Service',NULL,NULL,'2023-03-22 08:20:04',NULL,NULL),
+('ses','Security Service',NULL,NULL,'2023-03-22 08:20:09',NULL,NULL);
 
 /*Table structure for table `m_sub_area` */
 
 DROP TABLE IF EXISTS `m_sub_area`;
 
 CREATE TABLE `m_sub_area` (
-  `id` int(11) DEFAULT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `sub_area_name` varchar(50) DEFAULT NULL,
-  `id_area` int(11) DEFAULT NULL,
+  `area_id` int(11) DEFAULT NULL,
   `description` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `created_by` int(11) DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
-  `updated_by` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `updated_by` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `area_id` (`area_id`),
+  CONSTRAINT `m_sub_area_ibfk_1` FOREIGN KEY (`area_id`) REFERENCES `m_area` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `m_sub_area` */
+
+insert  into `m_sub_area`(`id`,`sub_area_name`,`area_id`,`description`,`created_at`,`created_by`,`updated_at`,`updated_by`) values 
+(1,'Security Function',1,'test','2023-03-29 08:31:25',NULL,NULL,NULL),
+(2,'Driving Safety',2,NULL,'2023-03-29 07:30:14',NULL,NULL,NULL),
+(3,'Attendance',2,NULL,'2023-03-29 07:30:14',NULL,NULL,NULL),
+(4,'Ruangan',3,NULL,'2023-03-29 07:32:52',NULL,NULL,NULL),
+(5,'Toilet',3,NULL,'2023-03-29 07:32:52',NULL,NULL,NULL),
+(6,'Halaman',3,NULL,'2023-03-29 07:32:52',NULL,NULL,NULL),
+(7,'Ruang Penyimpanan Artefak',4,NULL,'2023-03-29 07:35:22',NULL,NULL,NULL),
+(8,'Toilet',4,NULL,'2023-03-29 07:35:52',NULL,NULL,NULL),
+(9,'Halaman',4,'test','2023-03-29 08:53:36',NULL,NULL,NULL);
 
 /*Table structure for table `menu` */
 
 DROP TABLE IF EXISTS `menu`;
 
 CREATE TABLE `menu` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `menu_parent_id` smallint(6) DEFAULT NULL,
   `nama_menu` varchar(50) NOT NULL,
   `font_icon` varchar(50) NOT NULL,
@@ -367,43 +411,85 @@ CREATE TABLE `menu` (
   `created_by` varchar(255) DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `updated_by` varchar(255) DEFAULT NULL,
-  `id` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`id`),
   UNIQUE KEY `menu_nama_menu_unique` (`nama_menu`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
 
 /*Data for the table `menu` */
 
-insert  into `menu`(`menu_parent_id`,`nama_menu`,`font_icon`,`path`,`created_at`,`created_by`,`updated_at`,`updated_by`,`id`) values 
-(0,'Setting','fas fa-solid fa-wrench','javascript::','2023-03-06 17:24:41',NULL,NULL,NULL,1),
-(1,'Users','fas fa-solid fa-users','users','2023-03-06 17:34:37',NULL,NULL,NULL,2),
-(0,'Master','fas fa-solid fa-book','javascript::','2023-03-14 07:31:13',NULL,NULL,NULL,3),
-(3,'Client','fas fa-solid fa-building','client','2023-03-14 08:25:44',NULL,NULL,NULL,4),
-(32767,'Project','fas fa-solid fa-diagram-project','','2023-03-15 10:35:40',NULL,NULL,NULL,5),
-(3,'Region','fas fa-solid fa-map','region','2023-03-15 10:35:56',NULL,NULL,NULL,6),
-(3,'Location','fas fa-solid fa-map','location','2023-03-16 14:28:32',NULL,NULL,NULL,7),
-(3,'Area','fas fa-solid fa-map','area','2023-03-20 11:15:14',NULL,NULL,NULL,8),
-(3,'Sub Area','fas fa-solid fa-map','','2023-03-14 07:30:22',NULL,NULL,NULL,9);
+insert  into `menu`(`id`,`menu_parent_id`,`nama_menu`,`font_icon`,`path`,`created_at`,`created_by`,`updated_at`,`updated_by`) values 
+(1,0,'Setting','fas fa-solid fa-wrench','javascript::','2023-03-06 17:24:41',NULL,NULL,NULL),
+(2,1,'Users','fas fa-solid fa-users','users','2023-03-06 17:34:37',NULL,NULL,NULL),
+(3,0,'Master','fas fa-solid fa-book','javascript::','2023-03-14 07:31:13',NULL,NULL,NULL),
+(4,3,'Client','fas fa-solid fa-building','client','2023-03-14 08:25:44',NULL,NULL,NULL),
+(5,0,'Project','fas fa-solid fa-diagram-project','javascript::','2023-03-21 23:04:20',NULL,NULL,NULL),
+(6,3,'Region','fas fa-solid fa-map','region','2023-03-15 10:35:56',NULL,NULL,NULL),
+(7,3,'Location','fas fa-solid fa-map','location','2023-03-16 14:28:32',NULL,NULL,NULL),
+(8,3,'Area','fas fa-solid fa-map','area','2023-03-20 11:15:14',NULL,NULL,NULL),
+(9,3,'Sub Area','fas fa-solid fa-map','sub_area','2023-03-21 03:10:34',NULL,NULL,NULL),
+(10,5,'Setup Project','fas fa-solid fa-diagram-project','setup_project','2023-03-21 23:24:55',NULL,NULL,NULL),
+(11,0,'Evaluation','fas fa-solid fa-star','javascript::','2023-03-24 10:14:59',NULL,NULL,NULL),
+(12,11,'Form Evalution','fas fa-solid fa-star','evaluation','2023-03-24 10:33:32',NULL,NULL,NULL),
+(13,0,'Dashboard','fas fa-solid fa-gauge-simple','javascript::','2023-03-29 13:50:36',NULL,NULL,NULL),
+(14,13,'Dashboard 1','fas fa-solid fa-gauge-simple','dashboard','2023-03-29 13:50:39',NULL,NULL,NULL);
 
-/*Table structure for table `service_location` */
+/*Table structure for table `setup_project` */
 
-DROP TABLE IF EXISTS `service_location`;
+DROP TABLE IF EXISTS `setup_project`;
 
-CREATE TABLE `service_location` (
+CREATE TABLE `setup_project` (
+  `project_code` varchar(50) NOT NULL,
+  `project_name` varchar(50) DEFAULT NULL,
+  `client_id` int(11) DEFAULT NULL,
+  `contract_start` datetime DEFAULT NULL,
+  `contract_finish` datetime DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `created_by` int(11) DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  PRIMARY KEY (`project_code`),
+  UNIQUE KEY `project_code` (`project_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+/*Data for the table `setup_project` */
+
+insert  into `setup_project`(`project_code`,`project_name`,`client_id`,`contract_start`,`contract_finish`,`created_at`,`created_by`,`updated_at`,`updated_by`) values 
+('Samantha20230329','Samantha',2,'2023-03-30 00:00:00','2023-04-15 00:00:00','2023-03-29 09:20:52',1,NULL,NULL),
+('sddwqdwq20230324','sddwqdwq',2,'2023-03-24 00:00:00','2023-03-24 00:00:00','2023-03-24 14:20:25',1,NULL,NULL);
+
+/*Table structure for table `setup_project_detail` */
+
+DROP TABLE IF EXISTS `setup_project_detail`;
+
+CREATE TABLE `setup_project_detail` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `service_name` varchar(25) DEFAULT NULL,
+  `project_code` varchar(25) DEFAULT NULL,
+  `region_id` int(11) DEFAULT NULL,
   `location_id` int(11) DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
+  `area_id` int(11) DEFAULT NULL,
+  `sub_area_id` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `created_by` int(11) DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-/*Data for the table `service_location` */
+/*Data for the table `setup_project_detail` */
 
-insert  into `service_location`(`id`,`service_name`,`location_id`,`created_at`,`created_by`,`updated_at`,`updated_by`) values 
-(1,'[1,2,3]',NULL,NULL,NULL,NULL,NULL);
+insert  into `setup_project_detail`(`id`,`project_code`,`region_id`,`location_id`,`area_id`,`sub_area_id`,`created_at`,`created_by`,`updated_at`,`updated_by`) values 
+(1,'sddwqdwq20230324',2,2,1,1,'2023-03-24 14:20:25',1,NULL,NULL),
+(2,'sddwqdwq20230324',2,2,1,2,'2023-03-24 14:20:25',1,NULL,NULL),
+(3,'sddwqdwq20230324',2,2,1,3,'2023-03-24 14:20:25',1,NULL,NULL),
+(4,'Samantha20230329',1,1,1,1,'2023-03-29 09:20:52',1,NULL,NULL),
+(5,'Samantha20230329',1,1,2,2,'2023-03-29 09:20:52',1,NULL,NULL),
+(6,'Samantha20230329',1,1,2,3,'2023-03-29 09:20:52',1,NULL,NULL),
+(7,'Samantha20230329',1,1,3,4,'2023-03-29 09:20:52',1,NULL,NULL),
+(8,'Samantha20230329',1,1,3,5,'2023-03-29 09:20:52',1,NULL,NULL),
+(9,'Samantha20230329',1,1,3,6,'2023-03-29 09:20:52',1,NULL,NULL),
+(10,'Samantha20230329',1,1,4,7,'2023-03-29 09:20:52',1,NULL,NULL),
+(11,'Samantha20230329',1,1,4,8,'2023-03-29 09:20:52',1,NULL,NULL),
+(12,'Samantha20230329',1,1,4,9,'2023-03-29 09:20:52',1,NULL,NULL);
 
 /*Table structure for table `users` */
 
@@ -416,12 +502,13 @@ CREATE TABLE `users` (
   `email_verified_at` timestamp NULL DEFAULT NULL,
   `password` varchar(100) NOT NULL,
   `fullname` varchar(50) NOT NULL,
+  `client_id` int(11) DEFAULT NULL,
+  `role` enum('1','2','3') NOT NULL DEFAULT '3',
   `no_ktp` varchar(20) DEFAULT NULL,
   `no_handphone` varchar(20) DEFAULT NULL,
   `alamat` text DEFAULT NULL,
   `filename` text DEFAULT NULL,
   `is_blocked` tinyint(1) NOT NULL DEFAULT 0,
-  `role` enum('1','2','3') NOT NULL DEFAULT '3',
   `company_id` varchar(10) DEFAULT NULL,
   `remember_token` varchar(100) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
@@ -430,12 +517,13 @@ CREATE TABLE `users` (
   `updated_by` bigint(20) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_email_unique` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `users` */
 
-insert  into `users`(`id`,`username`,`email`,`email_verified_at`,`password`,`fullname`,`no_ktp`,`no_handphone`,`alamat`,`filename`,`is_blocked`,`role`,`company_id`,`remember_token`,`created_at`,`created_by`,`updated_at`,`updated_by`) values 
-(1,'itsupport','itsupport@sos.co.id',NULL,'$2y$10$lIPaf0Rk0ATRRjQKFBS5Qu5sq7EJ6w/DJU9ApPPRYmXAUxYon2Tpu','IT Support',NULL,NULL,NULL,NULL,0,'3',NULL,NULL,'2023-03-13 14:50:46',NULL,'2023-03-13 07:53:34',NULL);
+insert  into `users`(`id`,`username`,`email`,`email_verified_at`,`password`,`fullname`,`client_id`,`role`,`no_ktp`,`no_handphone`,`alamat`,`filename`,`is_blocked`,`company_id`,`remember_token`,`created_at`,`created_by`,`updated_at`,`updated_by`) values 
+(1,'itsupport','itsupport@sos.co.id',NULL,'$2y$10$lIPaf0Rk0ATRRjQKFBS5Qu5sq7EJ6w/DJU9ApPPRYmXAUxYon2Tpu','IT Support',NULL,'1',NULL,NULL,NULL,NULL,0,NULL,NULL,'2023-03-13 14:50:46',NULL,'2023-03-22 00:36:49',NULL),
+(2,'edwin_sunardi','edwinsunardi@sos.co.id',NULL,'$2y$10$BFSf2GxFnTChcO/j0yxKq.CyUqlIepcg7zOV03EvitYZlxYd8vlA2','Edwin Budiyanto Sunardi',2,'2',NULL,NULL,NULL,NULL,0,NULL,NULL,'2023-03-22 08:03:00',NULL,NULL,NULL);
 
 /*Table structure for table `usersauthority` */
 
@@ -471,17 +559,70 @@ CREATE TABLE `usersprivilege` (
   `updated_by` int(11) DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=66 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `usersprivilege` */
 
 insert  into `usersprivilege`(`id`,`user_id`,`menu_id`,`created_by`,`created_at`,`updated_by`,`updated_at`) values 
-(27,1,2,1,'2023-03-20 04:03:56',NULL,NULL),
-(28,1,4,1,'2023-03-20 04:03:56',NULL,NULL),
-(29,1,6,1,'2023-03-20 04:03:56',NULL,NULL),
-(30,1,7,1,'2023-03-20 04:03:56',NULL,NULL),
-(31,1,8,1,'2023-03-20 04:03:56',NULL,NULL),
-(32,1,9,1,'2023-03-20 04:03:56',NULL,NULL);
+(56,1,2,1,'2023-03-29 06:03:15',NULL,NULL),
+(57,1,4,1,'2023-03-29 06:03:15',NULL,NULL),
+(58,1,6,1,'2023-03-29 06:03:15',NULL,NULL),
+(59,1,7,1,'2023-03-29 06:03:15',NULL,NULL),
+(60,1,8,1,'2023-03-29 06:03:15',NULL,NULL),
+(61,1,9,1,'2023-03-29 06:03:15',NULL,NULL),
+(62,1,10,1,'2023-03-29 06:03:15',NULL,NULL),
+(63,1,12,1,'2023-03-29 06:03:15',NULL,NULL),
+(64,1,14,1,'2023-03-29 06:03:15',NULL,NULL),
+(65,2,14,1,'2023-03-29 06:03:46',NULL,NULL);
+
+/* Procedure structure for procedure `genSetupProject` */
+
+/*!50003 DROP PROCEDURE IF EXISTS  `genSetupProject` */;
+
+DELIMITER $$
+
+/*!50003 CREATE PROCEDURE `genSetupProject`(IN projectCode VARCHAR(25),IN regionId VARCHAR(25),IN userId INTEGER)
+BEGIN
+	DECLARE finished INTEGER DEFAULT 0;
+	declare region_id integer;
+	declare location_id integer;
+	declare area_id integer;
+	DECLARE sub_area_id INTEGER;
+	DECLARE setupProjectCursor CURSOR FOR SELECT a.id,b.id,c.id,d.id FROM m_region a 
+	INNER JOIN m_location b ON a.id = b.region_id INNER JOIN m_area c ON c.location_id = b.id INNER JOIN m_sub_area d ON d.area_id = c.id 
+	WHERE a.id = regionId;
+	DECLARE CONTINUE  HANDLER FOR NOT FOUND SET finished = 1;
+	OPEN setupProjectCursor;
+	addDetail:LOOP
+	FETCH setupProjectCursor INTO region_id, location_id, area_id, sub_area_id;
+	IF finished = 1 THEN
+		LEAVE addDetail;
+	END IF;
+	INSERT INTO setup_project_detail(project_code,region_id, location_id, area_id, sub_area_id,created_by) VALUES (projectCode, region_id, location_id, area_id, sub_area_id,userId);
+	END LOOP addDetail;
+	CLOSE setupProjectCursor;
+END */$$
+DELIMITER ;
+
+/* Procedure structure for procedure `instantInsert` */
+
+/*!50003 DROP PROCEDURE IF EXISTS  `instantInsert` */;
+
+DELIMITER $$
+
+/*!50003 CREATE PROCEDURE `instantInsert`()
+BEGIN
+	DECLARE v_max INT UNSIGNED DEFAULT 200;
+	DECLARE v_counter INT UNSIGNED DEFAULT 1;
+	START TRANSACTION;
+	WHILE v_counter < v_max DO
+		INSERT INTO evaluation(project_code,appraisal_date,sub_area_id,score) VALUES('Samantha20230329',DATE_ADD("2023-03-29", INTERVAL v_counter DAY),(ROUND(RAND() * 9)+1),ROUND(74+RAND() * 26));
+		SET v_counter = v_counter+1;
+	END WHILE;
+	
+	
+END */$$
+DELIMITER ;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

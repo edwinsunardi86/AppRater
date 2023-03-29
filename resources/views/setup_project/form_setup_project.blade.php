@@ -21,7 +21,10 @@
             <div class="row">
                 <div class="col-12">
                     <form method="post" id="form_setup_project" class="form-horizontal">
-                        <div class="card">
+                        <div class="card card-primary">
+                            <div class="card-header">
+                                <h3 class="card-title">Form Setup Project</h3>
+                            </div>
                             @csrf
                             <div class="card-body">
                                 @if(Auth::user()->role == 1)
@@ -65,7 +68,7 @@
                                     </div>
                                 </div>
                                   <button type="submit" class="btn btn-md btn-primary">Submit</button>
-                            </div>
+                            </div> 
                         </div>
                         <div class="row show_detail_region">
 
@@ -310,5 +313,25 @@ $(document).on('click','.pilih_client',function(){
         }
     });
 });
+$.get('/region/geDataRegionToSelected',function(data,status){
+        $('#region_name').append($('<option>',{
+            value:"",
+            text:"Choice Region"
+        }))
+        $.each(data,function(i,item){
+            $('#region_name').append($('<option>',{
+                value:data[i].id,
+                text:data[i].region_name
+            }));
+
+            $('#region_name').change(function(){
+                if($('#region_name').val() == ""){
+                    $('#region_description').val("");
+                }else{
+                    $('#region_description').val(data[i].description);
+                }
+            });
+        });
+    });
 </script>
 @endsection

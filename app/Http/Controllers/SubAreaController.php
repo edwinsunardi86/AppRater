@@ -71,23 +71,41 @@ class SubAreaController extends Controller
     }
 
     public function update_sub_area(Request $request){
+        $get_detail_project = DB::table('setup_project_detail')->where('sub_area_id',$request->sub_area_id)->get();
         $post = array(
+            'area_id'=>$request->area_id,
+            'sub_area_name'=>$request->sub_area_name,
             'description'=>$request->sub_area_description,
         );
-        DB::table('m_sub_area')->where('id',$request->sub_area_id)->update($post);
-        $confirmation = ['message' => 'Data Sub Area success updated','icon' => 'success', 'redirect'=>'/sub_area'];
+        if($get_detail_project->count() > 0){
+            $confirmation = ['message' => 'Data Sub Area contains one or several setup project','icon' => 'error', 'redirect'=>'/sub_area'];
+        }else{
+            $update = DB::table('m_sub_area')->where('id',$request->sub_area_id)->update($post);
+            if($update){
+                $confirmation = ['message' => 'Data Sub Area success updated','icon' => 'success', 'redirect'=>'/sub_area'];
+            }else{
+                $confirmation = ['message' => 'Data Sub Area failed updated','icon' => 'error', 'redirect'=>'/sub_area'];
+            }
+            
+        }
         return response()->json($confirmation);
     }
     
     public function delete_sub_area(Request $request){
+        $get_detail_project = DB::table('setup_project_detail')->where('sub_area_id',$request->sub_area_id)->get();
         $sub_area_id = $request->sub_area_id;
         $get_data_sub_area = DB::table('m_sub_area')->where('id',$sub_area_id)->first();
-        $delete_data_sub_area = DB::table('m_sub_area')->where('id',$sub_area_id)->delete($sub_area_id);
-        if($delete_data_sub_area){
-          $confirmation = ['message' => 'Data Sub Area ' . $get_data_sub_area->sub_area_name . ' berhasil dihapus', 'icon' => 'success', 'redirect' => '/sub_area'];
+        if($get_detail_project->count() > 0){
+            $confirmation = ['message' => 'Data Sub Area contains one or several setup project','icon' => 'error', 'redirect'=>'/sub_area'];
         }else{
-          $confirmation = ['message' => 'Data Sub Area ' . $get_data_sub_area->sub_area_name . ' berhasil dihapus', 'icon' => 'success', 'redirect' => '/sub_area'];
+            $delete_data_sub_area = DB::table('m_sub_area')->where('id',$sub_area_id)->delete($sub_area_id);
+            if($delete_data_sub_area){
+                $confirmation = ['message' => 'Data Sub Area ' . $get_data_sub_area->sub_area_name . ' success deleted', 'icon' => 'success', 'redirect' => '/sub_area'];
+            }else{
+                $confirmation = ['message' => 'Data Sub Area ' . $get_data_sub_area->sub_area_name . ' failed deleted', 'icon' => 'error', 'redirect' => '/sub_area'];
+            }
         }
+        
         return response()->json($confirmation);
     }
 }

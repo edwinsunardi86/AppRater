@@ -41,7 +41,7 @@
                                     </div>
                                 </div>
                                 <button type="button" value="add" id="addRow" class="btn btn-xl btn-primary mb-5 ml-2">Add New Row</button>
-                                <button type="button" id="removeRow" class="btn btn-xl btn-primary mb-5 ml-2">Remove Row</button>
+                                <button type="button" id="removeRow" class="btn btn-danger btn-xl btn-primary mb-5 ml-2">Remove Row</button>
                                 <table id="table_add_sub_area" class="table table-bordered table-stripped" style="width:100%">
                                     <thead>
                                         <tr>
@@ -149,7 +149,7 @@ $(document).ready(function(){
 $.get('/area/getDataAreaSelected',function(data,status){
     $('#area_name').append($('<option>',{
             value: "",
-            text: "Choice Sub Area",
+            text: "Choice Area",
         }));
     $.each(data,function(i,item){
         $('#area_name').append($('<option>',{
