@@ -42,4 +42,15 @@ class EvaluationController extends Controller
         }
         return response()->json($confirmation);
     }
+
+    function get_year_evaluation_project_per_location(Request $request){
+            $project_code = $request->project_code;
+            $location_id = $request->location_id;
+            // $get_report = DB::table('evaluation')->join('setup_project_detail','setup_project_detail.project_code = evaluation.project_code','AND','setup_project_detail.sub_area_id = evaluation.sub_area_id')->get();
+            $get_year = DB::select(DB::Raw('select year(appraisal_date)AS year_project from evaluation a inner join setup_project_detail b ON b.project_code = a.project_code and b.sub_area_id = a.sub_area_id INNER JOIN m_sub_area c ON c.id = b.sub_area_id
+            INNER JOIN m_area d ON d.id = c.area_id
+            INNER JOIN m_location e ON e.id = d.location_id
+            where a.project_code ="'.$project_code.'" and e.id = "'.$location_id.'" group by year(appraisal_date)'));
+            return response()->json($get_year);
+        }
 }

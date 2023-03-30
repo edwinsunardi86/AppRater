@@ -24,7 +24,7 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
         @php
           use Illuminate\Support\Facades\DB;
-          $db_menu_parent = DB::table('menu')->select('id','nama_menu','font_icon')->where('menu_parent_id','=',0)->get();
+          $db_menu_parent = DB::table('menu')->select('id','nama_menu','font_icon')->where('menu_parent_id','=',0)->orderBy('sort','asc')->get();
           $count = $db_menu_parent->count();
           $arr_menu_parent_id = array();
           $arr_menu_parent_name = array();

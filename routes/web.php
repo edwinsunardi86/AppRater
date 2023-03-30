@@ -9,6 +9,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EvaluationController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\SetupProjectController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserController;
 
 /*
@@ -125,4 +126,12 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'setup_project'],
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'evaluation'],function(){
     Route::get('/form_evaluation',[EvaluationController::class,'form_evaluation']);
     Route::post('/storeEvaluation',[EvaluationController::class,'store_evaluation']);
+    Route::post('/getYearEvaluationProjectPerLocation',[EvaluationController::class,'get_year_evaluation_project_per_location']);
 });
+
+
+    Route::get('/report_weekly',[ReportController::class,'report_weekly'])->middleware(['auth','authorization']);
+
+    Route::group(['middleware'=>['auth','authorization'],'prefix'=>'dashboard'],function(){
+        Route::post('/getAppraisalWeekly',[DashboardController::class,'get_appraisal_weekly']);
+    });
