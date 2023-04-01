@@ -164,7 +164,9 @@ class UserController extends Controller
         $menuParent = DB::table('menu')->where('menu_parent_id',0)->get();
         $menu = DB::table('menu')->select('menu.menu_parent_id','menu.id','menu.nama_menu')->where('menu.menu_parent_id','<>',0)->get();
         $access_menu = DB::table('usersprivilege')->select('menu_id','menu.menu_parent_id')->where('user_id',$id)->join('menu','menu.id','=','usersprivilege.menu_id')->get();
+        $company = DB::table('m_client')->select('id','client_name')->get();
         $authority = DB::table('usersauthority')->select('company_name')->where('user_id',$id)->first();
+        $role_user = DB::table('users')->select('role')->where('users.id',$id)->first();
         $menu_id = [];
         $menu_parent_id = [];
         foreach($access_menu as $row){
@@ -177,7 +179,9 @@ class UserController extends Controller
             'access_menu_parent' => $menuParent,
             'access_menu'        => $menu,
             'menu_id'            => $menu_id,
+            'company'            => $company,
             'menu_parent_id'     => $menu_parent_id,
+            'role'               => $role_user,
             'authority'          => isset($authority->company_name)?$authority->company_name:null,
             'active_gm'          => 'Setting',
             'active_m'           => 'users',

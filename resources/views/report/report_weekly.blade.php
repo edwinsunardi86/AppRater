@@ -26,6 +26,7 @@
                         </div>
                         <form method="post" id="form_evaluation" class="form-horizontal">
                         <div class="card-body">
+                            @if(Auth::user()->role == 1)
                             <div class="form-group row">
                                 <label for="inputClientName" class="col-sm-2 col-form-label">Client Name</label>
                                 <div class="col-sm-4">
@@ -36,6 +37,7 @@
                                     <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#modal-xl">Cari</button>
                                 </div>
                             </div>
+                            @endif
                             <div class="form-group row">
                                 <label for="inputClientDescription" class="col-sm-2 col-form-label">Client Description</label>
                                 <div class="col-sm-4">
@@ -82,21 +84,8 @@
                                     <select class="form-control" name="year_project" id="year_project"></select>
                                 </div>
                             </div>
-                            <div class="col-lg-2">
-                                <!-- small box -->
-                                <div class="small-box bg-success">
-                                    <div class="text-center mb-n4"><h5>2023 - WEEK 11</h5></div>
-                                    <div class="inner text-center">
-                                        <h1 class="mb-n2" style="font-size:75px;">SB</h1>
-                                        <h4 class="mb-n2">53 %</h4>
-                                    </div>
-                                  <div class="icon">
-                                    <i class="ion ion-stats-bars"></i>
-                                  </div>
-                                  <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-                                </div>
-                            </div>
                         </div>
+                        <div id="small-box-report" class="row"></div>
                     </div>
                 </div>
             </div>
@@ -203,6 +192,35 @@ $(document).on('click','.pilih_client',function(){
     });
 });
 
+$(document).ready(function(){
+    $.ajax({
+        headers:{
+            'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+        },
+        url:"/setup_project/getProjectSetupToSelected",
+        type:"POST",
+        dataType:"JSON",
+        data:{
+            client_id:{{ Auth::user()->role <> 1 }} ? {{ Auth::id() }} : $('#client_id').val()
+        },
+        processData:true,
+        success:function(data){
+            $('.tb_sub_area > tbody').empty();
+            $('select#project_code option').remove();
+            $('select#project_code').append($('<option>',{
+                    text:"Choice Project",
+                    value:""
+                }));
+            $.each(data,function(i,item){
+                $('select#project_code').append($('<option>',{
+                    text:data[i].project_name,
+                    value:data[i].project_code
+                }));
+            });
+        }
+    });
+});
+
 $(document).on('change','#project_code',function(){
     $.ajax({
         headers:{
@@ -212,7 +230,7 @@ $(document).on('change','#project_code',function(){
         type:"POST",
         dataType:"JSON",
         data:{
-            client_id:$('#client_id').val()
+            client_id:{{ Auth::user()->role <> 1 }} ? {{ Auth::id() }} : $('#client_id').val()
         },
         processData:true,
         success: function(data){
@@ -278,7 +296,7 @@ $(document).on('change','#location_name',function(){
         success: function(data){
             $('#year_project').append($('<option>',{
                     value:"",
-                    text:""
+                    text:"Choice year project"
                 }));
             $.each(data,function(i,item){
                 $('#year_project').append($('<option>',{
@@ -289,7 +307,7 @@ $(document).on('change','#location_name',function(){
         }
     });
 });
-$(document).on('change','#year_project',function(){
+$(document).on('change','#year_project,#month_project',function(){
     $.ajax({
         headers:{
             'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
@@ -299,13 +317,38 @@ $(document).on('change','#year_project',function(){
         dataType:"JSON",
         data:{
             'month_project' : $('#month_project').val(),
-            'year_project' : $('year_project').val(),
+            'year_project' : $('#year_project').val(),
             'project_code' : $('#project_code').val(),
             'location_id' : $('#location_name').val(),
         },
         processData:true,
         success: function(data){
-        
+            $('#small-box-report').empty();
+            $.each(data,function(i,item){
+                if(data[i].score == 100){
+                    var kategori = "SB";
+                }else if(data[i].score >= 95){
+                    var kategori = "CB";
+                }else if(data[i].score >= 89){
+                    var kategori = "B";
+                }else{
+                    var kategori = "KB";
+                }
+                var smallbox = "<div class=\"col-lg-2\">"+
+                                "<div class=\"small-box bg-success\">"+
+                                    "<div class=\"text-center mb-n4\"><h5>"+data[i].YEAR+" - WEEK "+data[i].MONTH+"</h5></div>"+
+                                    "<div class=\"inner text-center\">"+
+                                        "<h1 class=\"mb-n2\" style=\"font-size:75px;\">"+kategori+"</h1>"+
+                                        "<h4 class=\"mb-n2\">"+data[i].score+" %</h4>"+
+                                    "</div>"+
+                                  "<div class=\"icon\">"+
+                                    "<i class=\"ion ion-stats-bars\"></i>"+
+                                  "</div>"+
+                                  "<a href=\"#\" class=\"small-box-footer\">More info <i class=\"fas fa-arrow-circle-right\"></i></a>"+
+                                "</div>"+
+                            "</div>";
+                $('#small-box-report').append(smallbox);
+            });
         }
     });
 });

@@ -10,7 +10,7 @@ class ReportController extends Controller
         return view('report.report_weekly',[
             'title' => 'Report Weekly',
             'active_gm' => 'Report',
-            'active_m'=>'report_weekly'
+            'active_m'=>'report/report_weekly'
         ]);
     }
 }

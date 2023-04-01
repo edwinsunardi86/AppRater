@@ -11,7 +11,7 @@ use App\Http\Controllers\LocationController;
 use App\Http\Controllers\SetupProjectController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserController;
-
+use App\Http\Controllers\ProfileUserController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -45,9 +45,10 @@ Route::group(['middleware' => ['auth','authorization'],'prefix'=>'users'], funct
     Route::get('/access/{id}',[UserController::class,'usersAccess']);
     Route::post('/set_user_access_previlage',[UserController::class,'setUserAccessPrevilage']);
     Route::post('/set_user_access_authority',[UserController::class,'setUserAccessAuthority']);
-    Route::get('/change_password',[UserController::class,'viewChangePassword']);
-    Route::post('/change_password',[UserController::class,'changeSelfPassword']);
 });
+
+Route::get('/change_password',[ProfileUserController::class,'viewChangePassword'])->middleware('auth');
+Route::post('/change_password',[ProfileUserController::class,'changeSelfPassword'])->middleware('auth');
 
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'client'],function(){
     Route::get('/',[ClientController::class,'index']);
@@ -58,7 +59,6 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'client'],functio
     Route::get('/edit_client/{id}',[ClientController::class,'edit_client']);
     Route::post('/update_client',[ClientController::class,'update_client']);
     Route::post('/delete_client',[ClientController::class,'delete_client']);
-    Route::get('/getDatatableClientToSelected',[ClientController::class,'get_datatable_client_to_selected'])->name('data_client_to_selected:dt');
 });
 
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'region'],function(){
@@ -70,7 +70,7 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'region'],functio
     Route::get('/edit_region/{id}',[RegionController::class,'edit_region']);
     Route::post('/update_region',[RegionController::class,'update_region']);
     Route::post('/delete_region',[RegionController::class,'delete_region']);
-    Route::get('/geDataRegionToSelected',[RegionController::class,'get_data_region_to_selected']);
+    
 });
 
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'location'],function(){
@@ -82,7 +82,6 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'location'],funct
     Route::get('/edit_location/{id}',[LocationController::class,'edit_location']);
     Route::post('/update_location',[LocationController::class,'update_location']);
     Route::post('/delete_location',[LocationController::class,'delete_location']);
-    Route::get('/getDataLocationToSelected',[LocationController::class,'get_data_location_to_selected']);
 });
 
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'area'],function(){
@@ -94,7 +93,6 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'area'],function(
     Route::get('/edit_area/{id}',[AreaController::class,'edit_area']);
     Route::post('/update_area',[AreaController::class,'update_area']);
     Route::post('/delete_area',[AreaController::class,'delete_area']);
-    Route::get('/getDataAreaSelected',[AreaController::class,'get_data_area_to_selected']);
     Route::get('/getDataDescriptionById/{id}',[AreaController::class,'get_data_description_area_by_id']);
     Route::get('/getDataService',[AreaController::class,'get_data_service']);
     
@@ -117,10 +115,6 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'setup_project'],
     Route::post('/getDetailRegion',[SetupProjectController::class,'get_detail_region']);
     Route::get('/getDetailLocation/{id}',[SetupProjectController::class,'get_detail_location']);
     Route::post('/storeProjectSetup',[SetupProjectController::class,'store_project_setup']);
-    Route::post('/getProjectSetupToSelected',[SetupProjectController::class,'get_project_setup_to_selected']);
-    Route::post('/getRegionSetupProject',[SetupProjectController::class,'get_region_setup_project']);
-    Route::post('/getLocationSetupProject',[SetupProjectController::class,'get_location_setup_project']);
-    Route::post('/getAreaSubAreaSetupProject',[SetupProjectController::class,'get_area_sub_area_setup_project']);
 });
 
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'evaluation'],function(){
@@ -129,9 +123,23 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'evaluation'],fun
     Route::post('/getYearEvaluationProjectPerLocation',[EvaluationController::class,'get_year_evaluation_project_per_location']);
 });
 
+Route::group(['middleware'=>['auth','authorization'],'prefix'=>'evaluation'],function(){
+    Route::get('/',[EvaluationController::class,'index']);
+});
 
+Route::group(['middleware'=>['auth','authorization'],'prefix'=>'report'],function(){
     Route::get('/report_weekly',[ReportController::class,'report_weekly'])->middleware(['auth','authorization']);
+});
+Route::group(['middleware'=>['auth','authorization'],'prefix'=>'dashboard'],function(){
+    Route::post('/getAppraisalWeekly',[DashboardController::class,'get_appraisal_weekly']);
+});
 
-    Route::group(['middleware'=>['auth','authorization'],'prefix'=>'dashboard'],function(){
-        Route::post('/getAppraisalWeekly',[DashboardController::class,'get_appraisal_weekly']);
-    });
+Route::get('client/getDatatableClientToSelected',[ClientController::class,'get_datatable_client_to_selected'])->name('data_client_to_selected:dt')->middleware('auth');
+Route::get('region/geDataRegionToSelected',[RegionController::class,'get_data_region_to_selected'])->middleware('auth');
+Route::get('location/getDataLocationToSelected',[LocationController::class,'get_data_location_to_selected'])->middleware('auth');
+Route::get('area/getDataAreaSelected',[AreaController::class,'get_data_area_to_selected'])->middleware('auth');
+Route::post('setup_project/getProjectSetupToSelected',[SetupProjectController::class,'get_project_setup_to_selected'])->middleware('auth');
+Route::post('setup_project/getRegionSetupProject',[SetupProjectController::class,'get_region_setup_project'])->middleware('auth');
+Route::post('setup_project/getLocationSetupProject',[SetupProjectController::class,'get_location_setup_project'])->middleware('auth');
+Route::post('setup_project/getAreaSubAreaSetupProject',[SetupProjectController::class,'get_area_sub_area_setup_project'])->middleware('auth');
+

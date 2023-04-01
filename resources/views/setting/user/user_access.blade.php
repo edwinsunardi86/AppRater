@@ -95,6 +95,41 @@
                         </form>
                     </div>
                 </div>
+                @if($role->role == 2)
+                <div class="col-6">
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Access Authority</h3>
+                        </div>
+                        <form method="post" id="form_user_access" class="form-horizontal">
+                            @csrf
+                            <div class="card-body">
+                                <div class="mb-6">
+                                    <div class="form-group row">
+                                        <label for="inputEmail" class="col-form-label">Perusahaan</label>
+                                        <div class="col-sm-8">
+                                          @php 
+                                          $arr_authority = explode(",",$authority);
+                                          $in_authority = array();
+                                          @endphp
+                                          <select class="select2 form-control" id="company" name="company" multiple="multiple" data-placeholder="Select a Company" required>
+                                              @php
+                                              foreach($arr_authority as $row){
+                                                  array_push($in_authority,$row);
+                                              }
+                                              @endphp
+                                              @foreach($company as $row)
+                                                  <option value="{{ $row->id }}" {{ in_array($row->client_name,$in_authority) ? 'selected':''}}>{{ $row->client_name }}</option>
+                                              @endforeach
+                                          </select>
+                                        </div>
+                                      </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                @endif
             </div>
         </div>
     </section>

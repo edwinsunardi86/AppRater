@@ -18,7 +18,7 @@
             <i class="fas fa-sign-out-alt"></i> Log Out
           </a>
           <div class="dropdown-divider"></div>
-          <a href="users/change_password" class="dropdown-item">
+          <a href="/change_password" class="dropdown-item">
             <i class="fas fa-key"></i> Change Password
           </a>
         </div>

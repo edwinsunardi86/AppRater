@@ -21,7 +21,8 @@ class AccessAuthorization
         $user_prev = DB::table('usersprivilege')->select('usersprivilege.menu_id','menu.path')->join('menu','usersprivilege.menu_id','=','menu.id')->where('user_id',Auth::id())->get();
         $arr_menu_prev = array();
         foreach($user_prev as $row){
-            array_push($arr_menu_prev,strtolower($row->path));
+            $exp_path = explode("/",$row->path);
+            array_push($arr_menu_prev,strtolower($exp_path[0]));
         }
         // print_r($arr_menu_prev); die();
         // echo $request->path();die();
