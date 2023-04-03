@@ -8,7 +8,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EvaluationController;
 use App\Http\Controllers\LocationController;
-use App\Http\Controllers\SetupProjectController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileUserController;
@@ -110,11 +110,11 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'sub_area'],funct
     Route::get('/detail_sub_area/{id}',[SubAreaController::class,'detail_sub_area']);
 });
 
-Route::group(['middleware'=>['auth','authorization'],'prefix'=>'setup_project'],function(){
-    Route::get('/',[SetupProjectController::class,'form_setup_project']);
-    Route::post('/getDetailRegion',[SetupProjectController::class,'get_detail_region']);
-    Route::get('/getDetailLocation/{id}',[SetupProjectController::class,'get_detail_location']);
-    Route::post('/storeProjectSetup',[SetupProjectController::class,'store_project_setup']);
+Route::group(['middleware'=>['auth','authorization'],'prefix'=>'project'],function(){
+    Route::get('/',[ProjectController::class,'form_project']);
+    Route::post('/getDetailRegion',[ProjectController::class,'get_detail_region']);
+    Route::get('/getDetailLocation/{id}',[ProjectController::class,'get_detail_location']);
+    Route::post('/storeProject',[ProjectController::class,'store_project']);
 });
 
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'evaluation'],function(){
@@ -138,8 +138,9 @@ Route::get('client/getDatatableClientToSelected',[ClientController::class,'get_d
 Route::get('region/geDataRegionToSelected',[RegionController::class,'get_data_region_to_selected'])->middleware('auth');
 Route::get('location/getDataLocationToSelected',[LocationController::class,'get_data_location_to_selected'])->middleware('auth');
 Route::get('area/getDataAreaSelected',[AreaController::class,'get_data_area_to_selected'])->middleware('auth');
-Route::post('setup_project/getProjectSetupToSelected',[SetupProjectController::class,'get_project_setup_to_selected'])->middleware('auth');
-Route::post('setup_project/getRegionSetupProject',[SetupProjectController::class,'get_region_setup_project'])->middleware('auth');
-Route::post('setup_project/getLocationSetupProject',[SetupProjectController::class,'get_location_setup_project'])->middleware('auth');
-Route::post('setup_project/getAreaSubAreaSetupProject',[SetupProjectController::class,'get_area_sub_area_setup_project'])->middleware('auth');
+Route::post('project/getProjectToSelected',[ProjectController::class,'get_project_to_selected'])->middleware('auth');
+Route::post('project/getRegionSetupProject',[ProjectController::class,'get_region_setup_project'])->middleware('auth');
+Route::post('project/getLocationSetupProject',[ProjectController::class,'get_location_setup_project'])->middleware('auth');
+Route::post('project/getAreaSetupProject',[ProjectController::class,'get_area_setup_project'])->middleware('auth');
+Route::post('project/getAreaSubAreaSetupProject',[ProjectController::class,'get_area_sub_area_setup_project'])->middleware('auth');
 

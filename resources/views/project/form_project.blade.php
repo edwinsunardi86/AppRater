@@ -20,7 +20,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-                    <form method="post" id="form_setup_project" class="form-horizontal">
+                    <form method="post" id="form_project" class="form-horizontal">
                         <div class="card card-primary">
                             <div class="card-header">
                                 <h3 class="card-title">Form Setup Project</h3>
@@ -56,16 +56,6 @@
                                         <input type="text" class="form-control float-right" id="dateContract" name="dateContract">
                                     </div>
                                     <!-- /.input group -->
-                                </div>
-                                <div class="form-group row">
-                                    <label for="choiceRegion" class="col-form-label col-sm-2">Region</label>
-                                    <div class="col-sm-4">
-                                        <select class="select2" name="region_name" id="region_name" multiple="multiple" data-placeholder="Select a region" style="width: 100%;">
-                                          </select>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <button type="button" class="btn btn-md bg-purple preview">Preview</button>
-                                    </div>
                                 </div>
                                   <button type="submit" class="btn btn-md btn-primary">Submit</button>
                             </div> 
@@ -118,7 +108,7 @@
 </div>
 <script>
 $(document).ready(function(){
-    $('#form_setup_project').validate({
+    $('#form_project').validate({
         rules:{
             client_name:{
                 required:true
@@ -129,9 +119,6 @@ $(document).ready(function(){
             dateContract:{
                 required:true
             },
-            region_name:{
-                required:true
-            }
         },
         messages:{
             client_name:{
@@ -142,9 +129,6 @@ $(document).ready(function(){
             },
             dateContract:{
                 required:"Please input date contract"
-            },
-            region_name:{
-                required:"Please input region name"
             },
         },
         errorElement: 'span',
@@ -170,7 +154,7 @@ $(document).ready(function(){
                 {
                     'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
                 },
-                url:"/setup_project/storeProjectSetup",
+                url:"/project/storeProject",
                 type:"POST",
                 data:formData,
                 dataType:"JSON",
@@ -234,57 +218,6 @@ $(document).on('click','.pilih_client',function(){
     $('#modal-xl').modal('toggle');
 });
 
-$(document).on('click','.preview',function(){
-    $.ajax({
-        headers:{
-            'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
-        },
-        url:"/setup_project/getDetailRegion",
-        type:"POST",
-        dataType:"JSON",
-        data:{
-            region_name:$('#region_name').val()
-        },
-        processData:true,
-        success: function(data){
-            var region = $('#region_name').select2('data');
-            $('.card-region').remove();
-        
-            for(var i = 0;i<region.length;i++){
-                var html = "<div class=\"col-sm-12 card-region\">"+
-                "<h1>"+region[i].text+"</h1><div class=\"row\">";
-                $.each(data,function(a,item){
-                    html += "";
-                    if(data[a].region_name == region[i].text){
-                        html +="<div class=\"col-sm-3 card mr-3\">"+
-                        "<div class=\"card-body\">"+
-                        "<div class=\"row\"><h3 class=\"card-title\">"+data[a].location_name+"</h3></div>"+
-                        "<div class=\"row\"><span class=\"text-muted\">"+data[a].address+"</span></div>";
-                        $.ajax({
-                            headers:{
-                                'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
-                            },
-                            url:"/setup_project/getDetailLocation/"+data[a].location_id,
-                            type:"GET",
-                            dataType:"JSON",
-                            processData:true,
-                            success: function(data_area){
-                                $.each(data,function(c,item){
-                                    html+="<div class=\"row\">"+data_area[c].area_name+"</div>";
-                                });
-                            }
-                        });
-                        html +="</div></div>";
-                    }
-                });   
-                html += "</div>"+
-                "</div>";
-                $('.show_detail_region').append(html);
-            }
-            
-        }
-    });
-});
 $(document).on('click','.pilih_client',function(){
     $.ajax({
         headers:{
@@ -313,25 +246,5 @@ $(document).on('click','.pilih_client',function(){
         }
     });
 });
-$.get('/region/geDataRegionToSelected',function(data,status){
-        $('#region_name').append($('<option>',{
-            value:"",
-            text:"Choice Region"
-        }))
-        $.each(data,function(i,item){
-            $('#region_name').append($('<option>',{
-                value:data[i].id,
-                text:data[i].region_name
-            }));
-
-            $('#region_name').change(function(){
-                if($('#region_name').val() == ""){
-                    $('#region_description').val("");
-                }else{
-                    $('#region_description').val(data[i].description);
-                }
-            });
-        });
-    });
 </script>
 @endsection

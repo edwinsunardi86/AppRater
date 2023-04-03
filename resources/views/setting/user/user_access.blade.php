@@ -106,13 +106,14 @@
                             <div class="card-body">
                                 <div class="mb-6">
                                     <div class="form-group row">
-                                        <label for="inputEmail" class="col-form-label">Perusahaan</label>
+                                        <label for="inputClient" class="col-form-label col-sm-2">Perusahaan/Client</label>
                                         <div class="col-sm-8">
                                           @php 
                                           $arr_authority = explode(",",$authority);
                                           $in_authority = array();
                                           @endphp
-                                          <select class="select2 form-control" id="company" name="company" multiple="multiple" data-placeholder="Select a Company" required>
+                                          <select class="form-control" id="company" name="company" data-placeholder="Select a Company" required>
+                                                <option value="">Choice</option>
                                               @php
                                               foreach($arr_authority as $row){
                                                   array_push($in_authority,$row);
@@ -124,9 +125,18 @@
                                           </select>
                                         </div>
                                       </div>
+                                      <div class="form-group row">
+                                        <label for="choiceProject" class="col-form-label col-sm-2">Project</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control select2" name="project_code" id="project_code"></select>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </form>
+                    </div>
+                    <div class="card-project">
+
                     </div>
                 </div>
                 @endif
@@ -161,18 +171,10 @@ $(document).ready(function(){
                 required:true
             }
         },
-        // messages:{
-        //     'menuParent[]':{
-        //         required:"Mohon pilih perusahaannya"
-        //     }
-        // },
         errorElement: 'span',
             errorPlacement: function (error, element) {
-            // error.addClass('invalid-feedback');
-            // element.closest('.form-group').append(error);
             },
             highlight: function (element, errorClass, validClass) {
-            // $(element).addClass('is-invalid');
             Swal.fire({
                 title : "Perhatian!",
                 html  : "Mohon isi privilegenya!",
@@ -180,8 +182,6 @@ $(document).ready(function(){
             });
             },
             unhighlight: function (element, errorClass, validClass) {
-            // $(element).removeClass('is-invalid');
-            
             },
             submitHandler: function() { 
                 var url = window.location.href;
@@ -225,49 +225,84 @@ $(document).ready(function(){
                 });
             }
     });
-    // $('#form_user_access').submit(function(e){
-    //     e.preventDefault();
-    //     var url = window.location.href;
-    //             var param = url.split('/');
-    //             e.preventDefault();
-    //             var formData = new FormData();
-    //             const menuParent = [];
-    //             $('input[name="menuParent[]"]:checked').each(function(){
-    //                 menuParent.push($(this).val());
-    //             });
-    //             formData.append('menu_id',menuParent);
-    //             formData.append('user_id',param[5]);
-    //             $.ajax({
-    //                 headers: {
-    //                     'X-CSRF-TOKEN': $('meta[name=csrf-token]').attr('content')
-    //                 },
-    //                 url:'/users/set_user_access_previlage/',
-    //                 type: 'POST',
-    //                 dataType: 'JSON',
-    //                 data: formData,
-    //                 processData:false,
-    //                 contentType:false,
-    //                 success: function(data){
-    //                     if(data.error == 1){
-    //                         Toast.fire({
-    //                             icon: 'error',
-    //                             title: 'Warning!'
-    //                         })
-    //                     }else{
-    //                         Swal.fire({
-    //                             title: data.title,
-    //                             html : data.message,
-    //                             icon : data.icon,
-    //                             showConfirmButton: false
-    //                         });
-    //                         setTimeout(() => {
-    //                             window.location.href = data.redirect
-    //                         }, 1500);
-                            
-    //                     }
-    //                 }
-    //             });
-    // });
+});
+
+$(document).on('change','#company',function(){
+    $.ajax({
+        headers:{
+            'X-CSRF-TOKEN' : $('meta[name=csrf-token]').attr('content')
+        },
+        url:'/setup_project/getProjectSetupToSelected',
+        type:'POST',
+        dataType:'JSON',
+        data:{
+            client_id:$('#company').val()
+        },
+        processData:true,
+        success:function(data){
+            $('select#project_code option').remove();
+            $('select#project_code').append($('<option>',{
+                value:"",
+                text:"Choice Project"
+            }));
+            $.each(data,function(i,item){
+                $('select#project_code').append($('<option>',{
+                    value:data[i].project_code,
+                    text:data[i].project_name
+                }));
+            });
+        }
+    });
+});
+
+$(document).on('change','#project_code', function(){
+    $.ajax({
+        headers:{
+            'X-CSRF-TOKEN' : $('meta[name=csrf-token]').attr('content')
+        },
+        url:'/setup_project/getLocationSetupProject',
+        type:'POST',
+        dataType:'JSON',
+        data:{
+            project_code:$('#project_code').val()
+        },
+        processData:true,
+        success:function(data){
+            $('.card-project').empty();
+
+            $.each(data,function(i,item){
+                $.ajax({
+                    headers:{
+                        'X-CSRF-TOKEN' : $('meta[name=csrf-token]').attr('content')
+                    },
+                    url:'/setup_project/getAreaSetupProject',
+                    type:"POST",
+                    dataType:"JSON",
+                    data:{
+                        location_id:data[i].location_id
+                    },
+                    processData:true,
+                    contentType:false,
+                    success:function(data_area){
+                        console.log(data_area);
+                        $.each(data_area,function(a,item){
+                            $("#card-location-"+data[i].location_id).closest(".card_area").append(data_area[a].area_name);
+                            //$('.card-area').append(data_area[a].area_name);
+                        });
+                    }
+                });
+                var card_outline = "<div class=\"card card-primary card-outline\" id=\"card-location-"+data[i].location_id+"\">"+
+                    "<div class=\"card-body\"\">"+
+                    "<h5 class=\"card-title\" id=\"card-title"+data[i].location_id+"\">"+data[i].location_name+"</h5>"+
+                    "<div class=\"card-area\"></div>"+
+                    "<a href=\"#\" class=\"card-link\">Card link</a>"+
+                    "<a href=\"#\" class=\"card-link\">Another link</a>"+
+                    "</div>"+
+                "</div>";
+                $('.card-project').append(card_outline);
+            });
+        }
+    });
 });
 
 $('#btn_submit_authority').click(function(e){

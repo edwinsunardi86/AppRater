@@ -10,15 +10,15 @@ use Illuminate\Support\Facades\Auth;
 class RegionController extends Controller
 {
     function index(){
-        return view('master.region.index',[
-            'title' => 'Master Region',
+        return view('project.region.index',[
+            'title' => 'Setup Region',
             'active_gm' => 'Master',
             'active_m'=>'region'
         ]);
     }
 
     function get_datatable_region(){
-        $db = DB::table('m_region')->select('m_region.id','region_name',DB::raw('m_region.description AS region_description'))->get();
+        $db = DB::table('setup_region')->select('setup_region.id','region_name',DB::raw('setup_region.description AS region_description'))->get();
         return DataTables::of($db)->addColumn('action',function($row){
             $btn = "<a href='/region/detail_region/$row->id' class='btn btn-primary btn-xs'><i class='fas fa-eye'></i> View</a>
             <a href='/region/edit_region/".$row->id."' class=\"btn btn-secondary btn-xs\"><i class=\"fas fa-user-edit\"></i> Edit</a>
@@ -31,7 +31,7 @@ class RegionController extends Controller
     }
 
     public function add_region(){
-        return view('master.region.create',[
+        return view('project.region.create',[
           'title' => 'Master Region',
           'active_gm' => 'Master',
           'active_m'=>'region'

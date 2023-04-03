@@ -40,7 +40,7 @@
   <div class="bg-image"></div>
 <div class="login-box">
   <div class="login-logo">
-    <a href="../../index2.html" style="color:deeppink"><b>API</b>  Access Mobile Apps SOS</a>
+    <a href="../../index2.html" style="color:deeppink"><b>Apps</b>  Appraisal Service SOS</a>
   </div>
   <!-- /.login-logo -->
   <div class="card">
@@ -74,14 +74,14 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-8">
+          {{-- <div class="col-8">
             <div class="icheck-primary">
               <input type="checkbox" id="remember" name="remember" {{ Cookie::get('remember') == "true" ? "checked" : "" }}>
               <label for="remember">
                 Remember Me
               </label>
             </div>
-          </div>
+          </div> --}}
           <!-- /.col -->
           <div class="col-md-12">
             <button type="submit" class="btn btn-primary btn-block" id="btn_submit">Sign In</button>
@@ -89,12 +89,12 @@
           <!-- /.col -->
         </div>
       </form>
-      <p class="mb-1">
+      {{-- <p class="mb-1">
         <a href="forgot-password.html">I forgot my password</a>
       </p>
       <p class="mb-0">
         <a href="register.html" class="text-center">Register a new membership</a>
-      </p>
+      </p> --}}
     </div>
     <div class="col-md-6 d-flex align-items-center">
         <img src="/assets/images/business.jpg" class="img-fluid" alt="Responsive image">
@@ -102,8 +102,8 @@
     </div>
     <!-- /.login-card-body -->
     <div class="bg-primary py-2"> 
-      <div class="row px-2"> <small class="ml-4 ml-sm-5">Copyright &copy; 2019. All rights reserved.</small>
-          <div class="social-contact ml-4 ml-sm-auto"> <span class="fa fa-facebook mr-4 text-sm"></span> <span class="fa fa-google-plus mr-4 text-sm"></span> <span class="fa fa-linkedin mr-4 text-sm"></span> <span class="fa fa-twitter mr-4 mr-sm-5 text-sm"></span> </div>
+      <div class="row px-2"> <small class="ml-4 ml-sm-5">Copyright &copy; 2023. All rights reserved by IT PT.SOS Indonesia</small>
+          {{-- <div class="social-contact ml-4 ml-sm-auto"> <span class="fas fa-solid fa-facebook mr-4 text-sm"></span> <span class="fas fa-solid fa-google-plus mr-4 text-sm"></span> <span class="fa fa-linkedin mr-4 text-sm"></span> <span class="fa fa-twitter mr-4 mr-sm-5 text-sm"></span> </div> --}}
       </div>
     </div>
   </div>

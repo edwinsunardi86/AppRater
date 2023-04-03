@@ -165,7 +165,7 @@ class UserController extends Controller
         $menu = DB::table('menu')->select('menu.menu_parent_id','menu.id','menu.nama_menu')->where('menu.menu_parent_id','<>',0)->get();
         $access_menu = DB::table('usersprivilege')->select('menu_id','menu.menu_parent_id')->where('user_id',$id)->join('menu','menu.id','=','usersprivilege.menu_id')->get();
         $company = DB::table('m_client')->select('id','client_name')->get();
-        $authority = DB::table('usersauthority')->select('company_name')->where('user_id',$id)->first();
+        $authority = DB::table('usersauthority')->select('client_id')->where('user_id',$id)->first();
         $role_user = DB::table('users')->select('role')->where('users.id',$id)->first();
         $menu_id = [];
         $menu_parent_id = [];
