@@ -9,7 +9,7 @@ use Yajra\DataTables\DataTables as DataTables;
 class LocationController extends Controller
 {
     function index(){
-        return view('master.location.index',[
+        return view('project.location.index',[
             'title' => 'Master Location',
             'active_gm' => 'Master',
             'active_m'=>'location'
@@ -17,7 +17,7 @@ class LocationController extends Controller
     }
 
     public function get_datatable_location(){
-        $db = DB::table('m_location')->join('m_region','m_location.region_id','=','m_region.id')->select('m_location.id','m_location.location_name','m_location.description','m_location.address','m_region.region_name')->get();
+        $db = DB::table('setup_location')->join('setup_region','setup_location.region_id','=','setup_region.id')->join('setup_project','setup_project.project_code','=','setup_region.project_code')->join('m_client','m_client.id','=','setup_project.client_id')->select('setup_location.id','setup_location.location_name','setup_location.description','setup_location.address','setup_region.region_name','project_name','client_name')->get();
         return DataTables::of($db)->addColumn('action',function($row){
             $btn = "<a href='/location/detail_location/$row->id' class='btn btn-primary btn-xs'><i class='fas fa-eye'></i> View</a>
             <a href='/location/edit_location/".$row->id."' class=\"btn btn-secondary btn-xs\"><i class=\"fas fa-user-edit\"></i> Edit</a>
@@ -29,7 +29,7 @@ class LocationController extends Controller
         })->make();
     }
     public function add_location(){
-        return view('master.location.create',[
+        return view('project.location.create',[
           'title' => 'Master Location',
           'active_gm' => 'Master',
           'active_m'=>'location',
@@ -44,15 +44,15 @@ class LocationController extends Controller
                 'region_id'=>$request->region_id,
                 'description'=>$request->location[$i]['location_description']
             );
-            DB::table('m_location')->insert($post);
+            DB::table('setup_location')->insert($post);
         }
         $confirmation = ['message' => 'Data Location success added','icon' => 'success', 'redirect'=>'/location'];
         return response()->json($confirmation);
     }
 
     public function detail_location($id){
-        $get_location = DB::table('m_location')->join('m_region','m_region.id','=','m_location.region_id')->select('location_name','m_location.address',DB::Raw('m_location.description AS location_description'),'region_name',DB::Raw('m_region.description AS region_description'))->where('m_location.id',$id)->first();
-        return view('master.location.detail',[
+        $get_location = DB::table('setup_location')->join('setup_region','setup_region.id','=','setup_location.region_id')->join('setup_project','setup_project.project_code','=','setup_region.project_code')->join('m_client','m_client.id','=','setup_project.client_id')->select('location_name','setup_location.address',DB::Raw('setup_location.description AS location_description'),'region_name',DB::Raw('setup_region.description AS region_description'),'setup_project.project_code','project_name',DB::Raw('m_client.id AS client_id'),'client_name')->where('setup_location.id',$id)->first();
+        return view('project.location.detail',[
             'location' => $get_location,
             'title' => 'Master Location',
             'active_gm' => 'Master',
@@ -61,8 +61,8 @@ class LocationController extends Controller
     }
     
     public function edit_location($id){
-        $get_location = DB::table('m_location')->join('m_region','m_region.id','=','m_location.region_id')->select('m_location.id','location_name','m_location.address',DB::Raw('m_location.description AS location_description'),DB::Raw('m_region.id AS region_id'),'region_name')->where('m_location.id',$id)->first();
-        return view('master.location.edit',[
+        $get_location = DB::table('setup_location')->join('setup_region','setup_region.id','=','setup_location.region_id')->join('setup_project','setup_project.project_code','=','setup_region.project_code')->join('m_client','m_client.id','=','setup_project.client_id')->select('setup_location.id','location_name','setup_location.address',DB::Raw('setup_location.description AS location_description,setup_region.id AS region_id'),'region_name',DB::Raw('setup_region.description AS region_description'),'setup_project.project_code','project_name',DB::Raw('m_client.id AS client_id'),'client_name')->where('setup_location.id',$id)->first();
+        return view('project.location.edit',[
             'location' => $get_location,
             'title' => 'Master Location',
             'active_gm' => 'Master',

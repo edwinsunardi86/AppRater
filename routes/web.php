@@ -135,7 +135,7 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'dashboard'],func
 });
 
 Route::get('client/getDatatableClientToSelected',[ClientController::class,'get_datatable_client_to_selected'])->name('data_client_to_selected:dt')->middleware('auth');
-Route::get('region/geDataRegionToSelected',[RegionController::class,'get_data_region_to_selected'])->middleware('auth');
+Route::post('region/getDataRegionToSelected',[RegionController::class,'get_data_region_to_selected'])->middleware('auth');
 Route::get('location/getDataLocationToSelected',[LocationController::class,'get_data_location_to_selected'])->middleware('auth');
 Route::get('area/getDataAreaSelected',[AreaController::class,'get_data_area_to_selected'])->middleware('auth');
 Route::post('project/getProjectToSelected',[ProjectController::class,'get_project_to_selected'])->middleware('auth');

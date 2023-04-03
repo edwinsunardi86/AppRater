@@ -45,7 +45,7 @@ class ProjectController extends Controller
         return response()->json($confirmation);
     }
 
-    function get_project_setup_to_selected(Request $request){
+    function get_project_to_selected(Request $request){
         $get_project = DB::table('setup_project')->select('project_code','project_name')->where('client_id',$request->client_id)->get();
         return response()->json($get_project);
     }

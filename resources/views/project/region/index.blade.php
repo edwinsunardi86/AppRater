@@ -29,6 +29,8 @@
                                 <thead>
                                     <th>No.</th>
                                     <th>Region</th>
+                                    <th>Client Name</th>
+                                    <th>Project Name</th>
                                     <th>Region Description</th>
                                     <th>Action</th>
                                 </thead>
@@ -55,6 +57,8 @@ $(document).ready(function(){
                 return i++;
             }},
             { data:'region_name', name:'region_name' },
+            { data:'client_name', name:'client_name' },
+            { data:'project_name', name:'project_name' },
             { data: 'region_description', name:'region_description'},
             { data: 'action', name: 'action'}
         ],

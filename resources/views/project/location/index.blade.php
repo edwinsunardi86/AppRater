@@ -28,10 +28,12 @@
                             <table id="table_location" class="table table-bordered table-stripped" style="width:100%">
                             <thead>
                                 <th>No.</th>
-                                <th>Location Name</th>
+                                <th>Location</th>
+                                <th>Region</th>
+                                <th>Project</th>
+                                <th>Client</th>
                                 <th>Address</th>
                                 <th>Description</th>
-                                <th>Region Name</th>
                                 <th>Action</th>
                             </thead>
                             </table>
@@ -55,9 +57,11 @@ $(document).ready(function(){
                 return i++;
             }},
             { data:'location_name', name:'location_name' },
+            { data: 'region_name', name:'region_name'},
+            { data: 'project_name', name:'project_name'},
+            { data: 'client_name', name:'client_name'},
             { data: 'address', name:'address'},
             { data: 'description', name:'description'},
-            { data: 'region_name', name:'region_name'},
             { data: 'action', name: 'action'}
         ],
         "scrollX": true,

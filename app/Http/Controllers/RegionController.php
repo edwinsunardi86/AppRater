@@ -12,13 +12,13 @@ class RegionController extends Controller
     function index(){
         return view('project.region.index',[
             'title' => 'Setup Region',
-            'active_gm' => 'Master',
+            'active_gm' => 'Setup Project',
             'active_m'=>'region'
         ]);
     }
 
     function get_datatable_region(){
-        $db = DB::table('setup_region')->select('setup_region.id','region_name',DB::raw('setup_region.description AS region_description'))->get();
+        $db = DB::table('setup_region')->select('setup_region.id','region_name','client_name','project_name',DB::raw('setup_region.description AS region_description'))->join('setup_project','setup_project.project_code','=','setup_region.project_code')->join('m_client','m_client.id','=','setup_project.client_id')->get();
         return DataTables::of($db)->addColumn('action',function($row){
             $btn = "<a href='/region/detail_region/$row->id' class='btn btn-primary btn-xs'><i class='fas fa-eye'></i> View</a>
             <a href='/region/edit_region/".$row->id."' class=\"btn btn-secondary btn-xs\"><i class=\"fas fa-user-edit\"></i> Edit</a>
@@ -41,18 +41,19 @@ class RegionController extends Controller
     public function store_region(Request $request){
         for($i=0;$i<count($request->region);$i++){
             $post = array(
+                'project_code'=>$request->region[$i]['project_code'],
                 'region_name'=>$request->region[$i]['region_name'],
                 'description'=>$request->region[$i]['region_description']
             );
-            DB::table('m_region')->insert($post);
+            DB::table('setup_region')->insert($post);
         }
         $confirmation = ['message' => 'Data Region success added','icon' => 'success', 'redirect'=>'/region'];
         return response()->json($confirmation);
     }
 
     public function detail_region($id){
-        $get_region = DB::table('m_region')->select('region_name','description')->where('m_region.id',$id)->first();
-        return view('master.region.detail',[
+        $get_region = DB::table('setup_region')->join('setup_project','setup_project.project_code','=','setup_region.project_code')->join('m_client','m_client.id','=','setup_project.client_id')->select('region_name','client_name',DB::Raw('m_client.id  AS client_id'),'setup_region.project_code','project_name','setup_region.description')->where('setup_region.id',$id)->first();
+        return view('project.region.detail',[
             'region' => $get_region,
             'title' => 'Master Region',
             'active_gm' => 'Master',
@@ -61,8 +62,8 @@ class RegionController extends Controller
     }
 
     public function edit_region($id){
-        $get_region = DB::table('m_region')->select('id','region_name','description')->where('m_region.id',$id)->first();
-        return view('master.region.edit',[
+        $get_region = DB::table('setup_region')->join('setup_project','setup_project.project_code','=','setup_region.project_code')->join('m_client','m_client.id','=','setup_project.client_id')->select('setup_region.id','region_name','client_name',DB::Raw('m_client.id  AS client_id'),'setup_region.project_code','project_name','setup_region.description')->where('setup_region.id',$id)->first();
+        return view('project.region.edit',[
             'region' => $get_region,
             'title' => 'Master Region',
             'active_gm' => 'Master',
@@ -73,19 +74,20 @@ class RegionController extends Controller
     public function update_region(Request $request){
         $post = array(
             'region_name'=>$request->region_name,
+            'project_code'=>$request->project_code,
             'description'=>$request->description,
             'updated_by'=>Auth::id(),
         );
-        DB::table('m_region')->where('id',$request->id)->update($post);
+        DB::table('setup_region')->where('id',$request->id)->update($post);
         $confirmation = ['message' => 'Data Region success updated','icon' => 'success', 'redirect'=>'/region'];
         return response()->json($confirmation);
     }
     
     public function delete_region(Request $request){
         $region_id = $request->region_id;
-        $get_data_region = DB::table('m_region')->where('id',$region_id)->first();
-        $delete_data_region = DB::table('m_region')->where('id',$region_id)->delete($region_id);
-        $getLocationByRegion = DB::table('m_location')->where('region_id',$request->region_id)->get();
+        $get_data_region = DB::table('setup_region')->where('id',$region_id)->first();
+        $delete_data_region = DB::table('setup_region')->where('id',$region_id)->delete($region_id);
+        $getLocationByRegion = DB::table('setup_location')->where('region_id',$request->region_id)->get();
         if($getLocationByRegion->count() > 0){
             $confirmation = ['message' => 'Data region ' . $get_data_region->region_name . ' contains one or several locations', 'icon' => 'success', 'redirect' => '/region'];
         }else{
@@ -99,8 +101,8 @@ class RegionController extends Controller
         return response()->json($confirmation);
     }
 
-    public function get_data_region_to_selected(){
-        $db = DB::table('m_region')->select('.id','region_name','description')->get();
+    public function get_data_region_to_selected(Request $request){
+        $db = DB::table('setup_region')->select('setup_region.id','region_name','client_name','project_name',DB::raw('setup_region.description AS region_description'))->join('setup_project','setup_project.project_code','=','setup_region.project_code')->join('m_client','m_client.id','=','setup_project.client_id')->where('setup_project.project_code',$request->project_code)->get();
         return response()->json($db);
     }
 }
