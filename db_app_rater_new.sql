@@ -897,15 +897,12 @@ CREATE TABLE `setup_area` (
   PRIMARY KEY (`id`),
   KEY `service_code` (`service_code`),
   CONSTRAINT `setup_area_ibfk_1` FOREIGN KEY (`service_code`) REFERENCES `m_service` (`service_code`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `setup_area` */
 
 insert  into `setup_area`(`id`,`area_name`,`location_id`,`service_code`,`description`,`created_at`,`created_by`,`updated_at`,`updated_by`) values 
-(1,'Security',1,'ses','mantap','2023-03-28 13:23:55',NULL,NULL,NULL),
-(2,'Driver',1,'las','jhgjh','2023-03-28 15:51:59',1,NULL,NULL),
-(3,'Gedung Pameran',1,'cls','gedung pameran','2023-03-28 11:17:33',1,NULL,NULL),
-(4,'Gedung Utama',1,'cls','sdsadsad','2023-03-28 15:48:07',1,NULL,NULL);
+(2,'Driver',3,'cls','test','2023-04-04 13:49:06',1,NULL,NULL);
 
 /*Table structure for table `setup_location` */
 
@@ -925,12 +922,12 @@ CREATE TABLE `setup_location` (
   UNIQUE KEY `location_name` (`location_name`),
   KEY `region_id` (`region_id`),
   CONSTRAINT `setup_location_ibfk_1` FOREIGN KEY (`region_id`) REFERENCES `setup_region` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `setup_location` */
 
 insert  into `setup_location`(`id`,`location_name`,`region_id`,`address`,`description`,`created_at`,`created_by`,`updated_at`,`updated_by`) values 
-(1,'Gedung Artefak Punung',1,'-','test saja1','2023-03-28 09:30:02',NULL,NULL,NULL);
+(3,'Gedung Arenas',1,NULL,NULL,'2023-04-04 08:25:50',NULL,NULL,NULL);
 
 /*Table structure for table `setup_project` */
 
@@ -955,7 +952,7 @@ CREATE TABLE `setup_project` (
 /*Data for the table `setup_project` */
 
 insert  into `setup_project`(`project_code`,`project_name`,`client_id`,`contract_start`,`contract_finish`,`created_at`,`created_by`,`updated_at`,`updated_by`) values 
-('BRIN JATIM20230403','BRIN JATIM',6,'2023-04-04 00:00:00','2023-05-06 00:00:00','2023-04-03 16:08:08',1,NULL,NULL);
+('BRIN20230404','BRIN',6,'2023-04-05 00:00:00','2023-05-31 00:00:00','2023-04-04 07:42:49',1,NULL,NULL);
 
 /*Table structure for table `setup_project_detail` */
 
@@ -984,22 +981,20 @@ DROP TABLE IF EXISTS `setup_region`;
 CREATE TABLE `setup_region` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `region_name` varchar(50) DEFAULT NULL,
+  `project_code` varchar(25) DEFAULT NULL,
   `description` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `created_by` int(11) DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
-  `project_code` varchar(25) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `region_name` (`region_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `setup_region` */
 
-insert  into `setup_region`(`id`,`region_name`,`description`,`created_at`,`created_by`,`updated_at`,`updated_by`,`project_code`) values 
-(1,'Jawa Timur','- Arkenas Gedung Artefak Punung','2023-03-27 15:37:39',NULL,NULL,NULL,NULL),
-(2,'testing reg 1',NULL,'2023-04-03 14:46:33',NULL,NULL,NULL,NULL),
-(3,'test reg 2',NULL,'2023-04-03 14:46:33',NULL,NULL,NULL,NULL);
+insert  into `setup_region`(`id`,`region_name`,`project_code`,`description`,`created_at`,`created_by`,`updated_at`,`updated_by`) values 
+(1,'Jawa Timur','BRIN20230404',NULL,'2023-04-04 07:45:04',NULL,NULL,NULL);
 
 /*Table structure for table `setup_sub_area` */
 
@@ -1017,20 +1012,13 @@ CREATE TABLE `setup_sub_area` (
   PRIMARY KEY (`id`),
   KEY `area_id` (`area_id`),
   CONSTRAINT `setup_sub_area_ibfk_1` FOREIGN KEY (`area_id`) REFERENCES `setup_area` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `setup_sub_area` */
 
 insert  into `setup_sub_area`(`id`,`sub_area_name`,`area_id`,`description`,`created_at`,`created_by`,`updated_at`,`updated_by`) values 
-(1,'Security Function',1,'test','2023-03-29 08:31:25',NULL,NULL,NULL),
-(2,'Driving Safety',2,NULL,'2023-03-29 07:30:14',NULL,NULL,NULL),
-(3,'Attendance',2,NULL,'2023-03-29 07:30:14',NULL,NULL,NULL),
-(4,'Ruangan',3,NULL,'2023-03-29 07:32:52',NULL,NULL,NULL),
-(5,'Toilet',3,NULL,'2023-03-29 07:32:52',NULL,NULL,NULL),
-(6,'Halaman',3,NULL,'2023-03-29 07:32:52',NULL,NULL,NULL),
-(7,'Ruang Penyimpanan Artefak',4,NULL,'2023-03-29 07:35:22',NULL,NULL,NULL),
-(8,'Toilet',4,NULL,'2023-03-29 07:35:52',NULL,NULL,NULL),
-(9,'Halaman',4,'test','2023-03-29 08:53:36',NULL,NULL,NULL);
+(1,'Driving Safety',2,NULL,'2023-04-04 14:38:22',NULL,NULL,NULL),
+(2,'Attendance',2,NULL,'2023-04-04 14:38:22',NULL,NULL,NULL);
 
 /*Table structure for table `users` */
 

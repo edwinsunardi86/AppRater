@@ -9,15 +9,15 @@ use Yajra\DataTables\DataTables as DataTables;
 class SubAreaController extends Controller
 {
     function index(){
-        return view('master.sub_area.index',[
-            'title' => 'Master Sub Area',
-            'active_gm' => 'Master',
+        return view('project.sub_area.index',[
+            'title' => 'Setup Sub Area',
+            'active_gm' => 'Setup Project',
             'active_m'=>'sub_area',
         ]);
     }
 
     function get_datatable_sub_area(){
-        $db = DB::table('m_sub_area')->join('m_area','m_area.id','=','m_sub_area.area_id')->join('m_location','m_location.id','=','m_area.location_id')->select('m_sub_area.id','m_sub_area.sub_area_name',DB::raw('m_sub_area.description AS sub_area_description'),'m_area.area_name',DB::raw('m_area.description AS area_description'),'location_name','m_location.address',DB::Raw('m_location.description AS location_description'),'region_name',DB::Raw('m_region.description AS region_description'))->join('m_region','m_region.id','=','m_location.region_id')->get();
+        $db = DB::table('setup_sub_area')->join('setup_area','setup_area.id','=','setup_sub_area.area_id')->join('setup_location','setup_location.id','=','setup_area.location_id')->join('setup_region','setup_region.id','=','setup_location.region_id')->join('setup_project','setup_project.project_code','=','setup_region.project_code')->join('m_client','m_client.id','=','setup_project.client_id')->select('setup_sub_area.id','setup_sub_area.sub_area_name',DB::raw('setup_sub_area.description AS sub_area_description'),'setup_area.area_name',DB::raw('setup_area.description AS area_description'),'location_name','setup_location.address',DB::Raw('setup_location.description AS location_description'),'region_name',DB::Raw('setup_region.description AS region_description'))->get();
         return Datatables::of($db)->addColumn('action', function($row){
             $btn = "<a href='/sub_area/detail_sub_area/$row->id' class='btn btn-primary btn-xs'><i class='fas fa-eye'></i> View</a>
             <a href='/sub_area/edit_sub_area/".$row->id."' class=\"btn btn-secondary btn-xs\"><i class=\"fas fa-user-edit\"></i> Edit</a>
@@ -30,9 +30,9 @@ class SubAreaController extends Controller
     }
 
     function add_sub_area(){
-        return view('master.sub_area.create',[
+        return view('project.sub_area.create',[
             'title' => 'Master Sub Area',
-            'active_gm' => 'Master',
+            'active_gm' => 'Setup Project',
             'active_m'=>'sub_area'
           ]);
     }
@@ -44,25 +44,25 @@ class SubAreaController extends Controller
                 'area_id'=>$request->area_id,
                 'description'=>$request->sub_area[$i]['sub_area_description']
             );
-            DB::table('m_sub_area')->insert($post);
+            DB::table('setup_sub_area')->insert($post);
         }
         $confirmation = ['message' => 'Data Sub Area success added','icon' => 'success', 'redirect'=>'/sub_area'];
         return response()->json($confirmation);
     }
 
     public function detail_sub_area($id){
-        $get_sub_area = DB::table('m_sub_area')->join('m_area','m_area.id','=','m_sub_area.area_id')->join('m_location','m_area.location_id','=','m_location.id')->join('m_region','m_location.region_id','=','m_region.id')->select(DB::Raw('m_area.id AS area_id'),'area_name',DB::Raw('m_area.description AS area_description,m_location.id AS location_id,m_sub_area.id AS sub_area_id,m_sub_area.description AS sub_area_description'),'sub_area_name')->where('m_sub_area.id',$id)->first();
-        return view('master.sub_area.detail',[
+        $get_sub_area = DB::table('setup_sub_area')->join('setup_area','setup_area.id','=','setup_sub_area.area_id')->join('setup_location','setup_area.location_id','=','setup_location.id')->join('setup_region','setup_location.region_id','=','setup_region.id')->join('setup_project','setup_project.project_code','=','setup_region.project_code')->join('m_client','m_client.id','=','setup_project.client_id')->join('m_service','m_service.service_code','=','setup_area.service_code')->select(DB::Raw('setup_area.id AS area_id'),'area_name',DB::Raw('setup_area.description AS area_description,setup_location.id AS location_id,setup_sub_area.id AS sub_area_id,setup_sub_area.description AS sub_area_description'),'location_name','setup_location.address','sub_area_name',DB::Raw('setup_region.id AS region_id'),'region_name',DB::Raw('setup_region.description AS region_description'),'m_service.service_code','service_name','setup_project.project_code','project_name',DB::Raw('m_client.id AS client_id'),'client_name')->where('setup_sub_area.id',$id)->first();
+        return view('project.sub_area.detail',[
             'sub_area' => $get_sub_area,
             'title' => 'Master Sub Area',
-            'active_gm' => 'Master',
+            'active_gm' => 'Setup Project',
             'active_m'=>'sub_area'
         ]);
     }
 
     public function edit_sub_area($id){
-        $get_sub_area = DB::table('m_sub_area')->join('m_area','m_area.id','=','m_sub_area.area_id')->join('m_location','m_area.location_id','=','m_location.id')->join('m_region','m_location.region_id','=','m_region.id')->select(DB::Raw('m_area.id AS area_id'),'area_name',DB::Raw('m_area.description AS area_description,m_location.id AS location_id,m_sub_area.id AS sub_area_id,m_sub_area.description AS sub_area_description'),'sub_area_name')->where('m_sub_area.id',$id)->first();
-        return view('master.sub_area.edit',[
+        $get_sub_area = DB::table('setup_sub_area')->join('setup_area','setup_area.id','=','setup_sub_area.area_id')->join('setup_location','setup_area.location_id','=','setup_location.id')->join('setup_region','setup_location.region_id','=','setup_region.id')->select(DB::Raw('setup_area.id AS area_id'),'area_name',DB::Raw('setup_area.description AS area_description,setup_location.id AS location_id,setup_sub_area.id AS sub_area_id,setup_sub_area.description AS sub_area_description'),'sub_area_name')->where('setup_sub_area.id',$id)->first();
+        return view('project.sub_area.edit',[
             'sub_area' => $get_sub_area,
             'title' => 'Master Sub Area',
             'active_gm' => 'Master',
@@ -80,7 +80,7 @@ class SubAreaController extends Controller
         if($get_detail_project->count() > 0){
             $confirmation = ['message' => 'Data Sub Area contains one or several setup project','icon' => 'error', 'redirect'=>'/sub_area'];
         }else{
-            $update = DB::table('m_sub_area')->where('id',$request->sub_area_id)->update($post);
+            $update = DB::table('setup_sub_area')->where('id',$request->sub_area_id)->update($post);
             if($update){
                 $confirmation = ['message' => 'Data Sub Area success updated','icon' => 'success', 'redirect'=>'/sub_area'];
             }else{
@@ -94,11 +94,11 @@ class SubAreaController extends Controller
     public function delete_sub_area(Request $request){
         $get_detail_project = DB::table('setup_project_detail')->where('sub_area_id',$request->sub_area_id)->get();
         $sub_area_id = $request->sub_area_id;
-        $get_data_sub_area = DB::table('m_sub_area')->where('id',$sub_area_id)->first();
+        $get_data_sub_area = DB::table('setup_sub_area')->where('id',$sub_area_id)->first();
         if($get_detail_project->count() > 0){
             $confirmation = ['message' => 'Data Sub Area contains one or several setup project','icon' => 'error', 'redirect'=>'/sub_area'];
         }else{
-            $delete_data_sub_area = DB::table('m_sub_area')->where('id',$sub_area_id)->delete($sub_area_id);
+            $delete_data_sub_area = DB::table('setup_sub_area')->where('id',$sub_area_id)->delete($sub_area_id);
             if($delete_data_sub_area){
                 $confirmation = ['message' => 'Data Sub Area ' . $get_data_sub_area->sub_area_name . ' success deleted', 'icon' => 'success', 'redirect' => '/sub_area'];
             }else{

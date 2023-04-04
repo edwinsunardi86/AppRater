@@ -40,8 +40,13 @@ class ProjectController extends Controller
             'contract_finish' => $contract_finish,
             'created_by' => Auth::id()
         );
-        DB::table('setup_project')->insert($post);
-        $confirmation = ['message' => 'Setup Project berhasil digenerate', 'icon' => 'success', 'redirect' => '/project'];
+        $insert_project = DB::table('setup_project')->insert($post);
+        if($insert_project){
+            $confirmation = ['message' => 'Project success added', 'icon' => 'success', 'redirect' => '/project'];
+        }else{
+            $confirmation = ['message' => 'Project failed added', 'icon' => 'success', 'redirect' => '/project'];
+        }
+        
         return response()->json($confirmation);
     }
 
