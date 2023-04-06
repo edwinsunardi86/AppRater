@@ -5,11 +5,11 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Dashboard Weekly</h1>
+                    <h1>Dashboard</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="#">Report</a></li>
+                    <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
                     <li class="breadcrumb-item active">Weekly</li>
                     </ol>
                 </div>
@@ -22,7 +22,7 @@
                 <div class="col-12">
                     <div class="card card-primary">
                         <div class="card-header">
-                            <h3 class="card-title">Dashboard Weekly</h3>
+                            <h3 class="card-title">Dashboard</h3>
                         </div>
                         <form method="post" id="form_evaluation" class="form-horizontal">
                         <div class="card-body">
@@ -38,7 +38,6 @@
                                 </div>
                             </div>
                             @endif
-                            <input type="hidden" name="role_id" id="role_id" value="{{ Auth::user()->role }}"/>
                             <div class="form-group row">
                                 <label for="inputClientDescription" class="col-sm-2 col-form-label">Client Description</label>
                                 <div class="col-sm-4">
@@ -85,8 +84,8 @@
                                     <select class="form-control" name="year_project" id="year_project"></select>
                                 </div>
                             </div>
+                            <div id="small-box-report" class="row"></div>
                         </div>
-                        <div id="small-box-report" class="row"></div>
                     </div>
                 </div>
             </div>
@@ -169,7 +168,7 @@ $(document).on('click','.pilih_client',function(){
         headers:{
             'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
         },
-        url:"/setup_project/getProjectSetupToSelected",
+        url:"/project/getProjectToSelected",
         type:"POST",
         dataType:"JSON",
         data:{
@@ -192,49 +191,21 @@ $(document).on('click','.pilih_client',function(){
         }
     });
 });
+
 $(document).ready(function(){
     $.ajax({
         headers:{
             'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
         },
-        url:"/setup_project/getProjectSetupToSelected",
+        url:"/region/getDataRegionToSelected",
         type:"POST",
         dataType:"JSON",
         data:{
-            client_id:$('#role_id').val() != 1 ? {{ Auth::id() }} : $('#client_id').val()
+            "project_code":$('#project_code').val(),
         },
         processData:true,
         success:function(data){
-            $('.tb_sub_area > tbody').empty();
-            $('select#project_code option').remove();
-            $('select#project_code').append($('<option>',{
-                    text:"Choice Project",
-                    value:""
-                }));
-            $.each(data,function(i,item){
-                $('select#project_code').append($('<option>',{
-                    text:data[i].project_name,
-                    value:data[i].project_code
-                }));
-            });
-        }
-    });
-});
-
-$(document).on('change','#project_code',function(){
-    $.ajax({
-        headers:{
-            'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
-        },
-        url:"/setup_project/getRegionSetupProject",
-        type:"POST",
-        dataType:"JSON",
-        data:{
-            client_id:$('#role_id').val() != 1 ? {{ Auth::id() }} : $('#client_id').val()
-        },
-        processData:true,
-        success: function(data){
-            $('.tb_sub_area > tbody').empty();
+            $('.table_add_location > tbody').empty();
             $('select#region_name option').remove();
             $('select#region_name').append($('<option>',{
                     text:"Choice Region",
@@ -246,7 +217,36 @@ $(document).on('change','#project_code',function(){
                     value:data[i].id
                 }));
             });
+        }
+    });
+});
+
+$(document).on('change','#project_code',function(){
+    $.ajax({
+        headers:{
+            'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
         },
+        url:"/region/getDataRegionToSelected",
+        type:"POST",
+        dataType:"JSON",
+        data:{
+            "project_code":$('#project_code').val(),
+        },
+        processData:true,
+        success:function(data){
+            $('.table_add_location > tbody').empty();
+            $('select#region_name option').remove();
+            $('select#region_name').append($('<option>',{
+                    text:"Choice Region",
+                    value:""
+                }));
+            $.each(data,function(i,item){
+                $('select#region_name').append($('<option>',{
+                    text:data[i].region_name,
+                    value:data[i].id
+                }));
+            });
+        }
     });
 });
 
@@ -255,12 +255,11 @@ $(document).on('change','#region_name',function(){
         headers:{
             'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
         },
-        url:"/setup_project/getLocationSetupProject",
+        url:"/location/getDataLocationToSelected",
         type:"POST",
         dataType:"JSON",
         data:{
-            project_code:$('#project_code').val(),
-            region_id:$('#region_name').val()
+            region_id:$('#region_name').val(),
         },
         processData:true,
         success: function(data){
@@ -347,7 +346,27 @@ $(document).on('change','#year_project,#month_project',function(){
                                   "<a href=\"#\" class=\"small-box-footer\">More info <i class=\"fas fa-arrow-circle-right\"></i></a>"+
                                 "</div>"+
                             "</div>";
-                $('#small-box-report').append(smallbox);
+
+                var cardbox =   "<div class=\"card card-primary card-outline  mr-2\">"+
+                                    "<div class=\"card-body\">"+
+                                        "<div class=\"text-center mb-n4\">"+
+                                            "<h5>"+data[i].YEAR+" - WEEK "+data[i].MONTH+"</h5>"+
+                                        "</div>"+
+                                        "<div class=\"text-center\">"+
+                                            "<h1 class=\"mb-n2\" style=\"font-size:75px;\">"+kategori+"</h1>"+
+                                            "<h4 class=\"mb-n2\">"+data[i].score+" %</h4>"+
+                                        "</div>"+
+                                    "</div>"+
+                                    "<div class=\"card-footer text-center\">"+
+                                        "<div class=\"icon\">"+
+                                                "<i class=\"ion ion-stats-bars\"></i>"+
+                                        "</div>"+
+                                        "<a href=\"#\" class=\"small-box-footer\">More info <i class=\"fas fa-arrow-circle-right\"></i></a>"+
+                                    "</div>"
+                                "</div>";
+
+                    
+                $('#small-box-report').append(cardbox);
             });
         }
     });

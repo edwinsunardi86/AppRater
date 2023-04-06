@@ -127,7 +127,7 @@ class AreaController extends Controller
     }
 
     public function get_data_area_to_selected(Request $request){
-        $db = DB::table('setup_area')->select('setup_area.id','setup_area.area_name',DB::Raw('setup_area.description AS area_description'))->get();
+        $db = DB::table('setup_area')->select('setup_area.id','setup_area.area_name',DB::Raw('setup_area.description AS area_description'))->where('setup_area.location_id',$request->location_id)->get();
         return response()->json($db);
     }
 

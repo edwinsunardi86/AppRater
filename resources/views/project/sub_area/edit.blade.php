@@ -5,11 +5,11 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Master Area</h1>
+                    <h1>Setup Sub Area</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="#">Master</a></li>
+                    <li class="breadcrumb-item"><a href="#">Setup</a></li>
                     <li class="breadcrumb-item active">Sub Area</li>
                     </ol>
                 </div>
@@ -22,7 +22,7 @@
                 <div class="col-12">
                     <div class="card card-primary">
                         <div class="card-header">
-                            <h3 class="card-title">Form Sub Area</h3>
+                            <h3 class="card-title">Edit Sub Area</h3>
                         </div>
                         <form method="post" id="form_sub_area" class="form-horizontal">
                             @csrf
@@ -30,8 +30,8 @@
                                 <div class="form-group row">
                                     <label for="inputClientName" class="col-sm-2 col-form-label">Client Name</label>
                                     <div class="col-sm-4">
-                                        <input type="text" class="form-control" name="client_name" id="client_name" readonly>
-                                        <input type="hidden" class="form-control" name="client_id" id="client_id" readonly>
+                                        <input type="text" class="form-control" name="client_name" id="client_name" value="{{ $sub_area->client_name }}" readonly>
+                                        <input type="hidden" class="form-control" name="client_id" id="client_id" value="{{ $sub_area->client_id }}" readonly>
                                     </div>
                                     <div class="col-sm-2">
                                         <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#modal-xl">Cari</button>
@@ -40,13 +40,16 @@
                                 <div class="form-group row">
                                     <label for="projectName" class="col-sm-2 col-form-label">Project Name</label>
                                     <div class="col-sm-4">
-                                        <select name="project_code" id="project_code" class="form-control select2"></select>
+                                        <select name="project_code" id="project_code" class="form-control select2">
+                                            <option value="{{ $sub_area->project_code }}">{{ $sub_area->project_name }}</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label for="selectRegionName" class="col-sm-2 col-form-label">Region Name</label>
                                     <div class="col-sm-4">
                                         <select name="region_name" id="region_name" class="form-control select2">
+                                            <option value="{{ $sub_area->region_id }}">{{ $sub_area->region_name }}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -54,6 +57,7 @@
                                     <label for="selectLocationName" class="col-sm-2 col-form-label">Location Name</label>
                                     <div class="col-sm-4">
                                         <select name="location_name" id="location_name" class="form-control select2">
+                                            <option value="{{ $sub_area->location_id }}">{{ $sub_area->location_name }}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -61,6 +65,7 @@
                                     <label for="selectAreaName" class="col-sm-2 col-form-label">Area Name</label>
                                     <div class="col-sm-4">
                                         <select name="area_name" id="area_name" class="form-control select2">
+                                            <option value="{{ $sub_area->area_id }}">{{ $sub_area->area_name }}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -74,7 +79,7 @@
                                     <label for="inputSubAreaName" class="col-sm-2 col-form-label">Sub Area Name</label>
                                     <div class="col-sm-4">
                                         <input type="text" class="form-control" name="sub_area_name" id="sub_area_name" value="{{ $sub_area->sub_area_name}}">
-                                        <input type="hidden" name="sub_area_id" id="sub_area_id" value="{{ $sub_area->sub_area_id}}">
+                                        <input type="hidden" name="sub_area_id" id="sub_area_id" value="{{ $sub_area->sub_area_id }}">
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -153,6 +158,9 @@
     });
 });
 $(document).on('change','#region_name',function(){
+    $('#location_name option').remove();
+    $('#area_name option').remove();
+    $("#sub_area_name").val("");
     $.ajax({
         headers:{
             'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
@@ -190,6 +198,10 @@ $(document).on('change','#region_name',function(){
 });
 
 $(document).on('click','.pilih_client',function(){
+    $('#region_name option').remove();
+    $('#location_name option').remove();
+    $('#area_name option').remove();
+    $("#sub_area_name").val("");
     $('#client_id').val(($(this).attr('data-id')));
     $('#client_name').val(($(this).attr('data-client_name')));
     $('#client_description').val($(this).attr('data-client-description'));
@@ -223,6 +235,10 @@ $(document).on('click','.pilih_client',function(){
 });
 
 $(document).on('change','#project_code',function(){
+    $('#region_name option').remove();
+    $('#location_name option').remove();
+    $('#area_name option').remove();
+    $("#sub_area_name").val("");
     $.ajax({
         headers:{
             'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
@@ -250,35 +266,118 @@ $(document).on('change','#project_code',function(){
         }
     });
 });
-$('#form_sub_area').submit(function(e){
-    e.preventDefault();
-    
+
+$(document).on('change','#location_name',function(){
+    $('#area_name option').empty();
+    $("#sub_area_name").val("");
     $.ajax({
         headers:{
             'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
         },
-        url:"/sub_area/update_sub_area",
+        url:"/area/getDataAreaSelected",
         type:"POST",
         dataType:"JSON",
         data:{
-            sub_area_id:$('#sub_area_id').val(),
-            sub_area_name:$('#sub_area_name').val(),
-            area_id:$('#area_name').val(),
-            sub_area_description:$('#sub_area_description').val()
+            "location_id":$('#location_name').val(),
         },
         processData:true,
-        success: function(data){
-            Swal.fire({
-                title:data.title,
-                html:data.message,
-                icon:data.icon
+        success:function(data){
+            $('select#area_name').empty();
+            $('select#area_name').append($('<option>',{
+                    text:"Choice Area",
+                    value:""
+            }));
+            $.each(data,function(i,item){
+                $('select#area_name').append($('<option>',{
+                    text:data[i].area_name,
+                    value:data[i].id
+                }));
             });
-            setTimeout(() => {
-                window.location.href=data.redirect;
-            }, 1500);
         }
     });
 });
+
+$(document).on('change','#area_name',function(){
+    $("#sub_area_name").val("");
+});
+$(document).ready(function(){
+    $('#form_sub_area').validate({
+    rules:{
+        area_name:{
+            required:true,
+        },
+        location_name:{
+            required:true,
+        },
+        region_name:{
+            required:true
+        },
+        project_code:{
+            required:true
+        },
+        client_name:{
+            required:true
+        }
+    },
+    messages:{
+        area_name:{
+            required:"Please choice area name"
+        },
+        location_name:{
+            required:"Please choice location"
+        },
+        region_name:{
+            required:"Please choice region"
+        },
+        project_code:{
+            required:"Please choice project"
+        },
+        client_name:{
+            required:"Please choice client name"
+        }
+    },
+    errorElement: 'span',
+            errorPlacement: function (error, element) {
+            error.addClass('invalid-feedback');
+            element.closest('.form-group').append(error);
+        },
+        highlight: function (element, errorClass, validClass) {
+            $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element, errorClass, validClass) {
+            $(element).removeClass('is-invalid');
+        },
+        submitHandler: function() {
+            $.ajax({
+                headers:{
+                    'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+                },
+                url:"/sub_area/update_sub_area",
+                type:"POST",
+                dataType:"JSON",
+                data:{
+                    sub_area_id:$('#sub_area_id').val(),
+                    sub_area_name:$('#sub_area_name').val(),
+                    area_id:$('#area_name').val(),
+                    sub_area_description:$('#sub_area_description').val()
+                },
+                processData:true,
+                success: function(data){
+                    Swal.fire({
+                        title:data.title,
+                        html:data.message,
+                        icon:data.icon
+                    });
+                    setTimeout(() => {
+                        window.location.href=data.redirect;
+                    }, 1500);
+                }
+            });
+        }
+    });
+});
+
+
 
 // $.get('/area/getDataAreaSelected',function(data,status){
 //     $('#area_name').append($('<option>',{

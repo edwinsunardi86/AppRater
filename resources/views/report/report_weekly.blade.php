@@ -168,7 +168,7 @@ $(document).on('click','.pilih_client',function(){
         headers:{
             'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
         },
-        url:"/setup_project/getProjectSetupToSelected",
+        url:"/project/getProjectToSelected",
         type:"POST",
         dataType:"JSON",
         data:{
@@ -197,44 +197,15 @@ $(document).ready(function(){
         headers:{
             'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
         },
-        url:"/setup_project/getProjectSetupToSelected",
+        url:"/region/getDataRegionToSelected",
         type:"POST",
         dataType:"JSON",
         data:{
-            client_id:{{ Auth::user()->role <> 1 }} ? {{ Auth::id() }} : $('#client_id').val()
+            "project_code":$('#project_code').val(),
         },
         processData:true,
         success:function(data){
-            $('.tb_sub_area > tbody').empty();
-            $('select#project_code option').remove();
-            $('select#project_code').append($('<option>',{
-                    text:"Choice Project",
-                    value:""
-                }));
-            $.each(data,function(i,item){
-                $('select#project_code').append($('<option>',{
-                    text:data[i].project_name,
-                    value:data[i].project_code
-                }));
-            });
-        }
-    });
-});
-
-$(document).on('change','#project_code',function(){
-    $.ajax({
-        headers:{
-            'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
-        },
-        url:"/setup_project/getRegionSetupProject",
-        type:"POST",
-        dataType:"JSON",
-        data:{
-            client_id:{{ Auth::user()->role <> 1 }} ? {{ Auth::id() }} : $('#client_id').val()
-        },
-        processData:true,
-        success: function(data){
-            $('.tb_sub_area > tbody').empty();
+            $('.table_add_location > tbody').empty();
             $('select#region_name option').remove();
             $('select#region_name').append($('<option>',{
                     text:"Choice Region",
@@ -246,7 +217,36 @@ $(document).on('change','#project_code',function(){
                     value:data[i].id
                 }));
             });
+        }
+    });
+});
+
+$(document).on('change','#project_code',function(){
+    $.ajax({
+        headers:{
+            'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
         },
+        url:"/region/getDataRegionToSelected",
+        type:"POST",
+        dataType:"JSON",
+        data:{
+            "project_code":$('#project_code').val(),
+        },
+        processData:true,
+        success:function(data){
+            $('.table_add_location > tbody').empty();
+            $('select#region_name option').remove();
+            $('select#region_name').append($('<option>',{
+                    text:"Choice Region",
+                    value:""
+                }));
+            $.each(data,function(i,item){
+                $('select#region_name').append($('<option>',{
+                    text:data[i].region_name,
+                    value:data[i].id
+                }));
+            });
+        }
     });
 });
 
@@ -255,12 +255,11 @@ $(document).on('change','#region_name',function(){
         headers:{
             'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
         },
-        url:"/setup_project/getLocationSetupProject",
+        url:"/location/getDataLocationToSelected",
         type:"POST",
         dataType:"JSON",
         data:{
-            project_code:$('#project_code').val(),
-            region_id:$('#region_name').val()
+            region_id:$('#region_name').val(),
         },
         processData:true,
         success: function(data){

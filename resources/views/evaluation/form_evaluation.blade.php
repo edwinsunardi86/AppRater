@@ -165,7 +165,7 @@ $(document).on('click','.pilih_client',function(){
         headers:{
             'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
         },
-        url:"/setup_project/getProjectSetupToSelected",
+        url:"/project/getProjectToSelected",
         type:"POST",
         dataType:"JSON",
         data:{
@@ -194,11 +194,11 @@ $(document).on('change','#project_code',function(){
         headers:{
             'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
         },
-        url:"/setup_project/getRegionSetupProject",
+        url:"/region/getDataRegionToSelected",
         type:"POST",
         dataType:"JSON",
         data:{
-            client_id:$('#client_id').val()
+            project_code:$('#project_code').val()
         },
         processData:true,
         success: function(data){
@@ -223,11 +223,10 @@ $(document).on('change','#region_name',function(){
         headers:{
             'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
         },
-        url:"/setup_project/getLocationSetupProject",
+        url:"/location/getDataLocationToSelected",
         type:"POST",
         dataType:"JSON",
         data:{
-            project_code:$('#project_code').val(),
             region_id:$('#region_name').val()
         },
         processData:true,
@@ -253,11 +252,10 @@ $(document).on('change','#location_name',function(){
         headers:{
             'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
         },
-        url:"/setup_project/getAreaSubAreaSetupProject",
+        url:"/sub_area/getDataSubAreaSelected",
         type:"POST",
         dataType:"JSON",
         data:{
-            project_code:$('#project_code').val(),
             location_id:$('#location_name').val()
         },
         processData:true,

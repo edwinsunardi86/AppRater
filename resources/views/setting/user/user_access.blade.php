@@ -106,37 +106,60 @@
                             <div class="card-body">
                                 <div class="mb-6">
                                     <div class="form-group row">
-                                        <label for="inputClient" class="col-form-label col-sm-2">Perusahaan/Client</label>
-                                        <div class="col-sm-8">
-                                          @php 
-                                          $arr_authority = explode(",",$authority);
-                                          $in_authority = array();
-                                          @endphp
-                                          <select class="form-control" id="company" name="company" data-placeholder="Select a Company" required>
-                                                <option value="">Choice</option>
-                                              @php
-                                              foreach($arr_authority as $row){
-                                                  array_push($in_authority,$row);
-                                              }
-                                              @endphp
-                                              @foreach($company as $row)
-                                                  <option value="{{ $row->id }}" {{ in_array($row->client_name,$in_authority) ? 'selected':''}}>{{ $row->client_name }}</option>
-                                              @endforeach
-                                          </select>
+                                        <label for="inputClientName" class="col-sm-2 col-form-label">Client Name</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" class="form-control" name="client_name" id="client_name" readonly>
+                                            <input type="hidden" class="form-control" name="client_id" id="client_id" readonly>
                                         </div>
-                                      </div>
-                                      <div class="form-group row">
+                                        <div class="col-sm-2">
+                                            <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#modal-xl">Cari</button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
                                         <label for="choiceProject" class="col-form-label col-sm-2">Project</label>
                                         <div class="col-sm-8">
                                             <select class="form-control select2" name="project_code" id="project_code"></select>
                                         </div>
                                     </div>
+                                    <div class="div_region">
+
+                                    </div>
+                                    {{-- <div class="card card-info card-outline">
+                                        <div class="card-header">
+                                          <h5 class="card-title">Create Labels</h5>
+                                          <div class="card-tools">
+                                            <a href="#" class="btn btn-tool btn-link">#3</a>
+                                            <a href="#" class="btn btn-tool">
+                                              <i class="fas fa-pen"></i>
+                                            </a>
+                                          </div>
+                                        </div>
+                                        <div class="card-body">
+                                          <div class="custom-control custom-checkbox">
+                                            <input class="custom-control-input" type="checkbox" id="customCheckbox1" disabled>
+                                            <label for="customCheckbox1" class="custom-control-label">Bug</label>
+                                          </div>
+                                          <div class="custom-control custom-checkbox">
+                                            <input class="custom-control-input" type="checkbox" id="customCheckbox2" disabled>
+                                            <label for="customCheckbox2" class="custom-control-label">Feature</label>
+                                          </div>
+                                          <div class="custom-control custom-checkbox">
+                                            <input class="custom-control-input" type="checkbox" id="customCheckbox3" disabled>
+                                            <label for="customCheckbox3" class="custom-control-label">Enhancement</label>
+                                          </div>
+                                          <div class="custom-control custom-checkbox">
+                                            <input class="custom-control-input" type="checkbox" id="customCheckbox4" disabled>
+                                            <label for="customCheckbox4" class="custom-control-label">Documentation</label>
+                                          </div>
+                                          <div class="custom-control custom-checkbox">
+                                            <input class="custom-control-input" type="checkbox" id="customCheckbox5" disabled>
+                                            <label for="customCheckbox5" class="custom-control-label">Examples</label>
+                                          </div>
+                                        </div>
+                                      </div> --}}
                                 </div>
                             </div>
                         </form>
-                    </div>
-                    <div class="card-project">
-
                     </div>
                 </div>
                 @endif
@@ -144,8 +167,97 @@
         </div>
     </section>
 </div>
+<div class="modal fade" id="modal-xl">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Data Client</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="overflow:scroll">
+                <table id="table_client" class="diplay table table-bordered table-striped table-hover" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Client Name</th>
+                            <th>Address</th>
+                            <th>Contact 1</th>
+                            <th>Contact 2</th>
+                            <th>Mobile</th>
+                            <th>Description</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
 <script>
+$(document).on('click','.pilih_client',function(){
+    $('#client_id').val(($(this).attr('data-id')));
+    $('#client_name').val(($(this).attr('data-client_name')));
+    $('#client_description').val($(this).attr('data-client-description'));
+    $('#modal-xl').modal('toggle');
+    $.ajax({
+        headers:{
+            'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+        },
+        url:"/project/getProjectToSelected",
+        type:"POST",
+        dataType:"JSON",
+        data:{
+            "client_id":$('#client_id').val(),
+        },
+        processData:true,
+        success:function(data){
+            $('.tb_sub_area > tbody').empty();
+            $('select#project_code option').remove();
+            $('select#project_code').append($('<option>',{
+                    text:"Choice Project",
+                    value:""
+                }));
+            $.each(data,function(i,item){
+                $('select#project_code').append($('<option>',{
+                    text:data[i].project_name,
+                    value:data[i].project_code
+                }));
+            });
+        }
+    });
+});
 $(document).ready(function(){
+    var i = 1;
+    var tb_client = $('#table_client').DataTable({
+    processing:true,
+    serverSide:true,
+    destroy: true,
+    ajax:'{!! route("data_client_to_selected:dt") !!}',
+    columns:[
+        {data:'', name:'', render:function(row, type, set){
+            return i++;
+        }},
+        { data:'client_name', name:'client_name' },
+        { data:'address', name:'address' },
+        { data: 'contact1', name:'contact1' },
+        { data: 'contact2', name: 'contact2' },
+        { data: 'contact_mobile', name: 'contact_mobile'},
+        { data: 'description', name: 'description'},
+        { data: 'action', name: 'action'}
+        ],
+    });
+
     $('input[name="check_all[]"]').each(function(){
         if($(this).val()=='all'){
             var number = this.id.match(/\d+/);
@@ -255,55 +367,57 @@ $(document).on('change','#company',function(){
     });
 });
 
-$(document).on('change','#project_code', function(){
+$(document).on('change','#project_code',function(){
     $.ajax({
         headers:{
-            'X-CSRF-TOKEN' : $('meta[name=csrf-token]').attr('content')
+            'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
         },
-        url:'/setup_project/getLocationSetupProject',
-        type:'POST',
-        dataType:'JSON',
+        url:"/region/getDataRegionToSelected",
+        type:"POST",
+        dataType:"JSON",
         data:{
-            project_code:$('#project_code').val()
+            "project_code":$('#project_code').val(),
         },
         processData:true,
         success:function(data){
-            $('.card-project').empty();
-
             $.each(data,function(i,item){
+                var region = "<div class=\"card card-info card-outline col-6\">"+
+                            "<div class=\"card-header text-right\">"+
+                                "<h5 class=\"card-title\">Region "+data[i].region_name+"</h5><a class=\"btn-primary btn-sm\" data-toggle=\"collapse\" href=\"#collapseExample\" role=\"button\" aria-expanded=\"false\" aria-controls=\"collapseExample\"><i class=\"fa-solid fa-window-minimize\"></i></a>"+
+                            "</div>"+
+                            "<div class=\"card-body collapse\" id=\"collapseExample\"><div class=\"custom-control cxustom-checkbox\">"+
+                                    "<input class=\"custom-control-input\" type=\"checkbox\" id=\"customCheckbox1\" disabled>"+
+                                    "<label for=\"customCheckbox1\" class=\"custom-control-label\">Bug</label>"+
+                                    "</div>";
                 $.ajax({
                     headers:{
-                        'X-CSRF-TOKEN' : $('meta[name=csrf-token]').attr('content')
+                        'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
                     },
-                    url:'/setup_project/getAreaSetupProject',
+                    url:"/location/getDataLocationToSelected",
                     type:"POST",
                     dataType:"JSON",
                     data:{
-                        location_id:data[i].location_id
+                        "region_id":data[i].id,
                     },
                     processData:true,
-                    contentType:false,
-                    success:function(data_area){
-                        console.log(data_area);
-                        $.each(data_area,function(a,item){
-                            $("#card-location-"+data[i].location_id).closest(".card_area").append(data_area[a].area_name);
-                            //$('.card-area').append(data_area[a].area_name);
+                    success:function(data_location){
+                        region+="sdasd";
+                        $.each(data_location,function(a,location){
+                            region+="<div class=\"custom-control cxustom-checkbox\">"+
+                                    "<input class=\"custom-control-input\" type=\"checkbox\" id=\"customCheckbox1\" disabled>"+
+                                    "<label for=\"customCheckbox1\" class=\"custom-control-label\">Bug</label>"+
+                                    "</div>";
                         });
                     }
                 });
-                var card_outline = "<div class=\"card card-primary card-outline\" id=\"card-location-"+data[i].location_id+"\">"+
-                    "<div class=\"card-body\"\">"+
-                    "<h5 class=\"card-title\" id=\"card-title"+data[i].location_id+"\">"+data[i].location_name+"</h5>"+
-                    "<div class=\"card-area\"></div>"+
-                    "<a href=\"#\" class=\"card-link\">Card link</a>"+
-                    "<a href=\"#\" class=\"card-link\">Another link</a>"+
-                    "</div>"+
-                "</div>";
-                $('.card-project').append(card_outline);
+                region += "</div>"+
+                        "</div>"
+                $('.div_region').append(region);
             });
         }
     });
 });
+
 
 $('#btn_submit_authority').click(function(e){
     var url = window.location.href;
