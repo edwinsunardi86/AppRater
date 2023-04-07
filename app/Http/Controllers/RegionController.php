@@ -32,8 +32,8 @@ class RegionController extends Controller
 
     public function add_region(){
         return view('project.region.create',[
-          'title' => 'Master Region',
-          'active_gm' => 'Master',
+          'title' => 'Setup Region',
+          'active_gm' => 'Setup Project',
           'active_m'=>'region'
         ]);
     }

@@ -121,42 +121,9 @@
                                             <select class="form-control select2" name="project_code" id="project_code"></select>
                                         </div>
                                     </div>
-                                    <div class="div_region">
+                                    <div class="div_region row">
 
                                     </div>
-                                    {{-- <div class="card card-info card-outline">
-                                        <div class="card-header">
-                                          <h5 class="card-title">Create Labels</h5>
-                                          <div class="card-tools">
-                                            <a href="#" class="btn btn-tool btn-link">#3</a>
-                                            <a href="#" class="btn btn-tool">
-                                              <i class="fas fa-pen"></i>
-                                            </a>
-                                          </div>
-                                        </div>
-                                        <div class="card-body">
-                                          <div class="custom-control custom-checkbox">
-                                            <input class="custom-control-input" type="checkbox" id="customCheckbox1" disabled>
-                                            <label for="customCheckbox1" class="custom-control-label">Bug</label>
-                                          </div>
-                                          <div class="custom-control custom-checkbox">
-                                            <input class="custom-control-input" type="checkbox" id="customCheckbox2" disabled>
-                                            <label for="customCheckbox2" class="custom-control-label">Feature</label>
-                                          </div>
-                                          <div class="custom-control custom-checkbox">
-                                            <input class="custom-control-input" type="checkbox" id="customCheckbox3" disabled>
-                                            <label for="customCheckbox3" class="custom-control-label">Enhancement</label>
-                                          </div>
-                                          <div class="custom-control custom-checkbox">
-                                            <input class="custom-control-input" type="checkbox" id="customCheckbox4" disabled>
-                                            <label for="customCheckbox4" class="custom-control-label">Documentation</label>
-                                          </div>
-                                          <div class="custom-control custom-checkbox">
-                                            <input class="custom-control-input" type="checkbox" id="customCheckbox5" disabled>
-                                            <label for="customCheckbox5" class="custom-control-label">Examples</label>
-                                          </div>
-                                        </div>
-                                      </div> --}}
                                 </div>
                             </div>
                         </form>
@@ -376,19 +343,18 @@ $(document).on('change','#project_code',function(){
         type:"POST",
         dataType:"JSON",
         data:{
-            "project_code":$('#project_code').val(),
+            "project_code":$('#project_code').val(), 
         },
         processData:true,
         success:function(data){
+            var region = "";
             $.each(data,function(i,item){
-                var region = "<div class=\"card card-info card-outline col-6\">"+
+                region = "<div class=\"card card-info card-outline col-6\">"+
                             "<div class=\"card-header text-right\">"+
-                                "<h5 class=\"card-title\">Region "+data[i].region_name+"</h5><a class=\"btn-primary btn-sm\" data-toggle=\"collapse\" href=\"#collapseExample\" role=\"button\" aria-expanded=\"false\" aria-controls=\"collapseExample\"><i class=\"fa-solid fa-window-minimize\"></i></a>"+
+                                "<h5 class=\"card-title\">Region "+data[i].region_name+"</h5>"+
                             "</div>"+
-                            "<div class=\"card-body collapse\" id=\"collapseExample\"><div class=\"custom-control cxustom-checkbox\">"+
-                                    "<input class=\"custom-control-input\" type=\"checkbox\" id=\"customCheckbox1\" disabled>"+
-                                    "<label for=\"customCheckbox1\" class=\"custom-control-label\">Bug</label>"+
-                                    "</div>";
+                            "<div class=\"card-body\" id=\"div_location"+i+"\"></div></div>";
+                $('.div_region').append(region);
                 $.ajax({
                     headers:{
                         'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
@@ -401,18 +367,16 @@ $(document).on('change','#project_code',function(){
                     },
                     processData:true,
                     success:function(data_location){
-                        region+="sdasd";
-                        $.each(data_location,function(a,location){
-                            region+="<div class=\"custom-control cxustom-checkbox\">"+
-                                    "<input class=\"custom-control-input\" type=\"checkbox\" id=\"customCheckbox1\" disabled>"+
-                                    "<label for=\"customCheckbox1\" class=\"custom-control-label\">Bug</label>"+
-                                    "</div>";
+                        var location="";
+                        $.each(data_location,function(a,item){
+                            location ="<div class=\"custom-control custom-checkbox\">"+
+                            "<input class=\"custom-control-input\" type=\"checkbox\" id=\"region"+i+"location"+a+"\" name=\"location[]\" value='"+data_location[a].location_id+"'>"+
+                            "<label for=\"region"+i+"location"+a+"\" class=\"custom-control-label\">"+data_location[a].location_name+"</label>"+
+                            "</div>";
+                            $('#div_location'+i).append(location);
                         });
                     }
                 });
-                region += "</div>"+
-                        "</div>"
-                $('.div_region').append(region);
             });
         }
     });

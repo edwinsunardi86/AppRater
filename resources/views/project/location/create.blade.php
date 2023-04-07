@@ -173,6 +173,7 @@ $(document).on('change','#project_code',function(){
         counter++;
     });
     $('#addRow').click();
+    
     $('#form_location').validate({
         rules:{
             region_name: {
@@ -181,7 +182,7 @@ $(document).on('change','#project_code',function(){
         },
         messages: {
                 region_name:{
-                    required: "Mohon Pilih Region Anda"
+                    required: "Please Choice Region"
                 }
             },
         errorElement: 'span',
@@ -229,7 +230,11 @@ $(document).on('change','#project_code',function(){
                 }
             });
         }
-    });        
+    });   
+        $('#form_location input[name="location_name[]"]').each(function(){
+            $(this).rules("add",{ required:true});
+        });
+   
 });
 
 $(document).on('click','.pilih_client',function(){
