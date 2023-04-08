@@ -81,7 +81,7 @@
                                         <textarea class="form-control" name="description" id="description" rows="5"></textarea>
                                     </div>
                                 </div>
-                                <div class="form-group row">
+                                {{-- <div class="form-group row">
                                     <label for="selectServiceName" class="col-sm-2 col-form-label">Service</label>
                                     <div class="col-sm-4">
                                         <select name="service" id="service" class="form-control">
@@ -91,7 +91,18 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                </div>
+                                </div> --}}
+                                <button type="button" id="addRow" class="btn btn-xl btn-primary mb-5 ml-2">Add New Row</button>
+                                <button type="button" id="removeRow" class="btn btn-xl btn-danger mb-5 ml-2">Remove Row</button>
+                                <table id="table_add_area" class="table table-bordered table-stripped" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Area</th>
+                                            <th>Service</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                </table>
                                 <button type="submit" class="btn btn-primary btn-md">Submit</button> 
                             </div>
                         </form>
@@ -139,7 +150,45 @@
     <!-- /.modal-dialog -->
 </div>
 <script>
+
 $(document).ready(function(){
+    var counter = 0;
+    var tb_area = $('#table_add_area').DataTable();
+    var arr_service = new Array();
+    var opt_service = "";
+    $.ajax({
+            headers:{
+                'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+            },
+            url:"/area/getDataService",
+            type:"GET",
+            dataType:"JSON",
+            processData:true,
+            success: function(data_service){
+            //console.log(data);
+                
+                $.each(data_service,function(i,item){
+                    opt_service +="<option value="+data_service[i].service_code+">"+data_service[i].service_name+"</option>";
+                    
+                });
+            
+            }        
+        });
+        
+    $('#addRow').on('click',function(){
+        tb_area.row.add(['<input type="text" name="area_name[]" id="area_name'+counter+'" class="form-control form-control-sm" required data-msg="Please input field area"/>','<select class="form-control" name="service_code[]" id="service_code'+counter+'"></select>','<textarea class="form-control form-control-sm" id="area_description'+counter+'" name="area_description[]" rows="7" cols="20">']).draw(false);
+            $('select#service_code'+counter).append(opt_service);
+            alert(opt_service);
+        counter++;
+    });
+
+    $('#removeRow').on('click',function(){
+        tb_area.row('.selected').remove().draw(false);
+    });
+
+    $('#table_add_area tbody').on('click', 'tr', function () {
+        $(this).toggleClass('selected');
+    });
     var i = 1;
     var tb_client = $('#table_client').DataTable({
     processing:true,
@@ -194,15 +243,15 @@ $(document).ready(function(){
             $(element).removeClass('is-invalid');
         },
         submitHandler: function() {
-            // var area_name = $('input[name^="area_name[]"]').length
-            // var arr_area = new Array();
-            // for(var i = 1;i <= area_name;i++){
-            //     arr_area.push({
-            //         'area_name': $('#area_name'+i).val(),
-            //         'area_description': $('#area_description'+i).val(),
-            //         'service' : $('#service'+i).val(),
-            //     });
-            // }
+            var area_name = $('input[name^="area_name[]"]').length
+            var arr_area = new Array();
+            for(var i = 1;i <= area_name;i++){
+                arr_area.push({
+                    'area_name': $('#area_name'+i).val(),
+                    'area_description': $('#area_description'+i).val(),
+                    'service' : $('#service'+i).val(),
+                });
+            }
             $.ajax({
                 headers:{
                     'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')

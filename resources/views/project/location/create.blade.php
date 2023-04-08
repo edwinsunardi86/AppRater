@@ -57,6 +57,7 @@
                                     </div>
                                 </div>
                                 <button type="button" id="addRow" class="btn btn-xl btn-primary mb-5 ml-2">Add New Row</button>
+                                <button type="button" id="removeRow" class="btn btn-xl btn-danger mb-5 ml-2">Remove Row</button>
                                 <table id="table_add_location" class="table table-bordered table-stripped" style="width:100%">
                                     <thead>
                                         <tr>
@@ -166,13 +167,21 @@ $(document).on('change','#project_code',function(){
     });
 });
 
-    var counter = 1;
+    var counter = 0;
     var tb_location = $('#table_add_location').DataTable();
     $('#addRow').on('click',function(){
         tb_location.row.add(['<input type="text" name="location_name[]" id="location_name'+counter+'" class="form-control form-control-sm"/>','<textarea class="form-control form-control-sm " id="address'+counter+'" name="address[]" rows="7" cols="20">','<textarea class="form-control form-control-sm " id="location_description'+counter+'" name="location_description[]" rows="7" cols="20">']).draw(false);
         counter++;
     });
     $('#addRow').click();
+
+    $('#removeRow').on('click',function(){
+        tb_location.row('.selected').remove().draw(false);
+    });
+
+    $('#table_add_location tbody').on('click', 'tr', function () {
+        $(this).toggleClass('selected');
+    });
     
     $('#form_location').validate({
         rules:{
@@ -197,45 +206,57 @@ $(document).on('change','#project_code',function(){
             $(element).removeClass('is-invalid');
         },
         submitHandler: function() {
-            var location_name = $('input[name^="location_name[]"]').length;
+            var location_name = $('input[name^="location_name[]"]').val().length;
             var arr_location = new Array();
-            for(var i = 1;i <= location_name;i++){
-                arr_location.push({
-                    'location_name': $('#location_name'+i).val(),
-                    'address' : $('#address'+i).val(),
-                    'location_description': $('#location_description'+i).val(),
-                });
-            }
-            $.ajax({
-                headers:{
-                    'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
-                },
-                url:"/location/store_location",
-                type:"POST",
-                dataType:"JSON",
-                data:{
-                    region_id:$('#region_name').val(),
-                    location:arr_location
-                },
-                processData:true,
-                success: function(data){
-                    Swal.fire({
-                        title:data.title,
-                        html:data.message,
-                        icon:data.icon
+            var count_val = 0;
+            var count_location =  $('input[name^="location_name[]"]').length;
+            $('input[name="location_name[]"]').each(function(i,item){
+                if($(this).val() != ""){
+                    count_val += 1;
+                    arr_location.push({
+                        'location_name': $('#location_name'+i).val(),
+                        'address' : $('#address'+i).val(),
+                        'location_description': $('#location_description'+i).val(),
                     });
-                    setTimeout(() => {
-                        window.location.href=data.redirect;
-                    }, 1500);
                 }
             });
+            if(count_val == count_location){
+                $.ajax({
+                    headers:{
+                        'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+                    },
+                    url:"/location/store_location",
+                    type:"POST",
+                    dataType:"JSON",
+                    data:{
+                        region_id:$('#region_name').val(),
+                        location:arr_location
+                    },
+                    processData:true,
+                    success: function(data){
+                        Swal.fire({
+                            title:data.title,
+                            html:data.message,
+                            icon:data.icon
+                        });
+                        setTimeout(() => {
+                            window.location.href=data.redirect;
+                        }, 1500);
+                    }
+                });
+            }else{
+                Swal.fire({
+                    title:"Warning",
+                    html:"Please complete the input location name",
+                    icon:"error"
+                });
+            }
         }
     });   
-        $('#form_location input[name="location_name[]"]').each(function(){
-            $(this).rules("add",{ required:true});
-        });
+       
    
 });
+
 
 $(document).on('click','.pilih_client',function(){
     $('#client_id').val(($(this).attr('data-id')));
