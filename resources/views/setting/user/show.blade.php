@@ -39,17 +39,6 @@
                                     <input type="email" name="email" id="email" class="form-control" value="{{ $user->email }}" placeholder="Email" readonly>
                                 </div>
                             </div>
-                            {{-- <div class="form-group row">
-                                <label for="inputLevel" class="col-sm-2 col-form-label">Level</label>
-                                <div class="col-sm-4">
-                                    <select class="form-control" name="level" id="level" style="width: 100%;" readonly>
-                                        <option value="1" {{ $user->level == 1 ? 'selected' : '' }}>1</option>
-                                        <option value="2" {{ $user->level == 2 ? 'selected' : '' }}>2</option>
-                                        <option value="3" {{ $user->level == 3 ? 'selected' : '' }}>3</option>
-                                        <option value="4" {{ $user->level == 4 ? 'selected' : '' }}>4</option>
-                                    </select>
-                                </div>
-                            </div> --}}
                             <div class="form-group row">
                                 <label for="inputFullName" class="col-sm-2 col-form-label">Full Name</label>
                                 <div class="col-sm-4">

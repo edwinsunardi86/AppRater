@@ -38,7 +38,6 @@
                     <th>Email</th>
                     <th>Full Name</th>
                     <th>Role</th>
-                    <th>Author</th>
                     <th>Action</th>
                   </thead>
                   <tbody>
@@ -74,7 +73,6 @@ jQuery(document).ready(function(){
           return 'User';
         }
       }},
-      {data:'client_name', name:'client_name'},
       {data:'action', name:'action'}
     ],
     "columnDefs": [{

@@ -71,7 +71,7 @@ class LocationController extends Controller
     }
 
     public function update_location(Request $request){
-        $getArea = DB::table('setup_area')->join('setup_location','setup_area.location_id','=','setup_location.id')->get();
+        $getArea = DB::table('setup_area')->join('setup_location','setup_area.location_id','=','setup_location.id')->where('location_id',$request->location_id)->get();
         $post = array(
             'region_id'  => $request->region_name,
             'address'    => $request->address,

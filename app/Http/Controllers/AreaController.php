@@ -40,23 +40,23 @@ class AreaController extends Controller
     }
 
     public function store_area(Request $request){
-        // for($i=0;$i<count($request->area);$i++){
-        //     $post = array(
-        //         'area_name'=>$request->area[$i]['area_name'],
-        //         'location_id'=>$request->location_id,
-        //         'service_code'=>$request->area[$i]['service'],
-        //         'description'=>$request->area[$i]['area_description']
-        //     );
-        //     DB::table('setup_area')->insert($post);
-        // }
-        $post = array(
-            'area_name'=>$request->area_name,
-            'location_id'=>$request->location_id,
-            'service_code'=>$request->service,
-            'description'=>$request->description,
-            'created_by'=>Auth::id()
-        );
-        $insert_area = DB::table('setup_area')->insert($post);
+        for($i=0;$i<count($request->area);$i++){
+            $post = array(
+                'area_name'=>$request->area[$i]['area_name'],
+                'location_id'=>$request->location_id,
+                'service_code'=>$request->area[$i]['service'],
+                'description'=>$request->area[$i]['area_description'],
+                'created_by'=>Auth::id()
+            );
+            $insert_area = DB::table('setup_area')->insert($post);
+        }
+        // $post = array(
+        //     'area_name'=>$request->area_name,
+        //     'location_id'=>$request->location_id,
+        //     'service_code'=>$request->service,
+        //     'description'=>$request->description,
+        //     'created_by'=>Auth::id()
+        // );
         if($insert_area){
             $confirmation = ['message' => 'Data Area success added','icon' => 'success', 'redirect'=>'/area'];
         }else{

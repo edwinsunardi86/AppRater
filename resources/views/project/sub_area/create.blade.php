@@ -247,7 +247,7 @@ $(document).ready(function(){
         { data: 'action', name: 'action'}
         ],
     });
-    var counter = 1;
+    var counter = 0;
     var tb_sub_area = $('#table_add_sub_area').DataTable();
     $('#addRow').on('click',function(){
         tb_sub_area.row.add(['<input type="text" name="sub_area_name[]" id="sub_area_name'+counter+'" class="form-control form-control-sm sub_area_id"/>','<textarea class="form-control form-control-sm" id="sub_area_description'+counter+'" name="sub_area_description[]" rows="7" cols="20">']).draw(false);
@@ -280,21 +280,20 @@ $(document).ready(function(){
             $(element).removeClass('is-invalid');
         },
         submitHandler: function() {
-            var sub_area_name = $('input[name^="sub_area_name[]"]').length
+            var count_sub_area_name = $('input[name^="sub_area_name[]"]').length;
+            var count_val = 0; 
             var arr_sub_area = new Array();
-            for(var i = 1;i <= sub_area_name;i++){
-                arr_sub_area.push({
-                    'sub_area_name': $('#sub_area_name'+i).val(),
-                    'sub_area_description': $('#sub_area_description'+i).val(),
-                });
-            }
-            var count_not_empty = 0;
-
-            $('input.sub_area_id').each(function(){
-                count_not_empty = $('input.sub_area_id').val() != "" ? count_not_empty += 1 : count_not_empty;
+            $('input[name^="sub_area_name[]"]').each(function(i,item){
+                if($(this).val()!=""){
+                    count_val +=1;
+                    arr_sub_area.push({
+                        'sub_area_name': $('#sub_area_name'+i).val(),
+                        'sub_area_description': $('#sub_area_description'+i).val(),
+                    });
+                }
             });
-
-            if(count_not_empty == $('input.sub_area_id').length){
+                
+            if(count_val==count_sub_area_name){
                 $.ajax({
                     headers:{
                         'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
@@ -321,36 +320,60 @@ $(document).ready(function(){
             }else{
                 Swal.fire({
                     title:"Warning",
-                    html:"Please complete input sub area",
+                    html:"Please complete the input area name",
                     icon:"error"
                 });
             }
         }
     });
 });
-
-$.get('/area/getDataAreaSelected',function(data,status){
-    $('#area_name').append($('<option>',{
-            value: "",
-            text: "Choice Area",
-        }));
-    $.each(data,function(i,item){
-        $('#area_name').append($('<option>',{
-            value: data[i].id,
-            text: data[i].area_name,
-        }));
-        $('#area_name').change(function(){
-            if($('#area_name').find(':selected').val() == ""){
-                $('#area_description').val("");
-            }else{
-                var id = $('#area_name').find(':selected').val();
-                $.get('/area/getDataDescriptionById/'+id,function(data_desc,status){
-                    $('#area_description').val(data_desc.area_description);
-                });
-            }
-        });
+$(document).on('change','#location_name',function(){
+    $.ajax({
+        headers:{
+            'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+        },
+        url:"/area/getDataAreaSelected",
+        type:"POST",
+        dataType:"JSON",
+        data:{
+            location_id:$('#location_name').val(),
+        },
+        processData:true,
+        success:function(data){
+            $('select#area_name').append($('<option>',{
+                value:"",
+                text:"Choice area"}));
+            $.each(data,function(i,item){
+                $('select#area_name').append($('<option>',{
+                value:data[i].id,
+                text:data[i].area_name}));
+            });
+        }
     });
 });
+
+// $.get('/area/getDataAreaSelected',function(data,status){
+//     $('#area_name').append($('<option>',{
+//             value: "",
+//             text: "Choice Area",
+//         }));
+//     $.each(data,function(i,item){
+//         $('#area_name').append($('<option>',{
+//             value: data[i].id,
+//             text: data[i].area_name,
+//         }));
+//         $('#area_name').change(function(){
+//             if($('#area_name').find(':selected').val() == ""){
+//                 $('#area_description').val("");
+//             }else{
+//                 var id = $('#area_name').find(':selected').val();
+//                 $.get('/area/getDataDescriptionById/'+id,function(data_desc,status){
+//                     $('#area_description').val(data_desc.area_description);
+//                 });
+//             }
+//         });
+//     });
+// });
 $(document).on('change','#region_name',function(){
     $.ajax({
         headers:{

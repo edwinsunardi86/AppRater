@@ -317,6 +317,9 @@ $(document).ready(function(){
         },
         client_name:{
             required:true
+        },
+        sub_area_name:{
+            required:true
         }
     },
     messages:{
@@ -334,6 +337,9 @@ $(document).ready(function(){
         },
         client_name:{
             required:"Please choice client name"
+        },
+        sub_area_name:{
+            required:"Please choice sub area name"
         }
     },
     errorElement: 'span',

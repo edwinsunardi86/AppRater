@@ -5,7 +5,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Master Area</h1>
+                    <h1>Setup Area</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -69,7 +69,7 @@
                                         <textarea class="form-control" name="location_description" id="location_description" rows="5" readonly></textarea>
                                     </div>
                                 </div>
-                                <div class="form-group row">
+                                {{-- <div class="form-group row">
                                     <label for="inputAreaName" class="col-sm-2 col-form-label">Area</label>
                                     <div class="col-sm-4">
                                         <input type="text" class="form-control" name="area_name" id="area_name" rows="5">
@@ -80,7 +80,7 @@
                                     <div class="col-sm-4">
                                         <textarea class="form-control" name="description" id="description" rows="5"></textarea>
                                     </div>
-                                </div>
+                                </div> --}}
                                 {{-- <div class="form-group row">
                                     <label for="selectServiceName" class="col-sm-2 col-form-label">Service</label>
                                     <div class="col-sm-4">
@@ -165,20 +165,16 @@ $(document).ready(function(){
             dataType:"JSON",
             processData:true,
             success: function(data_service){
-            //console.log(data);
-                
                 $.each(data_service,function(i,item){
                     opt_service +="<option value="+data_service[i].service_code+">"+data_service[i].service_name+"</option>";
-                    
                 });
             
             }        
         });
         
     $('#addRow').on('click',function(){
-        tb_area.row.add(['<input type="text" name="area_name[]" id="area_name'+counter+'" class="form-control form-control-sm" required data-msg="Please input field area"/>','<select class="form-control" name="service_code[]" id="service_code'+counter+'"></select>','<textarea class="form-control form-control-sm" id="area_description'+counter+'" name="area_description[]" rows="7" cols="20">']).draw(false);
+        tb_area.row.add(['<input type="text" name="area_name[]" id="area_name'+counter+'" class="form-control form-control-sm"/>','<select class="form-control" name="service_code[]" id="service_code'+counter+'"></select>','<textarea class="form-control form-control-sm" id="area_description'+counter+'" name="area_description[]" rows="7" cols="20">']).draw(false);
             $('select#service_code'+counter).append(opt_service);
-            alert(opt_service);
         counter++;
     });
 
@@ -213,23 +209,11 @@ $(document).ready(function(){
             location_name:{
                 required:true,
             },
-            area_name:{
-                required:true
-            },
-            service:{
-                required:true
-            }
         },
         messages:{
             location_name: {
                 required:"Please input Location Name"
             },
-            area_name: {
-                required:"Please input Area Name"
-            },
-            service: {
-                required:"Please choice Service"
-            }
         },
         errorElement: 'span',
             errorPlacement: function (error, element) {
@@ -243,41 +227,51 @@ $(document).ready(function(){
             $(element).removeClass('is-invalid');
         },
         submitHandler: function() {
-            var area_name = $('input[name^="area_name[]"]').length
+            var count_val = 0;
+            var count_area = $('input[name^="area_name[]"]').length;
             var arr_area = new Array();
-            for(var i = 1;i <= area_name;i++){
-                arr_area.push({
-                    'area_name': $('#area_name'+i).val(),
-                    'area_description': $('#area_description'+i).val(),
-                    'service' : $('#service'+i).val(),
-                });
-            }
-            $.ajax({
-                headers:{
-                    'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
-                },
-                url:"/area/store_area",
-                type:"POST",
-                dataType:"JSON",
-                data:{
-                    location_id:$('#location_name').val(),
-                    // area:arr_area,
-                    area_name:$('#area_name').val(),
-                    service:$('#service').val(),
-                    description:$('#description').val()
-                },
-                processData:true,
-                success: function(data){
-                    Swal.fire({
-                        title:data.title,
-                        html:data.message,
-                        icon:data.icon
+
+            $('input[name^="area_name[]"]').each(function(i,item){
+                if($(this).val()!=""){
+                    count_val += 1;
+                    arr_area.push({
+                        'area_name': $('#area_name'+i).val(),
+                        'area_description': $('#area_description'+i).val(),
+                        'service' : $('#service_code'+i).val(),
                     });
-                    setTimeout(() => {
-                        window.location.href=data.redirect;
-                    }, 1500);
                 }
             });
+            if(count_val == count_area){
+                $.ajax({
+                    headers:{
+                        'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+                    },
+                    url:"/area/store_area",
+                    type:"POST",
+                    dataType:"JSON",
+                    data:{
+                        location_id:$('#location_name').val(),
+                        area:arr_area,
+                    },
+                    processData:true,
+                    success: function(data){
+                        Swal.fire({
+                            title:data.title,
+                            html:data.message,
+                            icon:data.icon
+                        });
+                        setTimeout(() => {
+                            window.location.href=data.redirect;
+                        }, 1500);
+                    }
+                });
+            }else{
+                Swal.fire({
+                    title:"Warning",
+                    html:"Please complete the input area name",
+                    icon:"error"
+                });
+            }
         }
     });
 });

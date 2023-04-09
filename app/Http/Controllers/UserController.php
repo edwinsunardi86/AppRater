@@ -19,7 +19,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = DB::table('users')->join('m_client','m_client.id','=','users.client_id','left')->select('username','email','fullname','role','client_name',DB::Raw('users.id AS user_id'));
+            $data = DB::table('users')->join('m_client','m_client.id','=','users.client_id','left')->select('username','email','fullname','role',DB::Raw('users.id AS user_id'));
             return DataTables::of($data)->addIndexColumn()->addColumn('action', function ($row) {
                 $btn = '<a href="/users/' . $row->username . '" class="btn btn-primary btn-sm"><i class="fas fa-eye"></i> View</a>
                 <a href="users/edit_user/' . $row->username . '" class="edit btn btn-secondary btn-sm"><i class="fas fa-user-edit"></i> Edit</a>
@@ -164,9 +164,15 @@ class UserController extends Controller
         $menuParent = DB::table('menu')->where('menu_parent_id',0)->get();
         $menu = DB::table('menu')->select('menu.menu_parent_id','menu.id','menu.nama_menu')->where('menu.menu_parent_id','<>',0)->get();
         $access_menu = DB::table('usersprivilege')->select('menu_id','menu.menu_parent_id')->where('user_id',$id)->join('menu','menu.id','=','usersprivilege.menu_id')->get();
-        $company = DB::table('m_client')->select('id','client_name')->get();
-        $authority = DB::table('usersauthority')->select('client_id')->where('user_id',$id)->first();
-        $role_user = DB::table('users')->select('role')->where('users.id',$id)->first();
+        $authority_client_per_project = DB::table('usersauthority')
+        ->join('setup_location','setup_location.id','=','usersauthority.location_id')
+        ->join('setup_region','setup_region.id','=','setup_location.region_id')
+        ->join('setup_project','setup_region.project_code','=','setup_project.project_code')
+        ->join('m_client','setup_project.client_id','=','m_client.id')
+        ->select(DB::Raw('m_client.id AS client_id'),'client_name','setup_project.project_code','project_name')
+        ->where('user_id',$id)->groupBy('setup_project.project_code')->first();
+        // var_dump($authority);
+        $role_user = DB::table('users')->select('id','username','fullname','email','role',)->where('users.id',$id)->first();
         $menu_id = [];
         $menu_parent_id = [];
         foreach($access_menu as $row){
@@ -176,16 +182,15 @@ class UserController extends Controller
             array_push($menu_parent_id,$row->menu_parent_id);
         }
         return view('setting.user.user_access', [
-            'access_menu_parent' => $menuParent,
-            'access_menu'        => $menu,
-            'menu_id'            => $menu_id,
-            'company'            => $company,
-            'menu_parent_id'     => $menu_parent_id,
-            'role'               => $role_user,
-            'authority'          => isset($authority->company_name)?$authority->company_name:null,
-            'active_gm'          => 'Setting',
-            'active_m'           => 'users',
-            'title'              => 'User Access'
+            'access_menu_parent'            => $menuParent,
+            'access_menu'                   => $menu,
+            'menu_id'                       => $menu_id,
+            'menu_parent_id'                => $menu_parent_id,
+            'role'                          => $role_user,
+            'authority_client_per_project' => $authority_client_per_project,
+            'active_gm'                     => 'Setting',
+            'active_m'                      => 'users',
+            'title'                         => 'User Access'
         ]);
     }
 

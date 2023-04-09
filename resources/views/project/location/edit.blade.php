@@ -140,13 +140,7 @@ $(document).ready(function(){
         { data: 'action', name: 'action'}
         ],
     });
-    var counter = 1;
-    var tb_location = $('#table_add_location').DataTable();
-    $('#addRow').on('click',function(){
-        tb_location.row.add(['<input type="text" name="location_name[]" id="location_name'+counter+'" class="form-control form-control-sm"/>','<textarea class="form-control form-control-sm " id="address'+counter+'" name="address[]" rows="7" cols="20">','<textarea class="form-control form-control-sm " id="location_description'+counter+'" name="location_description[]" rows="7" cols="20">']).draw(false);
-        counter++;
-    });
-
+    
     $('#form_location').validate({
         rules:{
             region_name: {

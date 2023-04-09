@@ -116,15 +116,6 @@
     <!-- /.modal-dialog -->
 </div>
 <script>
-$(document).on('change','#role', function(){
-    if($('#role').val() != "" && $('#role').val() != '1'){
-        $('.div_client').show();
-    }else{
-        $('.div_client').hide();
-        $('#client_name').val("");
-        $('#client_id').val("");
-    }
-});
 $(document).on('click','.pilih_client',function(){
     $('#client_id').val(($(this).attr('data-id')));
     $('#client_name').val(($(this).attr('data-client_name')));
@@ -169,9 +160,6 @@ $(document).ready(function(){
                     required:true,
                     minlength:5
                 },
-                client_name : {
-                    required:true
-                }
             },
             messages:{
                 username:{
@@ -185,9 +173,6 @@ $(document).ready(function(){
                 fullname:{
                     required:"Please enter a full name",
                     minlength:"Full name must be at least 4 characters long"
-                }
-                client_name : {
-                    required:"Please choice client"
                 }
             },
             errorElement: 'span',
@@ -208,7 +193,6 @@ $(document).ready(function(){
             username : $('#username').val(),
             email : $('#email').val(),
             role : $('#role').val(),
-            client_id : $('#client_id').val(),
             fullname : $('#fullname').val() 
         };
         $.ajax({

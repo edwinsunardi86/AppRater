@@ -206,7 +206,6 @@ $(document).on('change','#project_code',function(){
             $(element).removeClass('is-invalid');
         },
         submitHandler: function() {
-            var location_name = $('input[name^="location_name[]"]').val().length;
             var arr_location = new Array();
             var count_val = 0;
             var count_location =  $('input[name^="location_name[]"]').length;
