@@ -418,7 +418,7 @@ $(document).on('change','#project_code',function(){
                         var location="";
                         $.each(data_location,function(a,item){
                             location ="<div class=\"custom-control custom-checkbox\">"+
-                            "<input class=\"custom-control-input region"+i+"\" type=\"checkbox\" id=\"region"+i+"location"+a+"\" name=\"location[]\" value='"+data_location[a].location_id+"'>"+
+                            "<input class=\"custom-control-input region"+i+"\" type=\"checkbox\" id=\"region"+i+"location"+a+"\" name=\"location[]\" value='"+data_location[a].id+"'>"+
                             "<label for=\"region"+i+"location"+a+"\" class=\"custom-control-label\">"+data_location[a].location_name+"</label>"+
                             "</div>";
                             $('#div_location'+i).append(location);
@@ -447,67 +447,102 @@ $(document).on('change','#project_code',function(){
 });
 
 
-$('#btn_submit_authority').click(function(e){
-    var url = window.location.href;
-    var param = url.split('/');
-    e.preventDefault();
-    var formData = new FormData();
-    formData.append('company',$('#company').val());
-    formData.append('user_id',param[5]);
-    $.ajax({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name=csrf-token]').attr('content')
-            },
-            url:'/users/set_user_access_authority/',
-            type: 'POST',
-            dataType: 'JSON',
-            data: formData,
-            processData:false,
-            contentType:false,
-            success: function(data){
-                if(data.error == 1){
-                    Toast.fire({
-                        icon: 'error',
-                        title: 'Warning!'
-                    })
-                }else{
-                    Swal.fire({
-                        title: data.title,
-                        html : data.message,
-                        icon : data.icon,
-                        showConfirmButton: false
-                    });
-                    setTimeout(() => {
-                        window.location.href = data.redirect
-                    }, 1500);
+// $('#btn_submit_authority').click(function(e){
+//     var url = window.location.href;
+//     var param = url.split('/');
+//     e.preventDefault();
+//     var formData = new FormData();
+//     formData.append('company',$('#company').val());
+//     formData.append('user_id',param[5]);
+//     $.ajax({
+//             headers: {
+//                 'X-CSRF-TOKEN': $('meta[name=csrf-token]').attr('content')
+//             },
+//             url:'/users/set_user_access_authority/',
+//             type: 'POST',
+//             dataType: 'JSON',
+//             data: formData,
+//             processData:false,
+//             contentType:false,
+//             success: function(data){
+//                 if(data.error == 1){
+//                     Toast.fire({
+//                         icon: 'error',
+//                         title: 'Warning!'
+//                     })
+//                 }else{
+//                     Swal.fire({
+//                         title: data.title,
+//                         html : data.message,
+//                         icon : data.icon,
+//                         showConfirmButton: false
+//                     });
+//                     setTimeout(() => {
+//                         window.location.href = data.redirect
+//                     }, 1500);
                     
-                }
-        }
-    });
-});
-$('#form_user_authority').submit(function(e){
-    e.preventDefault();
-    // alert($('input[name^="location[]"]:checked').length);
-    var location = [];
-    $('input[name^="location[]"]').each(function(){
-        location.push($(this).val);
-    });
-    var formData = new FormData();
-    formData.append('location',location);
-    formData.append('user_id',{{ $role->id }});
-    $.ajax({
-        headers:
-        {
-            'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
+//                 }
+//         }
+//     });
+// });
+$(document).ready(function(){
+    $('#form_user_authority').validate({
+        rules:{
+            client_name:{
+                required:true
+            },
+            project_code:{
+                required:true
+            }
         },
-        url:"/users/set_user_authority",
-        type:"POST",
-        data:formData,
-        dataType:"JSON",
-        processData:false,
-        contentType:false,
-        success:function(data){
+        messages:{
+            client_name:{
+                required:"Please select client"
+            },
+            project_code:{
+                required:"Please select project"
+            }
+        },
+        errorElement: 'span',
+        errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-group').append(error);
+        },
+        highlight: function (element, errorClass, validClass) {
+            $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element, errorClass, validClass) {
+                $(element).removeClass('is-invalid');
+        },
+        submitHandler: function() {
+            var location = new Array();
+            $('input[name^="location[]"]:checked').each(function(){
+                location.push({
+                    'location_id':$(this).val()
+                });
+            });
 
+            $.ajax({
+                headers:
+                {
+                    'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
+                },
+                url:"/users/setUserAccessAuthority",
+                type:"POST",
+                data:{
+                    'user_id':{{ $role->id }},
+                    'location':location
+                },
+                dataType:"JSON",
+                processData:true,
+                success:function(data){
+                    Swal.fire({
+                        title:data.title,
+                        html:data.message,
+                        icon:data.icon
+                    });
+                }
+            });
         }
     });
 });

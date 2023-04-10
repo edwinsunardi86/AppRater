@@ -44,7 +44,7 @@ Route::group(['middleware' => ['auth','authorization'],'prefix'=>'users'], funct
     Route::post('/update_user', [UserController::class,'update_user']);
     Route::get('/access/{id}',[UserController::class,'usersAccess']);
     Route::post('/set_user_access_previlage',[UserController::class,'setUserAccessPrevilage']);
-    Route::post('/set_user_access_authority',[UserController::class,'setUserAccessAuthority']);
+    Route::post('/setUserAccessAuthority',[UserController::class,'setUserAccessAuthority']);
 });
 
 Route::get('/change_password',[ProfileUserController::class,'viewChangePassword'])->middleware('auth');
@@ -137,7 +137,8 @@ Route::post('location/getDataLocationToSelected',[LocationController::class,'get
 Route::post('area/getDataAreaSelected',[AreaController::class,'get_data_area_to_selected'])->middleware('auth');
 Route::post('sub_area/getDataSubAreaSelected',[SubAreaController::class,'get_data_sub_area_to_selected'])->middleware('auth');
 Route::post('project/getProjectToSelected',[ProjectController::class,'get_project_to_selected'])->middleware('auth');
-Route::post('dashboard/getAppraisalWeekly',[DashboardController::class,'get_appraisal_weekly']);
+Route::post('dashboard/getAppraisalWeekly',[DashboardController::class,'get_appraisal_weekly'])->middleware('auth');
+Route::get('/getUserAccessAuthority',[UserController::class,'getUserAccessAuthority'])->middleware('auth');
 // Route::post('project/getRegionSetupProject',[ProjectController::class,'get_region_setup_project'])->middleware('auth');
 // Route::post('project/getLocationSetupProject',[ProjectController::class,'get_location_setup_project'])->middleware('auth');
 // Route::post('project/getAreaSetupProject',[ProjectController::class,'get_area_setup_project'])->middleware('auth');

@@ -26,6 +26,7 @@
                         </div>
                         <form method="post" id="form_evaluation" class="form-horizontal">
                         <div class="card-body">
+                            @if(Auth::user()->role == 1)
                             <div class="form-group row">
                                 <label for="inputClientName" class="col-sm-2 col-form-label">Client Name</label>
                                 <div class="col-sm-4">
@@ -36,16 +37,19 @@
                                     <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#modal-xl">Cari</button>
                                 </div>
                             </div>
+
                             <div class="form-group row">
                                 <label for="inputClientDescription" class="col-sm-2 col-form-label">Client Description</label>
                                 <div class="col-sm-4">
                                     <textarea class="form-control" name="client_description" id="client_description" rows="5" readonly></textarea>
                                 </div>
                             </div>
+                            @endif
                             <div class="form-group row">
                                 <label for="projectName" class="col-sm-2 col-form-label">Project Name</label>
                                 <div class="col-sm-4">
-                                    <select name="project_code" id="project_code" class="form-control select2 col-sm-4"></select>
+                                    <select name="project_code" id="project_code" class="form-control select2 col-sm-4">
+                                    </select>
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -135,7 +139,19 @@
     <!-- /.modal-dialog -->
 </div>
 <script>
+    function groupBy(objectArray, property) {
+   return objectArray.reduce((acc, obj) => {
+      const key = obj[property];
+      if (!acc[key]) {
+         acc[key] = [];
+      }
+      // Add object to list for given key's value
+      acc[key].push(obj);
+      return acc;
+   }, {});
+}
 $(document).ready(function(){
+    
     var i = 1;
     var tb_client = $('#table_client').DataTable({
         processing:true,
@@ -189,63 +205,63 @@ $(document).on('click','.pilih_client',function(){
     });
 });
 
-$(document).on('change','#project_code',function(){
-    $.ajax({
-        headers:{
-            'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
-        },
-        url:"/region/getDataRegionToSelected",
-        type:"POST",
-        dataType:"JSON",
-        data:{
-            project_code:$('#project_code').val()
-        },
-        processData:true,
-        success: function(data){
-            $('.tb_sub_area > tbody').empty();
-            $('select#region_name option').remove();
-            $('select#region_name').append($('<option>',{
-                    text:"Choice Region",
-                    value:""
-                }));
-            $.each(data,function(i,item){
-                $('select#region_name').append($('<option>',{
-                    text:data[i].region_name,
-                    value:data[i].id
-                }));
-            });
-        },
-    });
-});
+// $(document).on('change','#project_code',function(){
+//     $.ajax({
+//         headers:{
+//             'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+//         },
+//         url:"/region/getDataRegionToSelected",
+//         type:"POST",
+//         dataType:"JSON",
+//         data:{
+//             project_code:$('#project_code').val()
+//         },
+//         processData:true,
+//         success: function(data){
+//             $('.tb_sub_area > tbody').empty();
+//             $('select#region_name option').remove();
+//             $('select#region_name').append($('<option>',{
+//                     text:"Choice Region",
+//                     value:""
+//                 }));
+//             $.each(data,function(i,item){
+//                 $('select#region_name').append($('<option>',{
+//                     text:data[i].region_name,
+//                     value:data[i].id
+//                 }));
+//             });
+//         },
+//     });
+// });
 
-$(document).on('change','#region_name',function(){
-    $.ajax({
-        headers:{
-            'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
-        },
-        url:"/location/getDataLocationToSelected",
-        type:"POST",
-        dataType:"JSON",
-        data:{
-            region_id:$('#region_name').val()
-        },
-        processData:true,
-        success: function(data){
-            $('.tb_sub_area > tbody').empty();
-            $('select#location_name option').remove();
-            $('select#location_name').append($('<option>',{
-                text:"Choice Location",
-                value:""
-            }));
-            $.each(data,function(i,item){
-                $('select#location_name').append($('<option>',{
-                    text:data[i].location_name,
-                    value:data[i].id
-                }));
-            });
-        }
-    });
-});
+// $(document).on('change','#region_name',function(){
+//     $.ajax({
+//         headers:{
+//             'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+//         },
+//         url:"/location/getDataLocationToSelected",
+//         type:"POST",
+//         dataType:"JSON",
+//         data:{
+//             region_id:$('#region_name').val()
+//         },
+//         processData:true,
+//         success: function(data){
+//             $('.tb_sub_area > tbody').empty();
+//             $('select#location_name option').remove();
+//             $('select#location_name').append($('<option>',{
+//                 text:"Choice Location",
+//                 value:""
+//             }));
+//             $.each(data,function(i,item){
+//                 $('select#location_name').append($('<option>',{
+//                     text:data[i].location_name,
+//                     value:data[i].id
+//                 }));
+//             });
+//         }
+//     });
+// });
 
 $(document).on('change','#location_name',function(){
     $.ajax({
@@ -398,6 +414,53 @@ $(document).ready(function(){
 
         }
     });
+});
+
+function groupBy(list, group, key, value) {
+    return Array.from(list
+        .reduce(
+            (map, object) => map.set(object[group], Object.assign(
+                map.get(object[group]) || { [group]: object[group] },
+                { [key]: object[value] }
+            )), new Map
+        )
+        .values()
+    );
+}
+
+function regionProject(project_code){
+    var project_code = $('#project_code').val()
+    alert(project_code);
+    return project_code;
+}
+$(document).ready(function(){
+    $('#project_code').append($('<option>',{
+                value:"",
+                text:"Choice Project"
+    }));
+    
+    $.get('/getUserAccessAuthority',function(data){
+        // console.log(data);
+        var project_name = ['project_name'];
+        var project = groupBy(data,'project_code',project_name,'project_name');
+        $.each(project,function(i,item){
+            $('#project_code').append($('<option>',{
+                value:project[i].project_code,
+                text:project[i].project_name
+            }));
+        });
+        
+        $(document).on('change','#project_code',function(){
+            var filter_region = data.filter(project => project.project_code == $('#project_code').val());
+            console.log(filter_region);
+        });
+        
+        // $.each(result, function(i,item){
+
+        // })
+    });
+
+    
 });
 </script>
 @endsection

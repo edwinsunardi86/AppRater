@@ -194,27 +194,27 @@ class UserController extends Controller
         ]);
     }
 
-    public function setUserAccessAuthority(Request $request){
-        $user_id = $request->user_id;
-        $company = $request->company;
-        $getAuthority = DB::table('usersauthority')->where('user_id',$user_id)->get();
-        if($getAuthority->count() > 0){
-            DB::table('usersauthority')->where('user_id',$user_id)->update([
-                'user_id'=>$user_id,
-                'company_name'=>$company,
-                'created_by'=>Auth::id(),
-                'created_at'=>date('Y-m-d H:i:s')
-            ]);
-            $confirmation = ['title'=>'Success!','message' =>'Akses Authority berhasil di update', 'icon' => 'success', 'redirect' => '/users'];
-        }else{
-            DB::table('usersauthority')->insert([
-                'user_id'=>$user_id,
-                'company_name'=>$company
-            ]);
-            $confirmation = ['title'=>'Success!','message' =>'Akses Authority berhasil di tambakan', 'icon' => 'success', 'redirect' => '/users'];
-        }
-        return $confirmation;
-    }
+    // public function setUserAccessAuthority(Request $request){
+    //     $user_id = $request->user_id;
+    //     $company = $request->company;
+    //     $getAuthority = DB::table('usersauthority')->where('user_id',$user_id)->get();
+    //     if($getAuthority->count() > 0){
+    //         DB::table('usersauthority')->where('user_id',$user_id)->update([
+    //             'user_id'=>$user_id,
+    //             'company_name'=>$company,
+    //             'created_by'=>Auth::id(),
+    //             'created_at'=>date('Y-m-d H:i:s')
+    //         ]);
+    //         $confirmation = ['title'=>'Success!','message' =>'Akses Authority berhasil di update', 'icon' => 'success', 'redirect' => '/users'];
+    //     }else{
+    //         DB::table('usersauthority')->insert([
+    //             'user_id'=>$user_id,
+    //             'company_name'=>$company
+    //         ]);
+    //         $confirmation = ['title'=>'Success!','message' =>'Akses Authority berhasil di tambakan', 'icon' => 'success', 'redirect' => '/users'];
+    //     }
+    //     return $confirmation;
+    // }
     public function setUserAccessPrevilage(Request $request){
         $get_access_id = explode(",",$request->menu_id);
         $user_id = $request->user_id;
@@ -254,5 +254,32 @@ class UserController extends Controller
         $confirmation = ['message' => 'Password has been changed', 'icon' => 'success', 'redirect' => '/send_email'];
         $request->session()->flash('change', 'Password has been changed');
         return redirect('/dashboard_v1');
+    }
+
+    function setUserAccessAuthority(Request $request){
+        $location = $request->location;
+        $get_authority = DB::table('usersauthority')->where('user_id',$request->user_id)->get();
+        $get_username = DB::table('users')->where('id',$request->user_id)->first();
+        if($get_authority->count() > 0){
+            $delete_authority = DB::table('usersauthority')->where('user_id',$request->user_id)->delete();
+            if($delete_authority){
+                $confirmation = ['title'=>'Warning!','message' => 'user authority with username '.$get_username->username.' successfully deleted', 'icon' => 'success', 'redirect' => '/users'];
+            }
+        }
+        for($i = 0;$i < count($location);$i++){
+            $post = array(
+                'user_id'=>$request->user_id,
+                'location_id'=>$request->location[$i]['location_id'],
+                'created_by'=>Auth::id()
+            );
+            $insert_usersauthority = DB::table('usersauthority')->insert($post);
+        }
+        $confirmation = ['title'=>'Warning!','message' => 'User authority with username '.$get_username->username.' successfully created', 'icon' => 'success'];
+        return response()->json($confirmation);
+    }
+
+    function getUserAccessAuthority(){
+        $query = DB::table('usersauthority')->join('setup_location','setup_location.id','=','usersauthority.location_id')->join('setup_region','setup_region.id','=','setup_location.region_id')->join('setup_project','setup_project.project_code','=','setup_region.project_code')->select('setup_project.project_code','project_name')->where('usersauthority.user_id',Auth::id())->get();
+        return response()->json($query);
     }
 }
