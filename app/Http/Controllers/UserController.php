@@ -279,7 +279,7 @@ class UserController extends Controller
     }
 
     function getUserAccessAuthority(){
-        $query = DB::table('usersauthority')->join('setup_location','setup_location.id','=','usersauthority.location_id')->join('setup_region','setup_region.id','=','setup_location.region_id')->join('setup_project','setup_project.project_code','=','setup_region.project_code')->select('setup_project.project_code','project_name')->where('usersauthority.user_id',Auth::id())->get();
+        $query = DB::table('usersauthority')->join('setup_location','setup_location.id','=','usersauthority.location_id')->join('setup_region','setup_region.id','=','setup_location.region_id')->join('setup_project','setup_project.project_code','=','setup_region.project_code')->join('setup_area','setup_area.location_id','=','setup_location.id')->join('setup_sub_area','setup_sub_area.area_id','=','setup_area.id')->select('setup_project.project_code','project_name',DB::Raw('setup_region.id AS region_id'),'setup_region.region_name',DB::Raw('setup_area.id AS area_id'),'area_name',DB::Raw('setup_sub_area.id AS sub_area_id'),'sub_area_name')->where('usersauthority.user_id',Auth::id())->get();
         return response()->json($query);
     }
 }

@@ -139,19 +139,8 @@
     <!-- /.modal-dialog -->
 </div>
 <script>
-    function groupBy(objectArray, property) {
-   return objectArray.reduce((acc, obj) => {
-      const key = obj[property];
-      if (!acc[key]) {
-         acc[key] = [];
-      }
-      // Add object to list for given key's value
-      acc[key].push(obj);
-      return acc;
-   }, {});
-}
+@if(Auth::user()->role==1)
 $(document).ready(function(){
-    
     var i = 1;
     var tb_client = $('#table_client').DataTable({
         processing:true,
@@ -205,63 +194,63 @@ $(document).on('click','.pilih_client',function(){
     });
 });
 
-// $(document).on('change','#project_code',function(){
-//     $.ajax({
-//         headers:{
-//             'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
-//         },
-//         url:"/region/getDataRegionToSelected",
-//         type:"POST",
-//         dataType:"JSON",
-//         data:{
-//             project_code:$('#project_code').val()
-//         },
-//         processData:true,
-//         success: function(data){
-//             $('.tb_sub_area > tbody').empty();
-//             $('select#region_name option').remove();
-//             $('select#region_name').append($('<option>',{
-//                     text:"Choice Region",
-//                     value:""
-//                 }));
-//             $.each(data,function(i,item){
-//                 $('select#region_name').append($('<option>',{
-//                     text:data[i].region_name,
-//                     value:data[i].id
-//                 }));
-//             });
-//         },
-//     });
-// });
+$(document).on('change','#project_code',function(){
+    $.ajax({
+        headers:{
+            'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+        },
+        url:"/region/getDataRegionToSelected",
+        type:"POST",
+        dataType:"JSON",
+        data:{
+            project_code:$('#project_code').val()
+        },
+        processData:true,
+        success: function(data){
+            $('.tb_sub_area > tbody').empty();
+            $('select#region_name option').remove();
+            $('select#region_name').append($('<option>',{
+                    text:"Choice Region",
+                    value:""
+                }));
+            $.each(data,function(i,item){
+                $('select#region_name').append($('<option>',{
+                    text:data[i].region_name,
+                    value:data[i].id
+                }));
+            });
+        },
+    });
+});
 
-// $(document).on('change','#region_name',function(){
-//     $.ajax({
-//         headers:{
-//             'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
-//         },
-//         url:"/location/getDataLocationToSelected",
-//         type:"POST",
-//         dataType:"JSON",
-//         data:{
-//             region_id:$('#region_name').val()
-//         },
-//         processData:true,
-//         success: function(data){
-//             $('.tb_sub_area > tbody').empty();
-//             $('select#location_name option').remove();
-//             $('select#location_name').append($('<option>',{
-//                 text:"Choice Location",
-//                 value:""
-//             }));
-//             $.each(data,function(i,item){
-//                 $('select#location_name').append($('<option>',{
-//                     text:data[i].location_name,
-//                     value:data[i].id
-//                 }));
-//             });
-//         }
-//     });
-// });
+$(document).on('change','#region_name',function(){
+    $.ajax({
+        headers:{
+            'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+        },
+        url:"/location/getDataLocationToSelected",
+        type:"POST",
+        dataType:"JSON",
+        data:{
+            region_id:$('#region_name').val()
+        },
+        processData:true,
+        success: function(data){
+            $('.tb_sub_area > tbody').empty();
+            $('select#location_name option').remove();
+            $('select#location_name').append($('<option>',{
+                text:"Choice Location",
+                value:""
+            }));
+            $.each(data,function(i,item){
+                $('select#location_name').append($('<option>',{
+                    text:data[i].location_name,
+                    value:data[i].id
+                }));
+            });
+        }
+    });
+});
 
 $(document).on('change','#location_name',function(){
     $.ajax({
@@ -315,6 +304,7 @@ $(document).on('change','#location_name',function(){
         }
     });
 });
+@endif
 $(document).ready(function(){
     $('#form_evaluation').validate({
         rules:{
@@ -416,6 +406,7 @@ $(document).ready(function(){
     });
 });
 
+@if(Auth::user()->role==3)
 function groupBy(list, group, key, value) {
     return Array.from(list
         .reduce(
@@ -427,12 +418,13 @@ function groupBy(list, group, key, value) {
         .values()
     );
 }
-
 function regionProject(project_code){
     var project_code = $('#project_code').val()
-    alert(project_code);
+    // alert(project_code);
     return project_code;
 }
+
+
 $(document).ready(function(){
     $('#project_code').append($('<option>',{
                 value:"",
@@ -452,7 +444,18 @@ $(document).ready(function(){
         
         $(document).on('change','#project_code',function(){
             var filter_region = data.filter(project => project.project_code == $('#project_code').val());
-            console.log(filter_region);
+            $('#region_name').append($('<option>',{
+                value:"",
+                text:"Choice Region"
+            }));
+            var region_name = ['region_name'];
+            var region = groupBy(filter_region,'region_id',region_name,'region_name');
+            $.each(region,function(i,item){
+                $('#region_name').append($('<option>',{
+                    value:region[i].region_id,
+                    text:region[i].region_name
+                }));
+            });
         });
         
         // $.each(result, function(i,item){
@@ -462,5 +465,6 @@ $(document).ready(function(){
 
     
 });
+@endif
 </script>
 @endsection
