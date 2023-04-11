@@ -442,25 +442,79 @@ $(document).ready(function(){
             }));
         });
         
+        
         $(document).on('change','#project_code',function(){
+            var region_name = ['region_name'];
             var filter_region = data.filter(project => project.project_code == $('#project_code').val());
+            var region  = groupBy(filter_region,'region_id',region_name,'region_name');
             $('#region_name').append($('<option>',{
                 value:"",
                 text:"Choice Region"
             }));
-            var region_name = ['region_name'];
-            var region = groupBy(filter_region,'region_id',region_name,'region_name');
             $.each(region,function(i,item){
                 $('#region_name').append($('<option>',{
                     value:region[i].region_id,
                     text:region[i].region_name
                 }));
             });
-        });
-        
-        // $.each(result, function(i,item){
 
-        // })
+            $(document).on('change','#region_name',function(location){
+                var location_name = ['location_name'];
+                var filter_location = data.filter(region => region.region_id == $('#region_name').val());
+                var location = groupBy(filter_location,'location_id',location_name,'location_name');
+                $('#location_name').append($('<option>',{
+                    value:"",
+                    text:"Choice Location"
+                }));
+                
+                $.each(location, function(i,item){
+                    $('#location_name').append($('<option>',{
+                        value:location[i].location_id,
+                        text:location[i].location_name
+                    }));
+                });
+                $(document).on('change','#location_name',function(){
+                    var area = ['area'];
+                    var filter_area_sub_area = data.filter(location => location.location_id == $('#location_name').val());
+                    var a=1;
+                    $('.tb_sub_area > tbody').empty();
+                    $.each(filter_area_sub_area,function(i,item){
+                        if($('.'+filter_area_sub_area[i].service_code).attr('id') == filter_area_sub_area[i].service_code){
+                            var content = "<tr><td>"+a+"</td><td>"+filter_area_sub_area[i].area_name+"<input type=\"hidden\" name=\"area_id[]\" id=\"area_id"+a+"\" value="+filter_area_sub_area[i].area_id+"></td><td>"+filter_area_sub_area[i].sub_area_name+"<input type=\"hidden\" name=\"sub_area_id[]\" id=\"sub_area_id"+a+"\" value="+filter_area_sub_area[i].sub_area_id+"></td><td>"+
+                            "<div class=\"col-sm-12\">"+
+                                "<div class=\"form-group row clearfix\">"+
+                                    "<div class=\"icheck-primary d-inline m-1\">"+
+                                        "<input class=\"score\" type=\"radio\" id=\"ratingsb"+a+"\" name=\"score"+a+"[]\" value=\"100\">"+
+                                        "<label for=\"ratingsb"+a+"\">SB"+
+                                        "</label>"+
+                                    "</div>"+
+                                    "<div class=\"icheck-primary d-inline m-1\">"+
+                                        "<input class=\"score\" type=\"radio\" id=\"ratingb"+a+"\" name=\"score"+a+"[]\" value=\"95\">"+
+                                        "<label for=\"ratingb"+a+"\">B"+
+                                        "</label>"+
+                                    "</div>"+
+                                    "<div class=\"icheck-primary d-inline m-1\">"+
+                                        "<input class=\"score\" type=\"radio\" id=\"ratingcb"+a+"\" name=\"score"+a+"[]\" value=\"89\">"+
+                                        "<label for=\"ratingcb"+a+"\">CB"+
+                                        "</label>"+
+                                    "</div>"+
+                                    "<div class=\"icheck-primary d-inline m-1\">"+
+                                        "<input class=\"score\" type=\"radio\" id=\"ratingkb"+a+"\" name=\"score"+a+"[]\" value=\"74\">"+
+                                        "<label for=\"ratingkb"+a+"\">KB"+
+                                        "</label>"+
+                                    "</div>"+
+                                "</div>"+
+                            "</div>"+
+                            "</td></tr>";
+                            $('.'+filter_area_sub_area[i].service_code+" > tbody").append(content);
+                        }
+                        a++;
+                    });
+                    var rating_count="<input type=\"hidden\" name=\"count_sub_area\" id=\"count_sub_area\" value="+ parseInt(a-1) +">";
+                    $('.rating-sub-area').append(rating_count);
+                });
+            });
+        });
     });
 
     

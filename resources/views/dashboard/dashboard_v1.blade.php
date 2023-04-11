@@ -37,13 +37,13 @@
                                     <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#modal-xl">Cari</button>
                                 </div>
                             </div>
-                            @endif
                             <div class="form-group row">
                                 <label for="inputClientDescription" class="col-sm-2 col-form-label">Client Description</label>
                                 <div class="col-sm-4">
                                     <textarea class="form-control" name="client_description" id="client_description" rows="5" readonly></textarea>
                                 </div>
                             </div>
+                            @endif
                             <div class="form-group row">
                                 <label for="projectName" class="col-sm-2 col-form-label">Project Name</label>
                                 <div class="col-sm-4">
@@ -122,7 +122,37 @@
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<div class="modal fade" id="modal-more_info">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Data Daily Appraisal</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="overflow:scroll">
+                <table class="display table table-bordered table-striped table-hover" id="table-appraisal">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Date</th>
+                            <th>Area</th>
+                            <th>Sub Area</th>
+                            <th>Score</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -130,6 +160,7 @@
     <!-- /.modal-dialog -->
 </div>
 <script>
+@if(Auth::user()->role == 1)
 $(document).ready(function(){
     var i = 1;
     var tb_client = $('#table_client').DataTable({
@@ -279,6 +310,78 @@ $(document).on('change','#region_name',function(){
     });
 });
 
+@endif
+
+@if(Auth::user()->role==3)
+function groupBy(list, group, key, value) {
+    return Array.from(list
+        .reduce(
+            (map, object) => map.set(object[group], Object.assign(
+                map.get(object[group]) || { [group]: object[group] },
+                { [key]: object[value] }
+            )), new Map
+        )
+        .values()
+    );
+}
+function regionProject(project_code){
+    var project_code = $('#project_code').val()
+    // alert(project_code);
+    return project_code;
+}
+
+
+$(document).ready(function(){
+    $('#project_code').append($('<option>',{
+                value:"",
+                text:"Choice Project"
+    }));
+    
+    $.get('/getUserAccessAuthority',function(data){
+        var project_name = ['project_name'];
+        var project = groupBy(data,'project_code',project_name,'project_name');
+        $.each(project,function(i,item){
+            $('#project_code').append($('<option>',{
+                value:project[i].project_code,
+                text:project[i].project_name
+            }));
+        });
+        
+        
+        $(document).on('change','#project_code',function(){
+            var region_name = ['region_name'];
+            var filter_region = data.filter(project => project.project_code == $('#project_code').val());
+            var region  = groupBy(filter_region,'region_id',region_name,'region_name');
+            $('#region_name').append($('<option>',{
+                value:"",
+                text:"Choice Region"
+            }));
+            $.each(region,function(i,item){
+                $('#region_name').append($('<option>',{
+                    value:region[i].region_id,
+                    text:region[i].region_name
+                }));
+            });
+
+            $(document).on('change','#region_name',function(location){
+                var location_name = ['location_name'];
+                var filter_location = data.filter(region => region.region_id == $('#region_name').val());
+                var location = groupBy(filter_location,'location_id',location_name,'location_name');
+                $('#location_name').append($('<option>',{
+                    value:"",
+                    text:"Choice Location"
+                }));
+                
+                $.each(location, function(i,item){
+                    $('#location_name').append($('<option>',{
+                        value:location[i].location_id,
+                        text:location[i].location_name
+                    }));
+                });
+            });
+        });
+    });
+});
 $(document).on('change','#location_name',function(){
     $.ajax({
         headers:{
@@ -293,6 +396,7 @@ $(document).on('change','#location_name',function(){
         },
         processData:true,
         success: function(data){
+            $('#year_project option').remove();
             $('#year_project').append($('<option>',{
                     value:"",
                     text:"Choice year project"
@@ -306,6 +410,8 @@ $(document).on('change','#location_name',function(){
         }
     });
 });
+@endif
+
 $(document).on('change','#year_project,#month_project',function(){
     $.ajax({
         headers:{
@@ -324,6 +430,8 @@ $(document).on('change','#year_project,#month_project',function(){
         success: function(data){
             $('#small-box-report').empty();
             $.each(data,function(i,item){
+                var substr_weekappraisal = String(data[i].week_appraisal).substring(4,6);
+                var substr_yearappraisal = String(data[i].week_appraisal).substring(0,4);
                 if(data[i].score == 100){
                     var kategori = "SB";
                 }else if(data[i].score >= 95){
@@ -333,24 +441,11 @@ $(document).on('change','#year_project,#month_project',function(){
                 }else{
                     var kategori = "KB";
                 }
-                var smallbox = "<div class=\"col-lg-2\">"+
-                                "<div class=\"small-box bg-success\">"+
-                                    "<div class=\"text-center mb-n4\"><h5>"+data[i].YEAR+" - WEEK "+data[i].MONTH+"</h5></div>"+
-                                    "<div class=\"inner text-center\">"+
-                                        "<h1 class=\"mb-n2\" style=\"font-size:75px;\">"+kategori+"</h1>"+
-                                        "<h4 class=\"mb-n2\">"+data[i].score+" %</h4>"+
-                                    "</div>"+
-                                  "<div class=\"icon\">"+
-                                    "<i class=\"ion ion-stats-bars\"></i>"+
-                                  "</div>"+
-                                  "<a href=\"#\" class=\"small-box-footer\">More info <i class=\"fas fa-arrow-circle-right\"></i></a>"+
-                                "</div>"+
-                            "</div>";
 
-                var cardbox =   "<div class=\"card card-primary card-outline  mr-2\">"+
+                var cardbox =   "<div class=\"card card-primary card-outline mr-2\">"+
                                     "<div class=\"card-body\">"+
                                         "<div class=\"text-center mb-n4\">"+
-                                            "<h5>"+data[i].YEAR+" - WEEK "+data[i].MONTH+"</h5>"+
+                                            "<h5>"+substr_yearappraisal+" - WEEK "+substr_weekappraisal+"</h5>"+
                                         "</div>"+
                                         "<div class=\"text-center\">"+
                                             "<h1 class=\"mb-n2\" style=\"font-size:75px;\">"+kategori+"</h1>"+
@@ -361,15 +456,45 @@ $(document).on('change','#year_project,#month_project',function(){
                                         "<div class=\"icon\">"+
                                                 "<i class=\"ion ion-stats-bars\"></i>"+
                                         "</div>"+
-                                        "<a href=\"#\" class=\"small-box-footer\">More info <i class=\"fas fa-arrow-circle-right\"></i></a>"+
+                                        "<a href=\"#\" data-yearappraisal="+substr_yearappraisal+" data-weekappraisal="+substr_weekappraisal+" data-toggle=\"modal\" data-target=\"#modal-more_info\" class=\"data_daily\">More info <i class=\"fas fa-arrow-circle-right\"></i></a>"+
                                     "</div>"
                                 "</div>";
-
-                    
                 $('#small-box-report').append(cardbox);
             });
         }
     });
 });
+
+$(document).on('click','.data_daily',function(){
+    var i = 1;
+    $('#table-appraisal').DataTable({
+        processing:true,
+        serverSide:true,
+        destroy: true,
+        ajax:{
+            headers:{
+                'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+            },
+            url:'/dailyAppraisalPerWeek',
+            type:"POST",
+            data:{
+                'location_id':$('#location_name').val(),
+                'year_project':$(this).attr('data-yearappraisal'),
+                'week_project':$(this).attr('data-weekappraisal')
+            },
+        },
+        columns:[
+            {data:'', name:'', render:function(row, type, set){
+                return i++;
+            }},
+            {data:'appraisal_date', name:'appraisal_date'},
+            {data:'area_name', name:'area_name'},
+            {data:'sub_area_name', name:'sub_area_name'},
+            {data:'score', name:'score'},
+        ]
+    });
+});
+    
+    
 </script>
 @endsection

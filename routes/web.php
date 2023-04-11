@@ -139,6 +139,7 @@ Route::post('sub_area/getDataSubAreaSelected',[SubAreaController::class,'get_dat
 Route::post('project/getProjectToSelected',[ProjectController::class,'get_project_to_selected'])->middleware('auth');
 Route::post('dashboard/getAppraisalWeekly',[DashboardController::class,'get_appraisal_weekly'])->middleware('auth');
 Route::get('/getUserAccessAuthority',[UserController::class,'getUserAccessAuthority'])->middleware('auth');
+Route::post('/dailyAppraisalPerWeek',[DashboardController::class,'dailyAppraisalPerWeek']);
 // Route::post('project/getRegionSetupProject',[ProjectController::class,'get_region_setup_project'])->middleware('auth');
 // Route::post('project/getLocationSetupProject',[ProjectController::class,'get_location_setup_project'])->middleware('auth');
 // Route::post('project/getAreaSetupProject',[ProjectController::class,'get_area_setup_project'])->middleware('auth');
