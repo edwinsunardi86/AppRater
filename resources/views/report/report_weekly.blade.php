@@ -22,70 +22,30 @@
                 <div class="col-12">
                     <div class="card card-primary">
                         <div class="card-header">
-                            <h3 class="card-title">Report Weekly</h3>
+                            <h3 class="card-title">Report Project Per Client</h3>
                         </div>
                         <form method="post" id="form_evaluation" class="form-horizontal">
                         <div class="card-body">
-                            @if(Auth::user()->role == 1)
-                            <div class="form-group row">
-                                <label for="inputClientName" class="col-sm-2 col-form-label">Client Name</label>
-                                <div class="col-sm-4">
-                                    <input type="text" class="form-control" name="client_name" id="client_name" readonly>
-                                    <input type="hidden" class="form-control" name="client_id" id="client_id" readonly>
+                            <figure class="highcharts-figure">
+                                <div class="form-group row">
+                                    <label for="inputClientName" class="col-sm-2 col-form-label">Client Name</label>
+                                    <div class="col-sm-4">
+                                        <input type="text" class="form-control" name="client_name" id="client_name" readonly>
+                                        <input type="hidden" class="form-control" name="client_id" id="client_id" readonly>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#modal-xl">Cari</button>
+                                    </div>
                                 </div>
-                                <div class="col-sm-2">
-                                    <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#modal-xl">Cari</button>
+                                <div class="form-group row">
+                                    <label for="projectName" class="col-sm-2 col-form-label">Project Name</label>
+                                    <div class="col-sm-4">
+                                        <select name="project_code" id="project_code" class="form-control select2"></select>
+                                    </div>
                                 </div>
-                            </div>
-                            @endif
-                            <div class="form-group row">
-                                <label for="inputClientDescription" class="col-sm-2 col-form-label">Client Description</label>
-                                <div class="col-sm-4">
-                                    <textarea class="form-control" name="client_description" id="client_description" rows="5" readonly></textarea>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="projectName" class="col-sm-2 col-form-label">Project Name</label>
-                                <div class="col-sm-4">
-                                    <select name="project_code" id="project_code" class="form-control select2"></select>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="regionName" class="col-sm-2 col-form-label">Region</label>
-                                <div class="col-sm-4">
-                                    <select name="region_name" id="region_name" class="form-control select2"></select>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="locationName" class="col-sm-2 col-form-label">Location</label>
-                                <div class="col-sm-4">
-                                    <select name="location_name" id="location_name" class="form-control select2"></select>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="locationName" class="col-sm-2 col-form-label">Bulan-Tahun</label>
-                                <div class="col-sm-2">
-                                    <select class="form-control" name="month_project" id="month_project">
-                                        <option value="01">January</option>
-                                        <option value="02">February</option>
-                                        <option value="03">March</option>
-                                        <option value="04">April</option>
-                                        <option value="05">Mei</option>
-                                        <option value="06">June</option>
-                                        <option value="07">July</option>
-                                        <option value="08">August</option>
-                                        <option value="09">September</option>
-                                        <option value="10">October</option>
-                                        <option value="11">November</option>
-                                        <option value="12">December</option>
-                                    </select>
-                                </div>
-                                <div class="col-sm-2">
-                                    <select class="form-control" name="year_project" id="year_project"></select>
-                                </div>
-                            </div>
+                                <div id="container"></div>
+                            </figure>
                         </div>
-                        <div id="small-box-report" class="row"></div>
                     </div>
                 </div>
             </div>
@@ -129,6 +89,10 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
+<script src="/plugins/Highcharts-10.3.3/code/highcharts.js"></script>
+<script src="/plugins/Highcharts-10.3.3/code/modules/exporting.js"></script>
+<script src="/plugins/Highcharts-10.3.3/code/modules/export-data.js"></script>
+<script src="/plugins/Highcharts-10.3.3/code/modules/accessibility.js"></script>
 <script>
 $(document).ready(function(){
     var i = 1;
@@ -151,13 +115,7 @@ $(document).ready(function(){
         ],
     });
 });
-
-$(document).on('click','.pilih_client',function(){
-    $('#client_id').val(($(this).attr('data-id')));
-    $('#client_name').val(($(this).attr('data-client_name')));
-    $('#client_description').val($(this).attr('data-client-description'));
-    $('#modal-xl').modal('toggle');
-});
+    
 
 $(document).on('click','.pilih_client',function(){
     $('#client_id').val(($(this).attr('data-id')));
@@ -169,7 +127,7 @@ $(document).on('click','.pilih_client',function(){
             'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
         },
         url:"/project/getProjectToSelected",
-        type:"POST",
+        type:"POST", 
         dataType:"JSON",
         data:{
             "client_id":$('#client_id').val(),
@@ -192,164 +150,110 @@ $(document).on('click','.pilih_client',function(){
     });
 });
 
-$(document).ready(function(){
-    $.ajax({
-        headers:{
-            'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
-        },
-        url:"/region/getDataRegionToSelected",
-        type:"POST",
-        dataType:"JSON",
-        data:{
-            "project_code":$('#project_code').val(),
-        },
-        processData:true,
-        success:function(data){
-            $('.table_add_location > tbody').empty();
-            $('select#region_name option').remove();
-            $('select#region_name').append($('<option>',{
-                    text:"Choice Region",
-                    value:""
-                }));
-            $.each(data,function(i,item){
-                $('select#region_name').append($('<option>',{
-                    text:data[i].region_name,
-                    value:data[i].id
-                }));
-            });
-        }
-    });
-});
 
 $(document).on('change','#project_code',function(){
     $.ajax({
         headers:{
             'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
         },
-        url:"/region/getDataRegionToSelected",
-        type:"POST",
+        url:"/report/getDataProjectPerClientMonthOfYear",
+        type:"POST", 
         dataType:"JSON",
         data:{
-            "project_code":$('#project_code').val(),
+            client_id:$('#client_id').val(),
+            project_code:$('#project_code').val(),
         },
         processData:true,
         success:function(data){
-            $('.table_add_location > tbody').empty();
-            $('select#region_name option').remove();
-            $('select#region_name').append($('<option>',{
-                    text:"Choice Region",
-                    value:""
-                }));
-            $.each(data,function(i,item){
-                $('select#region_name').append($('<option>',{
-                    text:data[i].region_name,
-                    value:data[i].id
-                }));
-            });
+            Highcharts.chart('container', {
+            chart: {
+                type: 'column'
+            },
+            credits: {
+                enabled: false
+            },
+            title: {
+                text: data[0].client_name
+            },
+            subtitle: {
+                text: data[0].project_name
+            },
+            xAxis:
         }
     });
 });
+ Highcharts.chart('container', {
+    chart: {
+        type: 'column'
+    },
+    credits: {
+        enabled: false
+    },
+    title: {
+        text: 'Monthly Average Rainfall'
+    },
+    subtitle: {
+        text: 'Source: WorldClimate.com'
+    },
+    xAxis: {
+        categories: [
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'May',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dec'
+        ],
+        crosshair: true
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: 'Rainfall (mm)'
+        }
+    },
+    tooltip: {
+        headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+        pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+            '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+        footerFormat: '</table>',
+        shared: true,
+        useHTML: true
+    },
+    plotOptions: {
+        column: {
+            pointPadding: 0.2,
+            borderWidth: 0
+        }
+    },
+    series: [{
+        name: 'Tokyo',
+        data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4,
+            194.1, 95.6, 54.4]
 
-$(document).on('change','#region_name',function(){
-    $.ajax({
-        headers:{
-            'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
-        },
-        url:"/location/getDataLocationToSelected",
-        type:"POST",
-        dataType:"JSON",
-        data:{
-            region_id:$('#region_name').val(),
-        },
-        processData:true,
-        success: function(data){
-            $('.tb_sub_area > tbody').empty();
-            $('select#location_name option').remove();
-            $('select#location_name').append($('<option>',{
-                text:"Choice Location",
-                value:""
-            }));
-            $.each(data,function(i,item){
-                $('select#location_name').append($('<option>',{
-                    text:data[i].location_name,
-                    value:data[i].id
-                }));
-            });
-        }
-    });
-});
+    }, {
+        name: 'New York',
+        data: [83.6, 78.8, 98.5, 93.4, 106.0, 84.5, 105.0, 104.3, 91.2, 83.5,
+            106.6, 92.3]
 
-$(document).on('change','#location_name',function(){
-    $.ajax({
-        headers:{
-            'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
-        },
-        url:"/evaluation/getYearEvaluationProjectPerLocation",
-        type:"POST",
-        dataType:"JSON",
-        data:{
-            'project_code':$('#project_code').val(),
-            'location_id':$('#location_name').val(),
-        },
-        processData:true,
-        success: function(data){
-            $('#year_project').append($('<option>',{
-                    value:"",
-                    text:"Choice year project"
-                }));
-            $.each(data,function(i,item){
-                $('#year_project').append($('<option>',{
-                    value:data[i].year_project,
-                    text:data[i].year_project
-                }));
-            });
-        }
-    });
-});
-$(document).on('change','#year_project,#month_project',function(){
-    $.ajax({
-        headers:{
-            'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
-        },
-        url:"/dashboard/getAppraisalWeekly",
-        type:"POST",
-        dataType:"JSON",
-        data:{
-            'month_project' : $('#month_project').val(),
-            'year_project' : $('#year_project').val(),
-            'project_code' : $('#project_code').val(),
-            'location_id' : $('#location_name').val(),
-        },
-        processData:true,
-        success: function(data){
-            $('#small-box-report').empty();
-            $.each(data,function(i,item){
-                if(data[i].score == 100){
-                    var kategori = "SB";
-                }else if(data[i].score >= 95){
-                    var kategori = "CB";
-                }else if(data[i].score >= 89){
-                    var kategori = "B";
-                }else{
-                    var kategori = "KB";
-                }
-                var smallbox = "<div class=\"col-lg-2\">"+
-                                "<div class=\"small-box bg-success\">"+
-                                    "<div class=\"text-center mb-n4\"><h5>"+data[i].YEAR+" - WEEK "+data[i].MONTH+"</h5></div>"+
-                                    "<div class=\"inner text-center\">"+
-                                        "<h1 class=\"mb-n2\" style=\"font-size:75px;\">"+kategori+"</h1>"+
-                                        "<h4 class=\"mb-n2\">"+data[i].score+" %</h4>"+
-                                    "</div>"+
-                                  "<div class=\"icon\">"+
-                                    "<i class=\"ion ion-stats-bars\"></i>"+
-                                  "</div>"+
-                                  "<a href=\"#\" class=\"small-box-footer\">More info <i class=\"fas fa-arrow-circle-right\"></i></a>"+
-                                "</div>"+
-                            "</div>";
-                $('#small-box-report').append(smallbox);
-            });
-        }
-    });
+    }, {
+        name: 'London',
+        data: [48.9, 38.8, 39.3, 41.4, 47.0, 48.3, 59.0, 59.6, 52.4, 65.2, 59.3,
+            51.2]
+
+    }, {
+        name: 'Berlin',
+        data: [42.4, 33.2, 34.5, 39.7, 52.6, 75.5, 57.4, 60.4, 47.6, 39.1, 46.8,
+            51.1]
+
+    },
+]
 });
 </script>
 @endsection

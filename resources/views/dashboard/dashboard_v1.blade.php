@@ -382,6 +382,8 @@ $(document).ready(function(){
         });
     });
 });
+@endif
+
 $(document).on('change','#location_name',function(){
     $.ajax({
         headers:{
@@ -410,7 +412,6 @@ $(document).on('change','#location_name',function(){
         }
     });
 });
-@endif
 
 $(document).on('change','#year_project,#month_project',function(){
     $.ajax({

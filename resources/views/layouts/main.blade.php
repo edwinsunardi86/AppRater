@@ -30,6 +30,7 @@
   <link rel="stylesheet" href="/plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.min.css">
   <!-- Tempusdominus Bootstrap 4 -->
   <link rel="stylesheet" href="/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
+  <link rel="stylesheet" href="/plugins/Highcharts-10.3.3/code/css/highcharts.css">
   <style>
   .select2-container .select2-selection--single {
     width: 100% ! important;
@@ -108,8 +109,7 @@ $(document).ready(function(){
 <script src="/plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js"></script>
 <!-- Tempusdominus Bootstrap 4 -->
 <script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
-
-
+<script src="/plugins/require/require.js"></script>
 <script>
 var Toast = Swal.mixin({
   toast: true,

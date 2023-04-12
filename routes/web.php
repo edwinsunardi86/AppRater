@@ -129,6 +129,7 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'evaluation'],fun
 
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'report'],function(){
     Route::get('/report_weekly',[ReportController::class,'report_weekly'])->middleware(['auth','authorization']);
+    Route::post('/getDataProjectPerClientMonthOfYear',[ReportController::class,'getDataProjectPerClientMonthOfYear']);
 });
 
 Route::get('client/getDatatableClientToSelected',[ClientController::class,'get_datatable_client_to_selected'])->name('data_client_to_selected:dt')->middleware('auth');
@@ -140,6 +141,7 @@ Route::post('project/getProjectToSelected',[ProjectController::class,'get_projec
 Route::post('dashboard/getAppraisalWeekly',[DashboardController::class,'get_appraisal_weekly'])->middleware('auth');
 Route::get('/getUserAccessAuthority',[UserController::class,'getUserAccessAuthority'])->middleware('auth');
 Route::post('/dailyAppraisalPerWeek',[DashboardController::class,'dailyAppraisalPerWeek']);
+
 // Route::post('project/getRegionSetupProject',[ProjectController::class,'get_region_setup_project'])->middleware('auth');
 // Route::post('project/getLocationSetupProject',[ProjectController::class,'get_location_setup_project'])->middleware('auth');
 // Route::post('project/getAreaSetupProject',[ProjectController::class,'get_area_setup_project'])->middleware('auth');
