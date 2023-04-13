@@ -5,11 +5,11 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Master Location</h1>
+                    <h1>Setup Location</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="#">Master</a></li>
+                    <li class="breadcrumb-item"><a href="#">Setup</a></li>
                     <li class="breadcrumb-item active">Location</li>
                     </ol>
                 </div>
@@ -53,8 +53,8 @@ $(document).ready(function(){
         destroy: true,
         ajax:'{!! route("data_location:dt") !!}',
         columns:[
-            {data:'', name:'', render:function(row, type, set){
-                return i++;
+            { data:i, name: i, render: function (data, type, row, meta) {
+                return meta.row + meta.settings._iDisplayStart + 1;
             }},
             { data:'location_name', name:'location_name' },
             { data: 'address', name:'address'},

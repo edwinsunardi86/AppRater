@@ -5,11 +5,11 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Master Area</h1>
+                    <h1>Setup Area</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="#">Master</a></li>
+                    <li class="breadcrumb-item"><a href="#">Setup</a></li>
                     <li class="breadcrumb-item active">Area</li>
                     </ol>
                 </div>
@@ -62,8 +62,8 @@ $(document).ready(function(){
         destroy: true,
         ajax:'{!! route("data_area:dt") !!}',
         columns:[
-            {data:'', name:'', render:function(row, type, set){
-                return i++;
+            { data:i, name: i, render: function (data, type, row, meta) {
+                return meta.row + meta.settings._iDisplayStart + 1;
             }},
             { data: 'area_name', name: 'area_name'},
             { data: 'description', name: 'description'},

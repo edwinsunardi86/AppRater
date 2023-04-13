@@ -9,7 +9,7 @@
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="#">Form</a></li>
+                    <li class="breadcrumb-item"><a href="#">Edit</a></li>
                     <li class="breadcrumb-item active">Setup Project</li>
                     </ol>
                 </div>
@@ -23,26 +23,30 @@
                     <form method="post" id="form_project" class="form-horizontal">
                         <div class="card card-primary">
                             <div class="card-header">
-                                <h3 class="card-title">Form Setup Project</h3>
+                                <h3 class="card-title">Form Edit Project</h3>
                             </div>
                             @csrf
                             <div class="card-body">
-                                @if(Auth::user()->role == 1)
                                 <div class="form-group row">
                                     <label for="inputClientName" class="col-sm-2 col-form-label">Client Name</label>
                                     <div class="col-sm-4">
-                                        <input type="text" class="form-control" name="client_name" id="client_name" readonly>
-                                        <input type="hidden" class="form-control" name="client_id" id="client_id" readonly>
+                                        <input type="text" class="form-control" name="client_name" id="client_name" value="{{ $project->client_name }}" readonly>
+                                        <input type="hidden" class="form-control" name="client_id" id="client_id" value="{{ $project->client_id }}" readonly>
                                     </div>
                                     <div class="col-sm-2">
                                         <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#modal-xl">Cari</button>
                                     </div>
                                 </div>
-                                @endif
+                                <div class="form-group row">
+                                    <label for="inputProjectName" class="col-sm-2 col-form-label">Project Code</label>
+                                    <div class="col-sm-4">
+                                        <input type="text" class="form-control" name="project_code" id="project_code" value="{{ $project->project_code }}" disabled>
+                                    </div>
+                                </div>
                                 <div class="form-group row">
                                     <label for="inputProjectName" class="col-sm-2 col-form-label">Project Name</label>
                                     <div class="col-sm-4">
-                                        <input type="text" class="form-control" name="project_name" id="project_name">
+                                        <input type="text" class="form-control" name="project_name" id="project_name" value="{{ $project->project_name }}">
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -53,7 +57,7 @@
                                                 <i class="far fa-calendar-alt"></i>
                                             </span>
                                         </div>
-                                        <input type="text" class="form-control float-right" id="dateContract" name="dateContract">
+                                        <input type="text" class="form-control float-right" id="dateContractEdit" name="dateContractEdit">
                                     </div>
                                     <!-- /.input group -->
                                 </div>
@@ -146,14 +150,15 @@ $(document).ready(function(){
             var formData = new FormData();
             formData.append('client_id',$('#client_id').val());
             formData.append('project_name',$('#project_name').val());
-            formData.append('date_contract',$('#dateContract').val());
+            formData.append('project_code',$('#project_code').val());
+            formData.append('dateContractEdit',$('#dateContractEdit').val());
             formData.append('region_name',region);
             $.ajax({
                 headers:
                 {
                     'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
                 },
-                url:"/project/storeProject",
+                url:"/project/updateProject",
                 type:"POST",
                 data:formData,
                 dataType:"JSON",
@@ -174,11 +179,8 @@ $(document).ready(function(){
                         );
                     }else{
                         Swal.fire({
-                            title:"<b>perhatian!</b>",
-                            html: '<p>' + data.username +'<br/>'+ data.email + '</p>',
-                            customClass: {
-                                popup: 'format-pre'
-                            },
+                            title:"<b>Perhatian!</b>",
+                            text:data.message,
                             icon:data.icon,
                             confirmButtonText:"OK"
                         });
@@ -244,6 +246,14 @@ $(document).on('click','.pilih_client',function(){
             });
         }
     });
+});
+$('#dateContractEdit').daterangepicker({
+  locale: {
+    format:'YYYY/MM/DD'
+  },
+
+  startDate: '{{ $project->contract_start }}',
+  endDate: '{{ $project->contract_finish }}'
 });
 </script>
 @endsection

@@ -5,7 +5,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Setup Project</h1>
+                    <h1>Setup Region</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -53,9 +53,9 @@ $(document).ready(function(){
         destroy: true,
         ajax:'{!! route("data_region:dt") !!}',
         columns:[
-            {data:'', name:'', render:function(row, type, set){
-                return i++;
-            }},
+            { data:i, name: i, render: function (data, type, row, meta) {
+        return meta.row + meta.settings._iDisplayStart + 1;
+    }},
             { data:'region_name', name:'region_name' },
             { data:'client_name', name:'client_name' },
             { data:'project_name', name:'project_name' },

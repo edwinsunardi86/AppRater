@@ -70,7 +70,6 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'region'],functio
     Route::get('/edit_region/{id}',[RegionController::class,'edit_region']);
     Route::post('/update_region',[RegionController::class,'update_region']);
     Route::post('/delete_region',[RegionController::class,'delete_region']);
-    
 });
 
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'location'],function(){
@@ -111,14 +110,19 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'sub_area'],funct
 });
 
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'project'],function(){
-    Route::get('/',[ProjectController::class,'form_project']);
+    Route::get('/',[ProjectController::class,'list_project']);
+    Route::get('/form_project',[ProjectController::class,'form_project']);
+    Route::get('/edit_project/{kode_project}',[ProjectController::class,'edit_project']);
     Route::post('/getDetailRegion',[ProjectController::class,'get_detail_region']);
     Route::get('/getDetailLocation/{id}',[ProjectController::class,'get_detail_location']);
     Route::post('/storeProject',[ProjectController::class,'store_project']);
+    Route::post('/updateProject',[ProjectController::class,'update_project']);
+    Route::get('/getDataTableProject',[ProjectController::class,'getDataTableProject'])->name('data_project:dt');
 });
 
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'evaluation'],function(){
     Route::get('/form_evaluation',[EvaluationController::class,'form_evaluation']);
+    Route::get('/edit_evaluation',[EvaluationController::class,'edit_evaluation']);
     Route::post('/storeEvaluation',[EvaluationController::class,'store_evaluation']);
     Route::post('/getYearEvaluationProjectPerLocation',[EvaluationController::class,'get_year_evaluation_project_per_location']);
 });

@@ -250,6 +250,70 @@ $(document).on('click','.pilih_client',function(){
     });
 });
 $(document).ready(function(){
+    $.ajax({
+        headers:{
+            'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+        },
+        url:"/region/getDataRegionToSelected",
+        type:"POST",
+        dataType:"JSON",
+        data:{
+            "project_code":$('#project_code').val(), 
+        },
+        processData:true,
+        success:function(data){
+            var region = "";
+            $.each(data,function(i,item){
+                region = "<div class=\"card card-info card-outline col-3\">"+
+                            "<div class=\"card-header text-left\">"+
+                                "<div class=\"custom-control custom-checkbox\">"+
+                                    "<input class=\"custom-control-input\" type=\"checkbox\" id=\"region"+i+"\" name=\"region[]\">"+
+                                    "<label for=\"region"+i+"\" class=\"custom-control-label\"><h5 class=\"card-title\">Region "+data[i].region_name+"</h5></label></div>"+
+                                    
+                            "</div>"+
+                            "<div class=\"card-body\" id=\"div_location"+i+"\"></div></div>";
+                $('.div_region').append(region);
+                $.ajax({
+                    headers:{
+                        'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+                    },
+                    url:"/location/getDataLocationToSelected",
+                    type:"POST",
+                    dataType:"JSON",
+                    data:{
+                        "region_id":data[i].id,
+                    },
+                    processData:true,
+                    success:function(data_location){
+                        var location="";
+                        $.each(data_location,function(a,item){
+                            location ="<div class=\"custom-control custom-checkbox\">"+
+                            "<input class=\"custom-control-input region"+i+"\" type=\"checkbox\" id=\"region"+i+"location"+a+"\" name=\"location[]\" value='"+data_location[a].id+"'>"+
+                            "<label for=\"region"+i+"location"+a+"\" class=\"custom-control-label\">"+data_location[a].location_name+"</label>"+
+                            "</div>";
+                            $('#div_location'+i).append(location);
+
+                            $('#region'+i+'location'+a).on('click',function(){
+                                if($('.region'+i).not(':checked').length > 0){
+                                    $('#region'+i).prop('checked',false);
+                                }else{
+                                    $('#region'+i).prop('checked',true);
+                                }
+                            });
+                        });
+                    }
+                });
+                $('#region'+i).on('click',function(){
+                    if($('#region'+i).is(':checked')){
+                        $('.region'+i).prop('checked',true);
+                    }else{
+                        $('.region'+i).prop('checked',false);
+                    }
+                });
+                
+            });
+        }
+    });
     var i = 1;
     var tb_client = $('#table_client').DataTable({
     processing:true,
