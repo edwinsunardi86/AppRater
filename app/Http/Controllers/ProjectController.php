@@ -79,8 +79,8 @@ class ProjectController extends Controller
         return DataTables::of($db)->addColumn('action',function($row){
             $btn = "<a href='/project/detail_project/$row->project_code' class='btn btn-primary btn-xs'><i class='fas fa-eye'></i> View</a>
             <a href='/project/edit_project/".$row->project_code."' class=\"btn btn-secondary btn-xs\"><i class=\"fas fa-user-edit\"></i> Edit</a>
-            <form id=\"deleteProject_$row->project_code\" class='d-inline' onsubmit=\"event.preventDefault()\" action=\"/project/delete_project/$row->project_code\" method=\"post\">
-                <button type=\"submit\" class=\"btn btn-xs btn-danger\" onclick=\"deleteProject($row->project_code,'$row->project_name')\"><i class=\"fas fa-solid fa-trash\"></i> Delete</button>
+            <form id=\"deleteProject_$row->project_code\" class='d-inline' onsubmit=\"event.preventDefault()\" method=\"post\">
+                <button type=\"submit\" class=\"btn btn-xs btn-danger\" onclick=\"deleteProject('$row->project_code','$row->project_name')\"><i class=\"fas fa-solid fa-trash\"></i> Delete</button>
             </form>";
             return $btn;
           })->make();
@@ -105,6 +105,32 @@ class ProjectController extends Controller
                 $confirmation = ['message' => 'Data project success updated','icon' => 'success', 'redirect'=>'/project'];
             }else{
                 $confirmation = ['message' => 'Data project failed updated','icon' => 'error', 'redirect'=>'/project'];
+            }
+        }
+        return response()->json($confirmation);
+    }
+
+    function detail_project($project_code){
+        $query = DB::table('setup_project')->select('setup_project.project_code','setup_project.project_name',DB::Raw('DATE_FORMAT(setup_project.contract_start,"%Y/%m/%d") AS contract_start'),DB::Raw('DATE_FORMAT(setup_project.contract_finish,"%Y/%m/%d") AS contract_finish'),DB::Raw('m_client.id AS client_id'),'client_name')->join('m_client','m_client.id','=','setup_project.client_id')->where('project_code',$project_code)->first();
+        // var_dump($query);
+        return view('project.detail_project',[
+            'project'=> $query,
+            'title' => 'Project',
+            'active_gm' => 'Setup Project',
+            'active_m'=>'project'
+        ]);
+    }
+
+    function delete_project(Request $request){
+        $getRegion = DB::table('setup_region')->where('project_code',$request->project_code)->get();
+        if($getRegion->count() > 0){
+            $confirmation = ['message' => 'Data project has one or several region','icon' => 'error', 'redirect'=>'/project'];
+        }else{
+            $delete = DB::table('setup_project')->where('project_code',$request->project_code)->delete();
+            if($delete){
+                $confirmation = ['message' => 'Data failed success deleted', 'icon' => 'success', 'redirect'=>'/project'];
+            }else{
+                $confirmation = ['message' => 'Data error success deleted', 'icon' => 'error', 'redirect'=>'/project'];
             }
         }
         return response()->json($confirmation);

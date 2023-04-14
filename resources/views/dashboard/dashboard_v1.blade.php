@@ -442,24 +442,23 @@ $(document).on('change','#year_project,#month_project',function(){
                 }else{
                     var kategori = "KB";
                 }
-
-                var cardbox =   "<div class=\"card card-primary card-outline mr-2\">"+
-                                    "<div class=\"card-body\">"+
-                                        "<div class=\"text-center mb-n4\">"+
-                                            "<h5>"+substr_yearappraisal+" - WEEK "+substr_weekappraisal+"</h5>"+
-                                        "</div>"+
-                                        "<div class=\"text-center\">"+
-                                            "<h1 class=\"mb-n2\" style=\"font-size:75px;\">"+kategori+"</h1>"+
-                                            "<h4 class=\"mb-n2\">"+data[i].score+" %</h4>"+
-                                        "</div>"+
-                                    "</div>"+
-                                    "<div class=\"card-footer text-center\">"+
-                                        "<div class=\"icon\">"+
-                                                "<i class=\"ion ion-stats-bars\"></i>"+
-                                        "</div>"+
-                                        "<a href=\"#\" data-yearappraisal="+substr_yearappraisal+" data-weekappraisal="+substr_weekappraisal+" data-toggle=\"modal\" data-target=\"#modal-more_info\" class=\"data_daily\">More info <i class=\"fas fa-arrow-circle-right\"></i></a>"+
-                                    "</div>"
-                                "</div>";
+                var cardbox = "<div class=\"card card-primary card-outline mr-2\">"+
+                        "<div class=\"card-body\">"+
+                            "<div class=\"text-center mb-n4\">"+
+                                "<h5>"+substr_yearappraisal+" - WEEK "+substr_weekappraisal+"</h5>"+
+                            "</div>"+
+                            "<div class=\"text-center\">"+
+                                "<h1 class=\"mb-n2\" style=\"font-size:75px;\">"+kategori+"</h1>"+
+                                "<h4 class=\"mb-n2\">"+data[i].score+" %</h4>"+
+                            "</div>"+
+                        "</div>"+
+                        "<div class=\"card-footer text-center\">"+
+                            "<div class=\"icon\">"+
+                                "<i class=\"ion ion-stats-bars\"></i>"+
+                            "</div>"+
+                            "<a href=\"#\" data-yearappraisal="+substr_yearappraisal+" data-weekappraisal="+substr_weekappraisal+" data-toggle=\"modal\" data-target=\"#modal-more_info\" class=\"data_daily\">More info <i class=\"fas fa-arrow-circle-right\"></i></a>"+
+                            "</div>"
+                        "</div>";
                 $('#small-box-report').append(cardbox);
             });
         }

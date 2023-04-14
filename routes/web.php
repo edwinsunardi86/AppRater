@@ -113,10 +113,12 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'project'],functi
     Route::get('/',[ProjectController::class,'list_project']);
     Route::get('/form_project',[ProjectController::class,'form_project']);
     Route::get('/edit_project/{kode_project}',[ProjectController::class,'edit_project']);
+    Route::get('/detail_project/{kode_project}',[ProjectController::class,'detail_project']);
     Route::post('/getDetailRegion',[ProjectController::class,'get_detail_region']);
     Route::get('/getDetailLocation/{id}',[ProjectController::class,'get_detail_location']);
     Route::post('/storeProject',[ProjectController::class,'store_project']);
     Route::post('/updateProject',[ProjectController::class,'update_project']);
+    Route::post('/deleteProject',[ProjectController::class,'delete_project']);
     Route::get('/getDataTableProject',[ProjectController::class,'getDataTableProject'])->name('data_project:dt');
 });
 
@@ -133,7 +135,7 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'evaluation'],fun
 
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'report'],function(){
     Route::get('/report_weekly',[ReportController::class,'report_weekly'])->middleware(['auth','authorization']);
-    Route::post('/getDataProjectPerClientMonthOfYear',[ReportController::class,'getDataProjectPerClientMonthOfYear']);
+    Route::post('/getDataProjectCurrentEvaluation',[ReportController::class,'getDataProjectCurrentEvaluation']);
 });
 
 Route::get('client/getDatatableClientToSelected',[ClientController::class,'get_datatable_client_to_selected'])->name('data_client_to_selected:dt')->middleware('auth');

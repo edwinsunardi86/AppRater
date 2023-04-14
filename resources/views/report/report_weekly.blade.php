@@ -43,7 +43,8 @@
                                         <select name="project_code" id="project_code" class="form-control select2"></select>
                                     </div>
                                 </div>
-                                <div id="container"></div>
+                                <div id="container0"></div>
+                                <div id="container1"></div>
                             </figure>
                         </div>
                     </div>
@@ -163,11 +164,14 @@ $(document).on('change','#project_code',function(){
         .values()
     );
 }
+var seriesOptions = [];
+var arr_service = [];
+var arr_score = [];
     $.ajax({
         headers:{
             'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
         },
-        url:"/report/getDataProjectPerClientMonthOfYear",
+        url:"/report/getDataProjectCurrentEvaluation",
         type:"POST", 
         dataType:"JSON",
         data:{
@@ -176,26 +180,63 @@ $(document).on('change','#project_code',function(){
         },
         processData:true,
         success:function(data){
-            var project_name = ['project_name'];
-            Highcharts.chart('container', {
-                chart: {
-                    type: 'column'
-                },
-                credits: {
-                    enabled: false
-                },
-                title: {
-                    text: data[0].client_name
-                },
-                subtitle: {
-                    text: data[0].project_name
-                },
-                xAxis:groupBy(data,'project_code',project_name,'project_name'),
-                series: [{
-                    type: 'column',
-                    data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
-                }]
+            var location_name = ['location_name'];
+            var per_location = groupBy(data,'location_id',location_name,'location_name');
+            $.each(per_location,function(i,item){
+                var filter_location = data.filter((location)=>(location.location_id == per_location[i].location_id));
+                chart = Highcharts.chart('container'+i, {
+                    chart: {
+                        type: 'column'
+                    },
+                    credits: {
+                        enabled: false
+                    },
+                    title: {
+                        text: $('#project_code').val(),
+                    },
+                    subtitle: {
+                        text: filter_location[i].location_name
+                    },
+                    xAxis:{ categories:arr_month },
+                    series: []
+                });
+                // console.log(filter_location);
+                var service_name = ['service_name'];
+                var per_service = groupBy(filter_location,'service_code',service_name,'service_name');
+                //console.log(per_service);
+                $.each(per_service,function(a,item){
+                    arr_service.push({service_code:per_service[a].service_code,service_name:per_service[a].service_name});
+                });
+                //alert(arr_service.length);
+                for(var i = 0;i < arr_service.length; i++){
+                    var filterLocationPerService = data.filter((location)=>(location.service_code == arr_service[i]['service_code']));
+                    console.log(filterLocationPerService);
+                    $.each(filterLocationPerService,function(b,item){
+                    
+                        if(filterLocationPerService[b].service_code == arr_service[i].service_code){
+                            // seriesOptions[arr_service[i]['service_code']]= {
+                            //     name:arr_service[i]['service_name'],
+                            //     data:filter_location[b].score
+                            // };
+                            //seriesOptions.push(seriesOptions);
+                            
+                            arr_score.push(parseInt(filterLocationPerService[b].score));
+                        }
+                        
+                    });
+                    chart.addSeries({name:arr_service[i].service_code, data:arr_score });
+                    // alert(arr_score);
+                }
+                // console.log(arr_service);
+                //var filter_service = filter_location.filter((location)=>(location.location_id == per_location[i].location_id && location.service_code == ));
+                var arr_month = [];
+                categories:$.each(filter_location,function(a,item){ 
+                    arr_month.push(filter_location[a].MONTH);
+                });
+                
+                //console.log(seriesOptions);
             });
+            
         }
     });
 });

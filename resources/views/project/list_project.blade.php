@@ -79,5 +79,51 @@ $(document).ready(function(){
         "scrollX": true,
     });
 });
+
+function deleteProject(project_code,project_name){
+    $('#deleteProject_'+project_code).submit(function(){
+        var formData = new FormData();
+        formData.append('project_code',project_code);
+        formData.append('project_name',project_name);
+        Swal.fire({
+            title: 'Perhatian!',
+            html: 'Apakah anda yakin ingin menghapus data project_name ini?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText:'Delete',
+        }).then((result)=>{
+            if(result.isConfirmed){
+                $.ajax({
+                    headers:{
+                        'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr("content")
+                    },
+                    url:'project/deleteProject',
+                    data:formData,
+                    type:'POST',
+                    dataType:'JSON',
+                    processData:false,
+                    contentType:false,
+                    success: function(data){
+                        Swal.fire({
+                            title:'Perhatian',
+                            html:data.message,
+                            icon:data.icon,
+                            showConfirmButton:false,
+                            timer:1500
+                        });
+                        if(data.icon == 'success'){
+                            setTimeout(() => {
+                                window.location.href = data.redirect 
+                            }, 2000);
+                        }
+                    },
+                    error: function(xhr,error,errorThrown){
+
+                    }
+                });
+            }
+        });
+    });
+}
 </script>
 @endsection
