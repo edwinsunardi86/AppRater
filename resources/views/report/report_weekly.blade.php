@@ -164,9 +164,9 @@ $(document).on('change','#project_code',function(){
         .values()
     );
 }
-var seriesOptions = [];
-var arr_service = [];
-var arr_score = [];
+
+
+
     $.ajax({
         headers:{
             'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
@@ -183,7 +183,14 @@ var arr_score = [];
             var location_name = ['location_name'];
             var per_location = groupBy(data,'location_id',location_name,'location_name');
             $.each(per_location,function(i,item){
+                var seriesOptions = [];
                 var filter_location = data.filter((location)=>(location.location_id == per_location[i].location_id));
+                console.log(filter_location);
+                var arr_month = [];
+                $.each(filter_location,function(a,item){ 
+                    arr_month.push(filter_location[a].MONTH);
+                });
+                //console.log(arr_month);
                 chart = Highcharts.chart('container'+i, {
                     chart: {
                         type: 'column'
@@ -204,37 +211,24 @@ var arr_score = [];
                 var service_name = ['service_name'];
                 var per_service = groupBy(filter_location,'service_code',service_name,'service_name');
                 //console.log(per_service);
+                var arr_service = [];
                 $.each(per_service,function(a,item){
                     arr_service.push({service_code:per_service[a].service_code,service_name:per_service[a].service_name});
                 });
                 //alert(arr_service.length);
-                for(var i = 0;i < arr_service.length; i++){
-                    var filterLocationPerService = data.filter((location)=>(location.service_code == arr_service[i]['service_code']));
-                    console.log(filterLocationPerService);
+                for(var z = 0;z < arr_service.length; z++){
+                    var filterLocationPerService = data.filter((location)=>(location.service_code == arr_service[z]['service_code'] && location.location_id == per_location[i].location_id));
+                    //console.log(filterLocationPerService);
+                    var arr_score = [];
                     $.each(filterLocationPerService,function(b,item){
                     
-                        if(filterLocationPerService[b].service_code == arr_service[i].service_code){
-                            // seriesOptions[arr_service[i]['service_code']]= {
-                            //     name:arr_service[i]['service_name'],
-                            //     data:filter_location[b].score
-                            // };
-                            //seriesOptions.push(seriesOptions);
-                            
+                        if(filterLocationPerService[b].service_code == arr_service[z].service_code){                            
                             arr_score.push(parseInt(filterLocationPerService[b].score));
                         }
-                        
                     });
-                    chart.addSeries({name:arr_service[i].service_code, data:arr_score });
+                    chart.addSeries({name:arr_service[z].service_code, data:arr_score });
                     // alert(arr_score);
                 }
-                // console.log(arr_service);
-                //var filter_service = filter_location.filter((location)=>(location.location_id == per_location[i].location_id && location.service_code == ));
-                var arr_month = [];
-                categories:$.each(filter_location,function(a,item){ 
-                    arr_month.push(filter_location[a].MONTH);
-                });
-                
-                //console.log(seriesOptions);
             });
             
         }

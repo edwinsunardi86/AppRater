@@ -24,7 +24,7 @@ class ReportController extends Controller
         INNER JOIN setup_region f ON f.id = e.region_id
         INNER JOIN setup_project g ON g.project_code = a.project_code
         INNER JOIN m_client h ON h.id = g.client_id
-        WHERE h.id = '6' AND YEAR(appraisal_date) = DATE_FORMAT(NOW(),'%Y') AND g.project_code = '".$request->project_code."'
+        WHERE h.id = '".$request->client_id."' AND YEAR(appraisal_date) = DATE_FORMAT(NOW(),'%Y') AND g.project_code = '".$request->project_code."'
         GROUP BY g.project_code,d.service_code,MONTH(appraisal_date),e.id";
                 /*WHERE h.id = '".$request->client_id."' AND YEAR(appraisal_date) = '".$request->date_appraisal."'*/
         // die($sql);

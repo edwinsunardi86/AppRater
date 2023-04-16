@@ -24,7 +24,13 @@ class EvaluationController extends Controller
         $project_code = $request->project_code;
         $exp_date_evaluation = explode("/",$request->date_evaluation);
         $format_date_sql = $exp_date_evaluation[2]."-".$exp_date_evaluation[0]."-".$exp_date_evaluation[1];
-        $get_duplicate_evaluation = DB::table('evaluation')->where('project_code',$project_code)->where('appraisal_date',$format_date_sql)->get();
+        $get_duplicate_evaluation = DB::table('evaluation')->
+        join('setup_sub_area','setup_sub_area.id','=','evaluation.sub_area_id')->
+        join('setup_area','setup_area.id','=','setup_sub_area.area_id')->
+        where('project_code',$project_code)->
+        where('appraisal_date',$format_date_sql)->
+        where('setup_area.location_id',$request->location_id)->
+        get();
         if($get_duplicate_evaluation->count() > 0){
             $confirmation = ['message' => 'Error : Duplicated Data', 'icon' => 'error', 'redirect' => '/evaluation/form_evaluation']; 
         }else{
