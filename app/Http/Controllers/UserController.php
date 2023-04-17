@@ -163,7 +163,7 @@ class UserController extends Controller
     public function usersAccess($id){
         $menuParent = DB::table('menu')->where('menu_parent_id',0)->get();
         $menu = DB::table('menu')->select('menu.menu_parent_id','menu.id','menu.nama_menu')->where('menu.menu_parent_id','<>',0)->get();
-        $access_menu = DB::table('usersprivilege')->select('menu_id','menu.menu_parent_id')->where('user_id',$id)->join('menu','menu.id','=','usersprivilege.menu_id')->get();
+        $access_menu = DB::table('usersprivilege')->select('menu_id','menu.menu_parent_id','create','update','delete')->where('user_id',$id)->join('menu','menu.id','=','usersprivilege.menu_id')->get();
         $authority_client_per_project = DB::table('usersauthority')
         ->join('setup_location','setup_location.id','=','usersauthority.location_id')
         ->join('setup_region','setup_region.id','=','setup_location.region_id')
@@ -172,19 +172,21 @@ class UserController extends Controller
         ->select(DB::Raw('m_client.id AS client_id'),'client_name','setup_project.project_code','project_name')
         ->where('user_id',$id)->groupBy('setup_project.project_code')->first();
         // var_dump($authority);
-        $role_user = DB::table('users')->select('id','username','fullname','email','role',)->where('users.id',$id)->first();
-        $menu_id = [];
+        $role_user = DB::table('users')->select('id','username','fullname','email','role')->where('users.id',$id)->first();
+        $menu_array = array();
         $menu_parent_id = [];
         foreach($access_menu as $row){
-            array_push($menu_id,$row->menu_id);
+            array_push($menu_array,array( 'menu_id'=> $row->menu_id,'create'=> $row->create, 'update' => $row->update, 'delete'=>$row->delete));
         }
+        //print_r($menu_array['menu_id']); die();
+        // echo $menu_array[0]['menu_id']; die();
         foreach($access_menu as $row){
             array_push($menu_parent_id,$row->menu_parent_id);
         }
         return view('setting.user.user_access', [
             'access_menu_parent'            => $menuParent,
             'access_menu'                   => $menu,
-            'menu_id'                       => $menu_id,
+            'menu_array'                    => $menu_array,
             'menu_parent_id'                => $menu_parent_id,
             'role'                          => $role_user,
             'authority_client_per_project' => $authority_client_per_project,
@@ -279,7 +281,13 @@ class UserController extends Controller
     }
 
     function getUserAccessAuthority(){
-        $query = DB::table('usersauthority')->join('setup_location','setup_location.id','=','usersauthority.location_id')->join('setup_region','setup_region.id','=','setup_location.region_id')->join('setup_project','setup_project.project_code','=','setup_region.project_code')->join('setup_area','setup_area.location_id','=','setup_location.id')->join('setup_sub_area','setup_sub_area.area_id','=','setup_area.id')->join('m_service','m_service.service_code','=','setup_area.service_code')->select('setup_project.project_code','project_name',DB::Raw('setup_region.id AS region_id'),'setup_region.region_name',DB::Raw('setup_location.id AS location_id'),'location_name',DB::Raw('setup_area.id AS area_id'),'area_name',DB::Raw('setup_sub_area.id AS sub_area_id'),'sub_area_name','m_service.service_code','service_name')->where('usersauthority.user_id',Auth::id())->get();
+        $query = DB::table('usersauthority')->
+        join('setup_location','setup_location.id','=','usersauthority.location_id')->
+        join('setup_region','setup_region.id','=','setup_location.region_id')->
+        join('setup_project','setup_project.project_code','=','setup_region.project_code')->
+        join('setup_area','setup_area.location_id','=','setup_location.id')->
+        join('setup_sub_area','setup_sub_area.area_id','=','setup_area.id')->
+        join('m_service','m_service.service_code','=','setup_area.service_code')->select('setup_project.project_code','project_name',DB::Raw('setup_region.id AS region_id'),'setup_region.region_name',DB::Raw('setup_location.id AS location_id'),'location_name',DB::Raw('setup_area.id AS area_id'),'area_name',DB::Raw('setup_sub_area.id AS sub_area_id'),'sub_area_name','m_service.service_code','service_name')->where('usersauthority.user_id',Auth::id())->get();
         return response()->json($query);
     }
 }

@@ -76,6 +76,7 @@
                                                                 @php $a = 0; @endphp
                                                                 @foreach($access_menu_parent as $row_parent)
                                                                         @php
+                                                                            $z = 0;
                                                                             $i = 1;
                                                                             $count_user_access = 1;
                                                                             $if_check_all = null;
@@ -92,7 +93,11 @@
                                                                             </td>
                                                                         </tr>
                                                                             @foreach($access_menu as $row_menu)
-                                                                            
+                                                                                @php
+                                                                                $arr = array_filter($menu_array,function($ar) use($row_menu){
+                                                                                    return $ar['menu_id'] == $row_menu->id;
+                                                                                });
+                                                                                @endphp
                                                                                 <tr class="expandable-body">
                                                                                     @if($row_parent->id == $row_menu->menu_parent_id)
                                                                                         <td class="hiddenRow">
@@ -103,7 +108,7 @@
                                                                                                             <td>
                                                                                                                 <div class="form-group">
                                                                                                                     <div class="icheck-primary d-inline pl-5">
-                                                                                                                        <input type="checkbox" class="menuParent{{ $a }}" id="checkbox{{ $a }}Menu{{ $i }}" name="menuParent[]" value="{{ $row_menu->id }}" {{ in_array($row_menu->id,$menu_id) ? 'checked':''}}>
+                                                                                                                        <input type="checkbox" class="menuParent{{ $a }}" id="checkbox{{ $a }}Menu{{ $i }}" name="menuParent[]" value="{{ $row_menu->id }}" {{ count($arr) > 0 ? 'checked' : '' }}>
                                                                                                                         <label for="checkbox{{ $a }}Menu{{ $i }}">
                                                                                                                             {{ $row_menu->nama_menu }}
                                                                                                                         </label>
@@ -116,8 +121,9 @@
                                                                                             </div>
                                                                                         </td>
                                                                                         @php
+                                                                                            $z++;
                                                                                             $i++;
-                                                                                            if(in_array($row_menu->id,$menu_id)){ 
+                                                                                            if(count($arr) > 0){ 
                                                                                                 $count_user_access++;
                                                                                             }
                                                                                         @endphp
@@ -262,14 +268,14 @@ $(document).ready(function(){
         },
         processData:true,
         success:function(data){
+            console.log(data);
             var region = "";
             $.each(data,function(i,item){
-                region = "<div class=\"card card-info card-outline col-3\">"+
+                region = "<div class=\"card card-info card-outline col-3 div_location\">"+
                             "<div class=\"card-header text-left\">"+
                                 "<div class=\"custom-control custom-checkbox\">"+
                                     "<input class=\"custom-control-input\" type=\"checkbox\" id=\"region"+i+"\" name=\"region[]\">"+
                                     "<label for=\"region"+i+"\" class=\"custom-control-label\"><h5 class=\"card-title\">Region "+data[i].region_name+"</h5></label></div>"+
-                                    
                             "</div>"+
                             "<div class=\"card-body\" id=\"div_location"+i+"\"></div></div>";
                 $('.div_region').append(region);
@@ -292,14 +298,6 @@ $(document).ready(function(){
                             "<label for=\"region"+i+"location"+a+"\" class=\"custom-control-label\">"+data_location[a].location_name+"</label>"+
                             "</div>";
                             $('#div_location'+i).append(location);
-
-                            $('#region'+i+'location'+a).on('click',function(){
-                                if($('.region'+i).not(':checked').length > 0){
-                                    $('#region'+i).prop('checked',false);
-                                }else{
-                                    $('#region'+i).prop('checked',true);
-                                }
-                            });
                         });
                     }
                 });
@@ -456,9 +454,10 @@ $(document).on('change','#project_code',function(){
         },
         processData:true,
         success:function(data){
+            $('.div_location').remove();
             var region = "";
             $.each(data,function(i,item){
-                region = "<div class=\"card card-info card-outline col-3\">"+
+                region = "<div class=\"card card-info card-outline col-3  div_location\">"+
                             "<div class=\"card-header text-left\">"+
                                 "<div class=\"custom-control custom-checkbox\">"+
                                     "<input class=\"custom-control-input\" type=\"checkbox\" id=\"region"+i+"\" name=\"region[]\">"+
