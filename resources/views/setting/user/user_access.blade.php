@@ -264,11 +264,10 @@ $(document).ready(function(){
         type:"POST",
         dataType:"JSON",
         data:{
-            "project_code":$('#project_code').val(), 
+            "project_code":$('#project_code').val(),
         },
         processData:true,
         success:function(data){
-            console.log(data);
             var region = "";
             $.each(data,function(i,item){
                 region = "<div class=\"card card-info card-outline col-3 div_location\">"+
@@ -291,24 +290,50 @@ $(document).ready(function(){
                     },
                     processData:true,
                     success:function(data_location){
-                        var location="";
-                        $.each(data_location,function(a,item){
-                            location ="<div class=\"custom-control custom-checkbox\">"+
-                            "<input class=\"custom-control-input region"+i+"\" type=\"checkbox\" id=\"region"+i+"location"+a+"\" name=\"location[]\" value='"+data_location[a].id+"'>"+
-                            "<label for=\"region"+i+"location"+a+"\" class=\"custom-control-label\">"+data_location[a].location_name+"</label>"+
-                            "</div>";
-                            $('#div_location'+i).append(location);
+                        var locUserAuth = {'location_id':[]};
+                        
+                        $.ajax({
+                            headers:{
+                                'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+                            },
+                            url:"/getUserAuthorityLocationToSelectedByRegion",
+                            type:"POST",
+                            dataType:"JSON",
+                            data:{
+                                "region_id":data[i].id,
+                                "user_id":{{ $role->id }}
+                            },
+                            processData:true,
+                            success:function(dataUserAuthorityLocation){
+                                $.each(dataUserAuthorityLocation,function(a,item){
+                                    locUserAuth['location_id'].push(dataUserAuthorityLocation[a]['id']);
+                                });
+                                 
+                            }
                         });
+                        //console.log(locUserAuth);
+                        $('#region'+i).on('click',function(){
+                            if($('#region'+i).is(':checked')){
+                                $('.region'+i).prop('checked',true);
+                            }else{
+                                $('.region'+i).prop('checked',false);
+                            }
+                        });
+                        var location="";
+                        $.each(data_location,function(z,item){
+                            // var is_checked = locUserAuth.filter(function(loc){
+                            //     return loc.location_id==data_location[z].id ? true : false;
+                            // });
+                            // //console.log(is_checked);
+                            // location ="<div class=\"custom-control custom-checkbox\">"+
+                            // "<input class=\"custom-control-input region"+i+"\" type=\"checkbox\" id=\"region"+i+"location"+z+"\" name=\"location[]\" value='"+data_location[z].id+"' "+is_checked+">"+
+                            // "<label for=\"region"+i+"location"+z+"\" class=\"custom-control-label\">"+data_location[z].location_name+"</label>"+
+                            // "</div>";
+                            // $('#div_location'+i).append(location);
+                        });
+                                console.log(locUserAuth[0]);
                     }
                 });
-                $('#region'+i).on('click',function(){
-                    if($('#region'+i).is(':checked')){
-                        $('.region'+i).prop('checked',true);
-                    }else{
-                        $('.region'+i).prop('checked',false);
-                    }
-                });
-                
             });
         }
     });

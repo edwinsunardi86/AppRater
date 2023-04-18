@@ -94,7 +94,6 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'area'],function(
     Route::post('/delete_area',[AreaController::class,'delete_area']);
     Route::get('/getDataDescriptionById/{id}',[AreaController::class,'get_data_description_area_by_id']);
     Route::get('/getDataService',[AreaController::class,'get_data_service']);
-    
 });
 
 
@@ -146,6 +145,7 @@ Route::post('sub_area/getDataSubAreaSelected',[SubAreaController::class,'get_dat
 Route::post('project/getProjectToSelected',[ProjectController::class,'get_project_to_selected'])->middleware('auth');
 Route::post('dashboard/getAppraisalWeekly',[DashboardController::class,'get_appraisal_weekly'])->middleware('auth');
 Route::get('/getUserAccessAuthority',[UserController::class,'getUserAccessAuthority'])->middleware('auth');
+Route::post('/getUserAuthorityLocationToSelectedByRegion',[UserController::class,'getUserAuthorityLocationToSelectedByRegion'])->middleware('auth');
 Route::post('/dailyAppraisalPerWeek',[DashboardController::class,'dailyAppraisalPerWeek']);
 
 // Route::post('project/getRegionSetupProject',[ProjectController::class,'get_region_setup_project'])->middleware('auth');

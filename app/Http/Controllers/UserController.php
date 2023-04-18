@@ -290,4 +290,19 @@ class UserController extends Controller
         join('m_service','m_service.service_code','=','setup_area.service_code')->select('setup_project.project_code','project_name',DB::Raw('setup_region.id AS region_id'),'setup_region.region_name',DB::Raw('setup_location.id AS location_id'),'location_name',DB::Raw('setup_area.id AS area_id'),'area_name',DB::Raw('setup_sub_area.id AS sub_area_id'),'sub_area_name','m_service.service_code','service_name')->where('usersauthority.user_id',Auth::id())->get();
         return response()->json($query);
     }
+
+    public function getUserAuthorityLocationToSelectedByRegion(Request $request){
+        $db = DB::table('setup_location')->
+        join('usersauthority','usersauthority.location_id','=','setup_location.id')->
+        join('setup_region','setup_location.region_id','=','setup_region.id')->
+        select('setup_location.id','setup_location.location_name','setup_location.address',DB::Raw('setup_location.description AS location_description,setup_region.description AS region_description','usersauthority.location_id'))->where('usersauthority.user_id',$request->user_id);
+        // var_dump($db);
+        if($request->location_id != ""){
+            $db = $db->where('setup_location.id',$request->location_id)->get();
+        }else{
+            $db = $db->where('setup_region.id',$request->region_id)->get();
+        }
+        // var_dump($db);
+        return response()->json($db);
+    }
 }
