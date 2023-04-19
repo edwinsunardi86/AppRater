@@ -164,24 +164,37 @@ class UserController extends Controller
         $menuParent = DB::table('menu')->where('menu_parent_id',0)->get();
         $menu = DB::table('menu')->select('menu.menu_parent_id','menu.id','menu.nama_menu')->where('menu.menu_parent_id','<>',0)->get();
         $access_menu = DB::table('usersprivilege')->select('menu_id','menu.menu_parent_id','create','update','delete')->where('user_id',$id)->join('menu','menu.id','=','usersprivilege.menu_id')->get();
-        $authority_client_per_project = DB::table('usersauthority')
+        $query = DB::table('usersauthority')
         ->join('setup_location','setup_location.id','=','usersauthority.location_id')
         ->join('setup_region','setup_region.id','=','setup_location.region_id')
         ->join('setup_project','setup_region.project_code','=','setup_project.project_code')
         ->join('m_client','setup_project.client_id','=','m_client.id')
         ->select(DB::Raw('m_client.id AS client_id'),'client_name','setup_project.project_code','project_name')
-        ->where('user_id',$id)->groupBy('setup_project.project_code')->first();
-        // var_dump($authority);
+        ->where('user_id',$id);
+        $query2 = DB::table('usersauthority')
+        ->join('setup_location','setup_location.id','=','usersauthority.location_id')
+        ->join('setup_region','setup_region.id','=','setup_location.region_id')
+        ->join('setup_project','setup_region.project_code','=','setup_project.project_code')
+        ->select('setup_project.project_code','project_name')
+        ->where('user_id',$id)->groupBy('setup_project.project_code');
+        $authority_client_per_project = $query->first();
+        $project = $query2->get();
+        $arr_project = array();
+        $imp_project = "";
+        foreach($project as $row){
+            array_push($arr_project,$row->project_code);
+            
+        }
+        $imp_project = implode(",",$arr_project);
         $role_user = DB::table('users')->select('id','username','fullname','email','role')->where('users.id',$id)->first();
         $menu_array = array();
         $menu_parent_id = [];
         foreach($access_menu as $row){
             array_push($menu_array,array( 'menu_id'=> $row->menu_id,'create'=> $row->create, 'update' => $row->update, 'delete'=>$row->delete));
         }
-        //print_r($menu_array['menu_id']); die();
-        // echo $menu_array[0]['menu_id']; die();
         foreach($access_menu as $row){
-            array_push($menu_parent_id,$row->menu_parent_id);
+            // array_push($menu_parent_id,$row->menu_parent_id);
+            
         }
         return view('setting.user.user_access', [
             'access_menu_parent'            => $menuParent,
@@ -189,7 +202,8 @@ class UserController extends Controller
             'menu_array'                    => $menu_array,
             'menu_parent_id'                => $menu_parent_id,
             'role'                          => $role_user,
-            'authority_client_per_project' => $authority_client_per_project,
+            'authority_client_per_project'  => $authority_client_per_project,
+            'project'                       => $imp_project,
             'active_gm'                     => 'Setting',
             'active_m'                      => 'users',
             'title'                         => 'User Access'

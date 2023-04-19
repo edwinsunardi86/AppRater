@@ -71,7 +71,7 @@
                                                 @csrf
                                                 <div class="card-body">
                                                     <div class="mb-6">
-                                                        <table class="table table-hover">
+                                                        {{-- <table class="table table-hover">
                                                             <tbody>
                                                                 @php $a = 0; @endphp
                                                                 @foreach($access_menu_parent as $row_parent)
@@ -87,7 +87,7 @@
                                                                                 <div class="icheck-primary d-inline">
                                                                                     <input type="checkbox" name="checkboxPrimary[]" id="checkboxPrimary{{ $a }}" value="{{ $row_parent->id }}">
                                                                                     <label for="checkboxPrimary{{ $a }}">
-                                                                                        {{ $row_parent->nama_menu }}
+                                                                                        <h4>{{ $row_parent->nama_menu }}</h4>
                                                                                     </label>
                                                                                 </div>
                                                                             </td>
@@ -107,10 +107,28 @@
                                                                                                         <tr>
                                                                                                             <td>
                                                                                                                 <div class="form-group">
-                                                                                                                    <div class="icheck-primary d-inline pl-5">
+                                                                                                                    <div class="icheck-primary d-inline pl-5 col-md-4">
                                                                                                                         <input type="checkbox" class="menuParent{{ $a }}" id="checkbox{{ $a }}Menu{{ $i }}" name="menuParent[]" value="{{ $row_menu->id }}" {{ count($arr) > 0 ? 'checked' : '' }}>
                                                                                                                         <label for="checkbox{{ $a }}Menu{{ $i }}">
-                                                                                                                            {{ $row_menu->nama_menu }}
+                                                                                                                            <h5>{{ $row_menu->nama_menu }}</h5>
+                                                                                                                        </label>
+                                                                                                                    </div>
+                                                                                                                    <div class="icheck-primary d-inline pl-5">
+                                                                                                                        <input type="checkbox" class="menuCreateParent{{ $a }}" id="checkbox{{ $a }}MenuCreate{{ $i }}" name="menuCreateParent[]" value="1" {{ count($arr) > 0 ? 'checked' : '' }}>
+                                                                                                                        <label for="checkbox{{ $a }}Menu{{ $i }}">
+                                                                                                                            Create
+                                                                                                                        </label>
+                                                                                                                    </div>
+                                                                                                                    <div class="icheck-primary d-inline pl-5">
+                                                                                                                        <input type="checkbox" class="menuUpdateParent{{ $a }}" id="checkbox{{ $a }}MenuUpdate{{ $i }}" name="menuUpdateParent[]" value="1" {{ count($arr) > 0 ? 'checked' : '' }}>
+                                                                                                                        <label for="checkbox{{ $a }}Menu{{ $i }}">
+                                                                                                                            Update
+                                                                                                                        </label>
+                                                                                                                    </div>
+                                                                                                                    <div class="icheck-primary d-inline pl-5">
+                                                                                                                        <input type="checkbox" class="menuDeleteParent{{ $a }}" id="checkbox{{ $a }}MenuDelete{{ $i }}" name="menuDeleteParent[]" value="1" {{ count($arr) > 0 ? 'checked' : '' }}>
+                                                                                                                        <label for="checkbox{{ $a }}Menu{{ $i }}">
+                                                                                                                            Delete
                                                                                                                         </label>
                                                                                                                     </div>
                                                                                                                 </div>
@@ -135,6 +153,134 @@
                                                                             echo '<input type="hidden" name="check_all[]" id="check_all'.$a.'" value="'.$if_check_all.'">';
                                                                             @endphp
                                                                     @php $a++; @endphp
+                                                                @endforeach
+                                                            </tbody>
+                                                        </table> --}}
+                                                        @php
+                                                        $checkedCreate = "";
+                                                        $checkedUpdate = "";
+                                                        $checkedDelete = "";
+                                                        function filterMenuCreateByMenuId($menu_array,$row_menu){
+                                                            foreach($menu_array as $arr){
+                                                                if($arr['menu_id'] == $row_menu->id){
+                                                                    if($arr['create']==1){
+                                                                            return "checked";
+                                                                    }
+                                                                    break;
+                                                                }
+                                                            }
+                                                        }
+
+                                                        function filterMenuUpdateByMenuId($menu_array,$row_menu){
+                                                            foreach($menu_array as $arr){
+                                                                if($arr['menu_id'] == $row_menu->id){
+                                                                    if($arr['update']==1){
+                                                                            return "checked";
+                                                                    }
+                                                                    break;
+                                                                }
+                                                            }
+                                                        }
+
+                                                        function filterMenuDeleteByMenuId($menu_array,$row_menu){
+                                                            foreach($menu_array as $arr){
+                                                                if($arr['menu_id'] == $row_menu->id){
+                                                                    if($arr['delete']==1){
+                                                                            return "checked";
+                                                                    }
+                                                                    break;
+                                                                }
+                                                            }
+                                                        }
+                                                        @endphp
+                                                        <table class="table table-hover table-striped">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Menu</th>
+                                                                    <th>Sub Menu</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @php $a = 0; @endphp
+                                                                @foreach($access_menu_parent as $row_parent)
+                                                                <tr>
+                                                                    <td>
+                                                                        <div class="icheck-primary d-inline">
+                                                                            <input type="checkbox" name="checkboxPrimary[]" id="checkboxPrimary{{ $a }}" value="{{ $row_parent->id }}">
+                                                                            <label for="checkboxPrimary{{ $a }}">
+                                                                                <h4>{{ $row_parent->nama_menu }}</h4>
+                                                                            </label>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <table class="table table-bordered">
+                                                                            <tbody>
+                                                                                @php
+                                                                                    $z = 0;
+                                                                                    $i = 1;
+                                                                                    $count_user_access = 1;
+                                                                                    $if_check_all = null;
+                                                                                @endphp
+                                                                                @foreach($access_menu as $row_menu)
+                                                                                @php
+                                                                                $arr = array_filter($menu_array,function($ar) use($row_menu){
+                                                                                    return $ar['menu_id'] == $row_menu->id;
+                                                                                });
+                                                                                $checkedCreate = "";
+                                                                                @endphp
+                                                                                    @if($row_parent->id == $row_menu->menu_parent_id)
+                                                                                        <tr>
+                                                                                            <td>
+                                                                                                <div class="icheck-primary d-inline pl-5 col-md-4">
+                                                                                                    <input type="checkbox" class="menuParent{{ $a }}" id="checkbox{{ $a }}Menu{{ $i }}" name="menuParent[]" value="{{ $row_menu->id }}" {{ count($arr) > 0 ? 'checked' : '' }}>
+                                                                                                    <label for="checkbox{{ $a }}Menu{{ $i }}">
+                                                                                                        <h5>{{ $row_menu->nama_menu }}</h5>
+                                                                                                    </label>
+                                                                                                </div>
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                <div class="icheck-primary d-inline pl-5">
+                                                                                                    <input type="checkbox" class="menuParentCreate{{ $a }}" id="checkbox{{ $a }}MenuCreate{{ $i }}" name="menuParentCreate[]" value="1" {{ filterMenuCreateByMenuId($menu_array,$row_menu) }}>
+                                                                                                    <label for="checkbox{{ $a }}MenuCreate{{ $i }}">
+                                                                                                        Create
+                                                                                                    </label>
+                                                                                                </div>
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                <div class="icheck-primary d-inline pl-5">
+                                                                                                    <input type="checkbox" class="menuParentUpdate{{ $a }}" id="checkbox{{ $a }}MenuUpdate{{ $i }}" name="menuParentUpdate[]" value="1" {{ filterMenuUpdateByMenuId($menu_array,$row_menu) }}>
+                                                                                                    <label for="checkbox{{ $a }}MenuUpdate{{ $i }}">
+                                                                                                        Update
+                                                                                                    </label>
+                                                                                                </div>
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                <div class="icheck-primary d-inline pl-5">
+                                                                                                    <input type="checkbox" class="menuParentDelete{{ $a }}" id="checkbox{{ $a }}MenuDelete{{ $i }}" name="menuParentDelete[]" value="1" {{ filterMenuDeleteByMenuId($menu_array,$row_menu) }}>
+                                                                                                    <label for="checkbox{{ $a }}MenuDelete{{ $i }}">
+                                                                                                        Delete
+                                                                                                    </label>
+                                                                                                </div>
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                        @php
+                                                                                            $z++;
+                                                                                            $i++;
+                                                                                            if(count($arr) > 0){ 
+                                                                                                $count_user_access++;
+                                                                                            }
+                                                                                        @endphp
+                                                                                    @endif          
+                                                                                @endforeach
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </td>
+                                                                </tr>
+                                                                @php
+                                                                    $if_check_all = ($i == $count_user_access) ? 'all' : '';
+                                                                    echo '<input type="hidden" name="check_all[]" id="check_all'.$a.'" value="'.$if_check_all.'">';
+                                                                @endphp
+                                                                @php $a++; @endphp
                                                                 @endforeach
                                                             </tbody>
                                                         </table>
@@ -162,13 +308,14 @@
                                                         </div>
                                                         <div class="form-group row">
                                                             <label for="choiceProject" class="col-form-label col-sm-2">Project</label>
-                                                            <div class="col-sm-8">
-                                                                <select class="form-control select2" name="project_code" id="project_code">
-                                                                    <option value="{{ isset($authority_client_per_project->project_code) ? $authority_client_per_project->project_code : "" }}">{{ isset($authority_client_per_project->project_name) ? $authority_client_per_project->project_name : "" }}</option>
+                                                            <div class="col-sm-4">
+                                                                <select class="form-control select2" name="project_code" id="project_code" multiple="multiple" style="width:100%">
+                                                                    {{-- <option value="{{ isset($authority_client_per_project->project_code) ? $authority_client_per_project->project_code : "" }}" selected>{{ isset($authority_client_per_project->project_name) ? $authority_client_per_project->project_name : "" }}</option> --}}
                                                                 </select>
+                                                                <input type="hidden" name="project_code_text" id="project_code_text">
                                                             </div>
                                                         </div>
-                                                        <div class="div_region row  d-flex justify-content-between">
+                                                        <div class="div_region row  d-flex justify-content-center">
                     
                                                         </div>
                                                     </div>
@@ -256,6 +403,47 @@ $(document).on('click','.pilih_client',function(){
     });
 });
 $(document).ready(function(){
+    var dataAuthLocation = [];
+    var project = "{{ $project }}";
+    var arr_project = project.split(",");
+    $('#project_code_text').val(arr_project);
+    console.log(arr_project);
+    $.ajax({
+        headers:{
+            'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+        },
+        url:"/project/getProjectToSelected",
+        type:"POST",
+        dataType:"JSON",
+        data:{
+            "client_id":$('#client_id').val(),
+        },
+        processData:true,
+        success:function(data){
+            $('.tb_sub_area > tbody').empty();
+            $('select#project_code option').remove();
+            var inputProject = "";
+            $.each(data,function(i,item){
+                
+                $('select#project_code').append($('<option>',{
+                    text:data[i].project_name,
+                    value:data[i].project_code
+                }));
+
+                var res_project = arr_project.filter(function(item){
+                    if(item == data[i].project_code){
+                        inputProject +=data[i].project_code+",";
+                    }
+                    return item == data[i].project_code;
+                });
+
+                // if(){
+                //     $('select#project_code > option[value="'+data[i].project_code+'"]').attr('selected',true);
+                // }
+            });
+           
+        }
+    });
     $.ajax({
         headers:{
             'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
@@ -264,13 +452,14 @@ $(document).ready(function(){
         type:"POST",
         dataType:"JSON",
         data:{
-            "project_code":$('#project_code').val(),
+            "project_code":arr_project, 
         },
         processData:true,
         success:function(data){
+            $('.div_location').remove();
             var region = "";
             $.each(data,function(i,item){
-                region = "<div class=\"card card-info card-outline col-3 div_location\">"+
+                region = "<div class=\"card card-info card-outline col-3  div_location mr-2\">"+
                             "<div class=\"card-header text-left\">"+
                                 "<div class=\"custom-control custom-checkbox\">"+
                                     "<input class=\"custom-control-input\" type=\"checkbox\" id=\"region"+i+"\" name=\"region[]\">"+
@@ -278,6 +467,25 @@ $(document).ready(function(){
                             "</div>"+
                             "<div class=\"card-body\" id=\"div_location"+i+"\"></div></div>";
                 $('.div_region').append(region);
+                $.ajax({
+                    headers:{
+                        'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+                    },
+                    url:"/getUserAuthorityLocationToSelectedByRegion",
+                    type:"POST",
+                    dataType:"JSON",
+                    data:{
+                        'user_id':{{ $role->id }},
+                        "region_id":data[i].id,
+                    },
+                    processData:true,
+                    success:function(dataUserAuth){
+                        $.each(dataUserAuth,function(i,item){
+                            dataAuthLocation.push({ location_id:dataUserAuth[i]['id']});
+                        });
+                    }
+                });
+                
                 $.ajax({
                     headers:{
                         'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
@@ -290,50 +498,36 @@ $(document).ready(function(){
                     },
                     processData:true,
                     success:function(data_location){
-                        var locUserAuth = {'location_id':[]};
-                        
-                        $.ajax({
-                            headers:{
-                                'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
-                            },
-                            url:"/getUserAuthorityLocationToSelectedByRegion",
-                            type:"POST",
-                            dataType:"JSON",
-                            data:{
-                                "region_id":data[i].id,
-                                "user_id":{{ $role->id }}
-                            },
-                            processData:true,
-                            success:function(dataUserAuthorityLocation){
-                                $.each(dataUserAuthorityLocation,function(a,item){
-                                    locUserAuth['location_id'].push(dataUserAuthorityLocation[a]['id']);
-                                });
-                                 
-                            }
-                        });
-                        //console.log(locUserAuth);
-                        $('#region'+i).on('click',function(){
-                            if($('#region'+i).is(':checked')){
-                                $('.region'+i).prop('checked',true);
-                            }else{
-                                $('.region'+i).prop('checked',false);
-                            }
-                        });
                         var location="";
-                        $.each(data_location,function(z,item){
-                            // var is_checked = locUserAuth.filter(function(loc){
-                            //     return loc.location_id==data_location[z].id ? true : false;
-                            // });
-                            // //console.log(is_checked);
-                            // location ="<div class=\"custom-control custom-checkbox\">"+
-                            // "<input class=\"custom-control-input region"+i+"\" type=\"checkbox\" id=\"region"+i+"location"+z+"\" name=\"location[]\" value='"+data_location[z].id+"' "+is_checked+">"+
-                            // "<label for=\"region"+i+"location"+z+"\" class=\"custom-control-label\">"+data_location[z].location_name+"</label>"+
-                            // "</div>";
-                            // $('#div_location'+i).append(location);
+                        $.each(data_location,function(a,item){
+                            var locchecked = dataAuthLocation.filter(function(item){ return item['location_id'] == data_location[a].id });
+                            // console.log(locchecked.length);
+                            if(locchecked.length > 0){
+                                var is_checked = "checked"
+                            }else{
+                                var is_checked = ""
+                            }
+                            location ="<div class=\"custom-control custom-checkbox\">"+
+                            "<input class=\"custom-control-input region"+i+"\" type=\"checkbox\" id=\"region"+i+"location"+a+"\" name=\"location[]\" value='"+data_location[a].id+"'"+is_checked+">"+
+                            "<label for=\"region"+i+"location"+a+"\" class=\"custom-control-label\">"+data_location[a].location_name+"</label>"+
+                            "</div>";
+                            $('#div_location'+i).append(location);
+                            if($('.region'+i).not(':checked').length > 0){
+                                $('#region'+i).prop('checked',false);
+                            }else{
+                                $('#region'+i).prop('checked',true);
+                            }
                         });
-                                console.log(locUserAuth[0]);
                     }
                 });
+                $('#region'+i).on('click',function(){
+                    if($('#region'+i).is(':checked')){
+                        $('.region'+i).prop('checked',true);
+                    }else{
+                        $('.region'+i).prop('checked',false);
+                    }
+                });
+                
             });
         }
     });
@@ -400,7 +594,9 @@ $(document).ready(function(){
                 var formData = new FormData();
                 const menuParent = [];
                 $('input[name="menuParent[]"]:checked').each(function(){
-                    menuParent.push($(this).val());
+                    menuParent.push(
+                        $(this).val()
+                    );
                 });
                 formData.append('menu_id',menuParent);
                 formData.append('user_id',param[5]);
@@ -438,35 +634,8 @@ $(document).ready(function(){
     });
 });
 
-$(document).on('change','#company',function(){
-    $.ajax({
-        headers:{
-            'X-CSRF-TOKEN' : $('meta[name=csrf-token]').attr('content')
-        },
-        url:'/setup_project/getProjectSetupToSelected',
-        type:'POST',
-        dataType:'JSON',
-        data:{
-            client_id:$('#company').val()
-        },
-        processData:true,
-        success:function(data){
-            $('select#project_code option').remove();
-            $('select#project_code').append($('<option>',{
-                value:"",
-                text:"Choice Project"
-            }));
-            $.each(data,function(i,item){
-                $('select#project_code').append($('<option>',{
-                    value:data[i].project_code,
-                    text:data[i].project_name
-                }));
-            });
-        }
-    });
-});
-
 $(document).on('change','#project_code',function(){
+    $('.div_location').remove();
     $.ajax({
         headers:{
             'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
@@ -479,10 +648,10 @@ $(document).on('change','#project_code',function(){
         },
         processData:true,
         success:function(data){
-            $('.div_location').remove();
+            // $('.div_location').remove();
             var region = "";
             $.each(data,function(i,item){
-                region = "<div class=\"card card-info card-outline col-3  div_location\">"+
+                region = "<div class=\"card card-info card-outline col-3  div_location mr-2\">"+
                             "<div class=\"card-header text-left\">"+
                                 "<div class=\"custom-control custom-checkbox\">"+
                                     "<input class=\"custom-control-input\" type=\"checkbox\" id=\"region"+i+"\" name=\"region[]\">"+

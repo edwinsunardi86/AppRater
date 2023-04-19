@@ -31,8 +31,15 @@ class DashboardController extends Controller
     }
 
     function dailyAppraisalPerWeek(Request $request){
-        $query = DB::table('setup_location')->join('setup_region','setup_region.id','=','setup_location.region_id')->join('setup_project','setup_project.project_code','=','setup_region.project_code')->join('evaluation','evaluation.project_code','=','setup_project.project_code')->join('setup_area','setup_area.location_id','=','setup_location.id')->join('setup_sub_area','setup_sub_area.area_id','setup_area.id')->where('setup_location.id',$request->location_id)->where(DB::Raw('YEARWEEK(appraisal_date)'),$request->year_project.$request->week_project)->get();
-        // return response()->json($query);
+        $query = DB::table('setup_location')->
+        join('setup_region','setup_region.id','=','setup_location.region_id')->
+        join('setup_project','setup_project.project_code','=','setup_region.project_code')->
+        join('evaluation','evaluation.project_code','=','setup_project.project_code')->
+        join('setup_area','setup_area.location_id','=','setup_location.id')->
+        join('setup_sub_area','setup_sub_area.area_id','setup_area.id')->
+        where('setup_location.id',$request->location_id)->
+        where(DB::Raw('YEARWEEK(appraisal_date)'),$request->year_project.$request->week_project)->get();
+        // var_dump($query);
         return Datatables::of($query)->make(true);
     }
 }

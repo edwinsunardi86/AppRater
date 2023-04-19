@@ -6,7 +6,14 @@
         <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
       </li>
     </ul>
-
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <!-- Brand Logo -->
+        <a href="index3.html" class="brand-link nav-link">
+          <img src="/images/LOGO-PT-SOS.png" alt="AdminLTE Logo" class="brand-image" style="opacity: .8">
+          <span class="brand-text font-weight-light">PT SOS Indonesia</span>
+        </a>
+    </ul>
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
       <li class="nav-item dropdown">

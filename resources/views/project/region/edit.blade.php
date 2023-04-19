@@ -37,8 +37,8 @@
                                 <div class="form-group row">
                                     <label for="inputClientName" class="col-sm-2 col-form-label">Client Name</label>
                                     <div class="col-sm-4">
-                                        <input type="text" class="form-control" name="client_name" id="client_name" readonly>
-                                        <input type="hidden" class="form-control" name="client_id" id="client_id" readonly>
+                                        <input type="text" class="form-control" name="client_name" id="client_name" value="{{ $region->client_name }}" readonly>
+                                        <input type="hidden" class="form-control" name="client_id" id="client_id" value="{{ $region->client_id }}" readonly>
                                     </div>
                                     <div class="col-sm-2">
                                         <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#modal-xl">Cari</button>
@@ -47,7 +47,7 @@
                                 <div class="form-group row">
                                     <label for="projectName" class="col-sm-2 col-form-label">Project Name</label>
                                     <div class="col-sm-4">
-                                        <select name="project_code" id="project_code" class="form-control select2 col-sm-4"></select>
+                                        <select name="project_code" id="project_code" class="form-control select2 col-sm-4"><option value="{{ $region->project_code }}">{{ $region->project_name }}</option></select>
                                     </div>
                                 </div>
                                 <div class="form-group row">

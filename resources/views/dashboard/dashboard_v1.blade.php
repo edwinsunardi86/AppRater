@@ -326,7 +326,6 @@ function groupBy(list, group, key, value) {
 }
 function regionProject(project_code){
     var project_code = $('#project_code').val()
-    // alert(project_code);
     return project_code;
 }
 
@@ -346,8 +345,6 @@ $(document).ready(function(){
                 text:project[i].project_name
             }));
         });
-        
-        
         $(document).on('change','#project_code',function(){
             var region_name = ['region_name'];
             var filter_region = data.filter(project => project.project_code == $('#project_code').val());
@@ -457,7 +454,7 @@ $(document).on('change','#year_project,#month_project',function(){
                                 "<i class=\"ion ion-stats-bars\"></i>"+
                             "</div>"+
                             "<a href=\"#\" data-yearappraisal="+substr_yearappraisal+" data-weekappraisal="+substr_weekappraisal+" data-toggle=\"modal\" data-target=\"#modal-more_info\" class=\"data_daily\">More info <i class=\"fas fa-arrow-circle-right\"></i></a>"+
-                            "</div>"
+                            "</div>"+
                         "</div>";
                 $('#small-box-report').append(cardbox);
             });
