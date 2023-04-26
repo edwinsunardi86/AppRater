@@ -78,23 +78,19 @@ class SubAreaController extends Controller
     }
 
     public function update_sub_area(Request $request){
-        $get_detail_project = DB::table('setup_project_detail')->where('sub_area_id',$request->sub_area_id)->get();
+
         $post = array(
             'area_id'=>$request->area_id,
             'sub_area_name'=>$request->sub_area_name,
             'description'=>$request->sub_area_description,
         );
-        if($get_detail_project->count() > 0){
-            $confirmation = ['message' => 'Data Sub Area contains one or several setup project','icon' => 'error', 'redirect'=>'/sub_area'];
+        $update = DB::table('setup_sub_area')->where('id',$request->sub_area_id)->update($post);
+        if($update){
+            $confirmation = ['message' => 'Data Sub Area success updated','icon' => 'success', 'redirect'=>'/sub_area'];
         }else{
-            $update = DB::table('setup_sub_area')->where('id',$request->sub_area_id)->update($post);
-            if($update){
-                $confirmation = ['message' => 'Data Sub Area success updated','icon' => 'success', 'redirect'=>'/sub_area'];
-            }else{
-                $confirmation = ['message' => 'Data Sub Area failed updated','icon' => 'error', 'redirect'=>'/sub_area'];
-            }
-            
+            $confirmation = ['message' => 'Data Sub Area failed updated','icon' => 'error', 'redirect'=>'/sub_area'];
         }
+
         return response()->json($confirmation);
     }
     

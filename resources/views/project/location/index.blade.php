@@ -51,6 +51,7 @@ $(document).ready(function(){
         processing:true,
         serverSide:true,
         destroy: true,
+        ordering:false,
         ajax:'{!! route("data_location:dt") !!}',
         columns:[
             { data:i, name: i, render: function (data, type, row, meta) {

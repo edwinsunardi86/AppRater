@@ -5,7 +5,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Setup Area</h1>
+                    <h1>Setup Sub Area</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -248,12 +248,27 @@ $(document).ready(function(){
         ],
     });
     var counter = 0;
-    var tb_sub_area = $('#table_add_sub_area').DataTable();
+    var tb_sub_area = $('#table_add_sub_area').DataTable({paging:false});
     $('#addRow').on('click',function(){
-        tb_sub_area.row.add(['<input type="text" name="sub_area_name[]" id="sub_area_name'+counter+'" class="form-control form-control-sm sub_area_id"/>','<textarea class="form-control form-control-sm" id="sub_area_description'+counter+'" name="sub_area_description[]" rows="7" cols="20">']).draw(false);
+        tb_sub_area.row.add(['<input type="text" name="sub_area_name[]" id="sub_area_name'+counter+'" data-iterate='+counter+' class="form-control form-control-sm sub_area_id"/>','<textarea class="form-control form-control-sm" id="sub_area_description'+counter+'" name="sub_area_description[]" rows="7" cols="20">']).draw(false);
         counter++;
     });
+
     $('#addRow').click();
+
+    $('#removeRow').on('click',function(){
+        tb_sub_area.row('.selected').remove().draw(false);
+    });
+
+    $('#table_add_sub_area tbody').on('click', 'tr', function () {
+        if ($(this).hasClass('selected')) {
+            $(this).removeClass('selected');
+        } else {
+            tb_sub_area.$('tr.selected').removeClass('selected');
+            $(this).toggleClass('selected');
+        }
+    });
+
     $('#form_sub_area').validate({
         rules:{
             area_name:{
@@ -286,9 +301,10 @@ $(document).ready(function(){
             $('input[name^="sub_area_name[]"]').each(function(i,item){
                 if($(this).val()!=""){
                     count_val +=1;
+                    var getDataIterate = $(this).attr('data-iterate');
                     arr_sub_area.push({
-                        'sub_area_name': $('#sub_area_name'+i).val(),
-                        'sub_area_description': $('#sub_area_description'+i).val(),
+                        'sub_area_name': $('#sub_area_name'+getDataIterate).val(),
+                        'sub_area_description': $('#sub_area_description'+getDataIterate).val(),
                     });
                 }
             });
@@ -340,6 +356,7 @@ $(document).on('change','#location_name',function(){
         },
         processData:true,
         success:function(data){
+            $('select#area_name').empty();
             $('select#area_name').append($('<option>',{
                 value:"",
                 text:"Choice area"}));

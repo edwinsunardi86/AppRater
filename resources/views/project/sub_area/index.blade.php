@@ -30,14 +30,10 @@
                                     <tr>
                                         <th>No.</th>
                                         <th>Sub Area</th>
-                                        <th>Sub Area Description</th>
                                         <th>Area Name</th>
-                                        <th>Area Description</th>
                                         <th>Location Name</th>
                                         <th>Address</th>
-                                        <th>Location Description</th>
                                         <th>Region Name</th>
-                                        <th>Region Description</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -67,14 +63,10 @@ $(document).ready(function(){
                 }
             },
             { data: 'sub_area_name', name: 'area_name'},
-            { data: 'sub_area_description', name: 'sub_area_description'},
             { data: 'area_name', name: 'area_name'},
-            { data: 'area_description', name: 'description'},
             { data:'location_name', name: 'location_name'},
             { data: 'address', name: 'address'},
-            { data: 'location_description', name: 'location_description'},
             { data: 'region_name', name: 'region_name'},
-            { data: 'region_description', name: 'region_description'},
             { data: 'action', name: 'action'}
         ],
         "scrollX": true,

@@ -168,21 +168,29 @@ $(document).ready(function(){
                 $.each(data_service,function(i,item){
                     opt_service +="<option value="+data_service[i].service_code+">"+data_service[i].service_name+"</option>";
                 });
+            },
+            complete: function(){
+                $('#addRow').on('click',function(){
+                    tb_area.row.add(['<input type="text" name="area_name[]" id="area_name'+counter+'" data-iterate='+counter+' class="form-control form-control-sm"/>','<select class="form-control" name="service_code[]" id="service_code'+counter+'"></select>','<textarea class="form-control form-control-sm" id="area_description'+counter+'" name="area_description[]" rows="7" cols="20">']).draw(false);
+                        $('select#service_code'+counter).append(opt_service);
+                    counter++;
+                });
+                $('#addRow').click();
             }        
-        });
-        
-    $('#addRow').on('click',function(){
-        tb_area.row.add(['<input type="text" name="area_name[]" id="area_name'+counter+'" class="form-control form-control-sm"/>','<select class="form-control" name="service_code[]" id="service_code'+counter+'"></select>','<textarea class="form-control form-control-sm" id="area_description'+counter+'" name="area_description[]" rows="7" cols="20">']).draw(false);
-            $('select#service_code'+counter).append(opt_service);
-        counter++;
     });
-
+    
+    // $('select#service_code'+counter).append(opt_service);
     $('#removeRow').on('click',function(){
         tb_area.row('.selected').remove().draw(false);
     });
 
     $('#table_add_area tbody').on('click', 'tr', function () {
-        $(this).toggleClass('selected');
+        if ($(this).hasClass('selected')) {
+            $(this).removeClass('selected');
+        } else {
+            tb_area.$('tr.selected').removeClass('selected');
+            $(this).toggleClass('selected');
+        }
     });
     var i = 1;
     var tb_client = $('#table_client').DataTable({
@@ -232,11 +240,12 @@ $(document).ready(function(){
 
             $('input[name^="area_name[]"]').each(function(i,item){
                 if($(this).val()!=""){
+                    var getDataIterate = $(this).attr('data-iterate');
                     count_val += 1;
                     arr_area.push({
-                        'area_name': $('#area_name'+i).val(),
-                        'area_description': $('#area_description'+i).val(),
-                        'service' : $('#service_code'+i).val(),
+                        'area_name': $('#area_name'+getDataIterate).val(),
+                        'area_description': $('#area_description'+getDataIterate).val(),
+                        'service' : $('#service_code'+getDataIterate).val(),
                     });
                 }
             });

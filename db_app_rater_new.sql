@@ -1,6 +1,6 @@
 /*
 SQLyog Community v13.1.7 (64 bit)
-MySQL - 10.4.27-MariaDB : Database - rater_area
+MySQL - 10.4.24-MariaDB : Database - rater_area
 *********************************************************************
 */
 
@@ -12,7 +12,7 @@ MySQL - 10.4.27-MariaDB : Database - rater_area
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-CREATE DATABASE /*!32312 IF NOT EXISTS*/`rater_area` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/`rater_area` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
 
 USE `rater_area`;
 
@@ -25,7 +25,7 @@ CREATE TABLE `dial_country` (
   `country` varchar(25) DEFAULT NULL,
   `dial_code` char(10) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=197 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=197 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `dial_country` */
 
@@ -240,7 +240,7 @@ CREATE TABLE `evaluation` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `created_by` int(25) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `evaluation` */
 
@@ -263,7 +263,7 @@ CREATE TABLE `m_client` (
   `updated_by` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `client_name` (`client_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `m_client` */
 
@@ -283,7 +283,7 @@ CREATE TABLE `m_service` (
   `updated_by` int(11) DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`service_code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `m_service` */
 
@@ -299,14 +299,14 @@ DROP TABLE IF EXISTS `menu`;
 CREATE TABLE `menu` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `menu_parent_id` smallint(6) DEFAULT NULL,
-  `nama_menu` varchar(50) NOT NULL,
-  `font_icon` varchar(50) NOT NULL,
-  `path` varchar(200) NOT NULL,
+  `nama_menu` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `font_icon` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `path` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,
   `sort` int(11) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `created_by` varchar(255) DEFAULT NULL,
+  `created_by` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
-  `updated_by` varchar(255) DEFAULT NULL,
+  `updated_by` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `menu_nama_menu_unique` (`nama_menu`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
@@ -350,9 +350,30 @@ CREATE TABLE `setup_area` (
   KEY `location_id` (`location_id`),
   CONSTRAINT `setup_area_ibfk_1` FOREIGN KEY (`service_code`) REFERENCES `m_service` (`service_code`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `setup_area_ibfk_2` FOREIGN KEY (`location_id`) REFERENCES `setup_location` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `setup_area` */
+
+insert  into `setup_area`(`id`,`area_name`,`location_id`,`service_code`,`description`,`created_at`,`created_by`,`updated_at`,`updated_by`) values 
+(1,'Security',2,'ses',NULL,'2023-04-26 22:21:31',1,NULL,NULL),
+(2,'Gedung Administrasi Lt.1',2,'cls',NULL,'2023-04-26 22:21:31',1,NULL,NULL),
+(3,'Gedung Laboratorium Lt.1',2,'cls',NULL,'2023-04-26 22:57:14',1,NULL,NULL),
+(4,'Gedung Laboratorium Lt.2',2,'cls',NULL,'2023-04-26 22:57:51',1,NULL,NULL),
+(5,'Gedung Laboratorium Lt.3',2,'cls',NULL,'2023-04-26 22:59:19',1,NULL,NULL),
+(6,'Gedung Produksi Lt.1',2,'cls',NULL,'2023-04-26 22:59:19',1,NULL,NULL),
+(7,'Gedung Asrama Lt.1',2,'cls',NULL,'2023-04-26 22:59:19',1,NULL,NULL),
+(8,'Rumah Dinas',2,'cls',NULL,'2023-04-26 22:59:19',1,NULL,NULL),
+(9,'Security',1,'ses',NULL,'2023-04-26 23:11:15',1,NULL,NULL),
+(10,'Driver',1,'las',NULL,'2023-04-26 23:11:15',1,NULL,NULL),
+(11,'Gedung Utama Lt.1',1,'cls',NULL,'2023-04-26 23:11:15',1,NULL,NULL),
+(12,'Gedung Utama Lt.2',1,'cls',NULL,'2023-04-26 23:11:15',1,NULL,NULL),
+(13,'Gedung Blok Barat Lt.1',1,'cls',NULL,'2023-04-26 23:11:15',1,NULL,NULL),
+(14,'Gedung Blok Barat Lt.2',1,'cls',NULL,'2023-04-26 23:11:15',1,NULL,NULL),
+(15,'Gedung Pameran',1,'cls',NULL,'2023-04-26 23:11:15',1,NULL,NULL),
+(16,'Gedung Perpustakaan Lt.1',1,'cls',NULL,'2023-04-26 23:11:15',1,NULL,NULL),
+(17,'Gedung Perpustakaan Lt.2',1,'cls',NULL,'2023-04-26 23:11:15',1,NULL,NULL),
+(18,'Halaman',1,'cls',NULL,'2023-04-26 23:11:15',1,NULL,NULL),
+(19,'Driver',52,'las',NULL,'2023-04-26 23:16:23',1,NULL,NULL);
 
 /*Table structure for table `setup_location` */
 
@@ -372,7 +393,7 @@ CREATE TABLE `setup_location` (
   UNIQUE KEY `location_name` (`location_name`),
   KEY `region_id` (`region_id`),
   CONSTRAINT `setup_location_ibfk_1` FOREIGN KEY (`region_id`) REFERENCES `setup_region` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=53 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `setup_location` */
 
@@ -390,7 +411,45 @@ insert  into `setup_location`(`id`,`location_name`,`region_id`,`address`,`descri
 (11,'Kab. Bandung Ciater',2,NULL,NULL,'2023-04-26 17:03:18',NULL,NULL,NULL),
 (12,'Kab. Bandung PLTP Ibun Kamojan',2,NULL,NULL,'2023-04-26 17:03:18',NULL,NULL,NULL),
 (13,'Subang',2,NULL,NULL,'2023-04-26 17:03:18',NULL,NULL,NULL),
-(14,'Sumedang Ex. Lapan',2,NULL,NULL,'2023-04-26 17:03:18',NULL,NULL,NULL);
+(14,'Sumedang Ex. Lapan',2,NULL,NULL,'2023-04-26 17:03:18',NULL,NULL,NULL),
+(15,'Arkenas Balar DIY',3,NULL,NULL,'2023-04-26 21:20:13',NULL,NULL,NULL),
+(16,'Arkenas Gd. Artefak Rembang',3,NULL,NULL,'2023-04-26 21:20:13',NULL,NULL,NULL),
+(17,'Gunung Kidul DIY',3,NULL,NULL,'2023-04-26 21:20:13',NULL,NULL,NULL),
+(18,'Jepara',3,NULL,NULL,'2023-04-26 21:20:13',NULL,NULL,NULL),
+(19,'Kalasan',3,NULL,NULL,'2023-04-26 21:20:13',NULL,NULL,NULL),
+(20,'Magelang',3,NULL,NULL,'2023-04-26 21:20:13',NULL,NULL,NULL),
+(21,'Salatiga',3,NULL,NULL,'2023-04-26 21:20:13',NULL,NULL,NULL),
+(22,'Tawangmangu',3,NULL,NULL,'2023-04-26 21:20:13',NULL,NULL,NULL),
+(23,'Arkenas Gd. Artefak Punung',4,NULL,NULL,'2023-04-26 21:27:54',NULL,NULL,NULL),
+(24,'Arkenas Gd. Artefak Trowulan',4,NULL,NULL,'2023-04-26 21:27:54',NULL,NULL,NULL),
+(25,'Pasuruhan Jawa Timur',4,NULL,NULL,'2023-04-26 21:27:55',NULL,NULL,NULL),
+(26,'Arkenas Balar Kalsel',5,NULL,NULL,'2023-04-26 21:30:48',NULL,NULL,NULL),
+(27,'Pontianak',5,NULL,NULL,'2023-04-26 21:30:48',NULL,NULL,NULL),
+(28,'Kupang',6,NULL,NULL,'2023-04-26 21:32:42',NULL,NULL,NULL),
+(29,'Rajabasa DBL',7,NULL,NULL,'2023-04-26 21:33:32',NULL,NULL,NULL),
+(30,'DKI Jakarta Cikini + Raden Saleh',8,NULL,NULL,'2023-04-26 21:40:19',NULL,NULL,NULL),
+(31,'DKI Jakarta Jalan Bandung',8,NULL,NULL,'2023-04-26 21:40:19',NULL,NULL,NULL),
+(32,'DKI Jakarta Mess Gatsu',8,NULL,NULL,'2023-04-26 21:40:19',NULL,NULL,NULL),
+(33,'DKI Jakarta Pekayon',8,NULL,NULL,'2023-04-26 21:40:19',NULL,NULL,NULL),
+(34,'DKI Jakarta Permata Hijau',8,NULL,NULL,'2023-04-26 21:40:19',NULL,NULL,NULL),
+(35,'DKI Jakarta Rawamangun',8,NULL,NULL,'2023-04-26 21:40:20',NULL,NULL,NULL),
+(36,'DKI Jakarta Thamrin',8,NULL,NULL,'2023-04-26 21:40:20',NULL,NULL,NULL),
+(37,'DKI Mess Jakarta Ancol',8,NULL,NULL,'2023-04-26 21:40:20',NULL,NULL,NULL),
+(38,'Kab. Bogor Rusun Cibinong',8,NULL,NULL,'2023-04-26 21:40:20',NULL,NULL,NULL),
+(39,'Kota Bogor Kusnoto',8,NULL,NULL,'2023-04-26 21:40:20',NULL,NULL,NULL),
+(40,'Tangerang Gunung Sindur',8,NULL,NULL,'2023-04-26 21:40:20',NULL,NULL,NULL),
+(41,'Tangerang Puspitek',8,NULL,NULL,'2023-04-26 21:40:20',NULL,NULL,NULL),
+(42,'Arkenas Gd. Artefak Banten',8,NULL,NULL,'2023-04-26 21:40:20',NULL,NULL,NULL),
+(43,'Arkenas Balar Maluku',9,NULL,NULL,'2023-04-26 21:43:05',NULL,NULL,NULL),
+(44,'Arkenas Balar Papua',9,NULL,NULL,'2023-04-26 21:43:05',NULL,NULL,NULL),
+(45,'Arkenas Balar Sulut',9,NULL,NULL,'2023-04-26 21:43:05',NULL,NULL,NULL),
+(46,'Arkenas Sulsel',9,NULL,NULL,'2023-04-26 21:43:05',NULL,NULL,NULL),
+(47,'Lahendong - Tomohon',9,NULL,NULL,'2023-04-26 21:43:05',NULL,NULL,NULL),
+(48,'Bukit Tinggi Sumbar',10,NULL,NULL,'2023-04-26 21:44:11',NULL,NULL,NULL),
+(49,'Arkenas Balar Sumsel',11,NULL,NULL,'2023-04-26 21:44:59',NULL,NULL,NULL),
+(50,'Arkenas Balar Sumut',12,NULL,NULL,'2023-04-26 21:46:10',NULL,NULL,NULL),
+(51,'Arkenas Gd. Artefak Barus',12,NULL,NULL,'2023-04-26 21:46:10',NULL,NULL,NULL),
+(52,'Mataram',1,NULL,NULL,'2023-04-26 21:55:11',NULL,NULL,NULL);
 
 /*Table structure for table `setup_project` */
 
@@ -410,7 +469,7 @@ CREATE TABLE `setup_project` (
   UNIQUE KEY `project_code` (`project_code`),
   KEY `client_id` (`client_id`),
   CONSTRAINT `setup_project_ibfk_1` FOREIGN KEY (`client_id`) REFERENCES `m_client` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `setup_project` */
 
@@ -432,7 +491,7 @@ CREATE TABLE `setup_region` (
   `updated_by` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `region_name` (`region_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `setup_region` */
 
@@ -466,9 +525,119 @@ CREATE TABLE `setup_sub_area` (
   PRIMARY KEY (`id`),
   KEY `area_id` (`area_id`),
   CONSTRAINT `setup_sub_area_ibfk_1` FOREIGN KEY (`area_id`) REFERENCES `setup_area` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=109 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `setup_sub_area` */
+
+insert  into `setup_sub_area`(`id`,`sub_area_name`,`area_id`,`description`,`created_at`,`created_by`,`updated_at`,`updated_by`) values 
+(1,'Security Functions',1,NULL,'2023-04-26 23:27:01',NULL,NULL,NULL),
+(2,'Lobby Gedung Administrasi',2,NULL,'2023-04-26 23:40:50',NULL,NULL,NULL),
+(3,'Ruang Rapat',2,NULL,'2023-04-26 23:40:50',NULL,NULL,NULL),
+(4,'Ruang Kerja Pimpinan (Ka.BTIKK)',2,NULL,'2023-04-26 23:40:50',NULL,NULL,NULL),
+(5,'Gallery',2,NULL,'2023-04-26 23:40:50',NULL,NULL,NULL),
+(6,'Ruang Kerja Staff (Sekretaris)',2,NULL,'2023-04-26 23:40:50',NULL,NULL,NULL),
+(7,'Ruang Kerja Staff (Desain)',2,NULL,'2023-04-26 23:40:50',NULL,NULL,NULL),
+(8,'Ruang Kerja Staff (Pengelola Keuangan)',2,NULL,'2023-04-26 23:40:50',NULL,NULL,NULL),
+(9,'Ruang Kerja Staff (KPJT. 1)',2,NULL,'2023-04-26 23:40:50',NULL,NULL,NULL),
+(10,'Ruang Kerja Staff (KPJT. 2)',2,NULL,'2023-04-26 23:40:50',NULL,NULL,NULL),
+(11,'Ruang Kerja Staff (PPT)',2,NULL,'2023-04-26 23:40:50',NULL,NULL,NULL),
+(12,'Ruang Kerja Sub.Kordinator TU dan Staff TU',2,NULL,'2023-04-26 23:40:50',NULL,NULL,NULL),
+(13,'Toilet (Pria)',2,NULL,'2023-04-26 23:40:50',NULL,NULL,NULL),
+(14,'Toilet (Wanita)',2,NULL,'2023-04-26 23:40:50',NULL,NULL,NULL),
+(15,'Pantry',2,NULL,'2023-04-26 23:40:50',NULL,NULL,NULL),
+(16,'Lorong Administrasi',2,NULL,'2023-04-26 23:40:50',NULL,NULL,NULL),
+(17,'Area Parkir',2,NULL,'2023-04-26 23:40:50',NULL,NULL,NULL),
+(18,'Lobby Gedung Laboratorium',3,NULL,'2023-04-26 23:44:02',NULL,NULL,NULL),
+(19,'Ruang Rapat',3,NULL,'2023-04-26 23:44:02',NULL,NULL,NULL),
+(20,'Ruang Kontrol Rapat',3,NULL,'2023-04-26 23:44:02',NULL,NULL,NULL),
+(21,'Ruang Laboratorium',3,NULL,'2023-04-26 23:44:02',NULL,NULL,NULL),
+(22,'Ruang Kerja Staff Laboratorium',3,NULL,'2023-04-26 23:44:02',NULL,NULL,NULL),
+(23,'Gudang Bahan Kimia',3,NULL,'2023-04-26 23:44:02',NULL,NULL,NULL),
+(24,'Toilet VIP',3,NULL,'2023-04-26 23:44:02',NULL,NULL,NULL),
+(25,'Toilet (Pria)',3,NULL,'2023-04-26 23:44:02',NULL,NULL,NULL),
+(26,'Toilet (Wanita)',3,NULL,'2023-04-26 23:44:02',NULL,NULL,NULL),
+(27,'Ruang Tamu',4,NULL,'2023-04-26 23:48:45',NULL,NULL,NULL),
+(28,'Ruang CWS 1',4,NULL,'2023-04-26 23:48:45',NULL,NULL,NULL),
+(29,'Ruang CWS 2',4,NULL,'2023-04-26 23:48:45',NULL,NULL,NULL),
+(30,'Ruang Arsip',4,NULL,'2023-04-26 23:48:45',NULL,NULL,NULL),
+(31,'Tempat Ibadah (Mushola)',4,NULL,'2023-04-26 23:48:45',NULL,NULL,NULL),
+(32,'Toilet (Pria)',4,NULL,'2023-04-26 23:48:45',NULL,NULL,NULL),
+(33,'Toilet (Wanita)',4,NULL,'2023-04-26 23:48:45',NULL,NULL,NULL),
+(34,'Ruang Kerja INA TWS',5,NULL,'2023-04-26 23:50:17',NULL,NULL,NULL),
+(35,'Ruang Kerja Produksi (Pembakaran)',6,NULL,'2023-04-26 23:56:34',NULL,NULL,NULL),
+(36,'Pencetakan',6,NULL,'2023-04-26 23:56:34',NULL,NULL,NULL),
+(37,'Pembentukan dan Kriya ukir',6,NULL,'2023-04-26 23:56:34',NULL,NULL,NULL),
+(38,'Ruang Kerja Produksi (Kriya lukis)',6,NULL,'2023-04-26 23:56:34',NULL,NULL,NULL),
+(39,'Ruang Kontrol Panel Listrik',6,NULL,'2023-04-26 23:56:34',NULL,NULL,NULL),
+(40,'Toilet (Pria)',6,NULL,'2023-04-26 23:56:34',NULL,NULL,NULL),
+(41,'Toilet (Wanita)',6,NULL,'2023-04-26 23:56:34',NULL,NULL,NULL),
+(42,'Gudang Produksi',6,NULL,'2023-04-26 23:56:34',NULL,NULL,NULL),
+(43,'Ruang Kerja Produksi (Pengolahan bahan baku)',6,NULL,'2023-04-26 23:56:34',NULL,NULL,NULL),
+(44,'Gudang Bahan Baku',6,NULL,'2023-04-26 23:56:34',NULL,NULL,NULL),
+(45,'Area Parkir 1 (roda 2)',6,NULL,'2023-04-26 23:56:34',NULL,NULL,NULL),
+(46,'Area Parkir 2 (roda 4)',6,NULL,'2023-04-26 23:56:34',NULL,NULL,NULL),
+(47,'Area Parkir 3 (roda 4)',6,NULL,'2023-04-26 23:56:34',NULL,NULL,NULL),
+(48,'Ruang Training Center',6,NULL,'2023-04-26 23:56:34',NULL,NULL,NULL),
+(49,'Lobby Asrama Putri',7,NULL,'2023-04-27 00:01:39',NULL,NULL,NULL),
+(50,'Kamar Asrama Putri 1',7,NULL,'2023-04-27 00:01:39',NULL,NULL,NULL),
+(51,'Kamar Asrama Putri 2',7,NULL,'2023-04-27 00:01:39',NULL,NULL,NULL),
+(52,'Toilet Wanita1',7,NULL,'2023-04-27 00:05:10',NULL,NULL,NULL),
+(53,'Toilet  Wanita2',7,NULL,'2023-04-27 00:06:02',NULL,NULL,NULL),
+(54,'Lobby Asrama Putra',7,NULL,'2023-04-27 00:01:39',NULL,NULL,NULL),
+(55,'Kamar Asrama Putra 1',7,NULL,'2023-04-27 00:01:39',NULL,NULL,NULL),
+(56,'Kamar Asrama Putra 2',7,NULL,'2023-04-27 00:01:39',NULL,NULL,NULL),
+(57,'Toilet Pria 1',7,NULL,'2023-04-27 00:01:39',NULL,NULL,NULL),
+(58,'Toilet Pria 2',7,NULL,'2023-04-27 00:01:39',NULL,NULL,NULL),
+(59,'Rumah Dinas Pimpinan',8,NULL,'2023-04-27 00:07:21',NULL,NULL,NULL),
+(60,'Halaman 1',8,NULL,'2023-04-27 00:07:21',NULL,NULL,NULL),
+(61,'Halaman 2',8,NULL,'2023-04-27 00:07:21',NULL,NULL,NULL),
+(62,'Security Functions',9,NULL,'2023-04-27 00:16:20',NULL,NULL,NULL),
+(63,'Attendance',10,NULL,'2023-04-27 00:17:57',NULL,NULL,NULL),
+(64,'Driving Safety',10,NULL,'2023-04-27 00:17:57',NULL,NULL,NULL),
+(65,'Lobby',11,NULL,'2023-04-27 00:21:35',NULL,NULL,NULL),
+(66,'R Kasubag',11,NULL,'2023-04-27 00:21:35',NULL,NULL,NULL),
+(67,'R Tata Usaha',11,NULL,'2023-04-27 00:21:35',NULL,NULL,NULL),
+(68,'R Keuangan',11,NULL,'2023-04-27 00:21:35',NULL,NULL,NULL),
+(69,'Pantry',11,NULL,'2023-04-27 00:21:35',NULL,NULL,NULL),
+(70,'Toilet Pria & Wanita 1',11,NULL,'2023-04-27 00:21:35',NULL,NULL,NULL),
+(71,'Toilet Pria & Wanita 2',11,NULL,'2023-04-27 00:21:35',NULL,NULL,NULL),
+(72,'R Kepala',12,NULL,'2023-04-27 00:26:19',NULL,NULL,NULL),
+(73,'R Peneliti 1',12,NULL,'2023-04-27 00:26:19',NULL,NULL,NULL),
+(74,'R Peneliti 3',12,NULL,'2023-04-27 00:26:19',NULL,NULL,NULL),
+(75,'R Peneliti 4',12,NULL,'2023-04-27 00:26:19',NULL,NULL,NULL),
+(76,'Pantry',12,NULL,'2023-04-27 00:26:19',NULL,NULL,NULL),
+(77,'R Rapat Kecil 1',12,NULL,'2023-04-27 00:26:19',NULL,NULL,NULL),
+(78,'R Rapat Kecil  2',12,NULL,'2023-04-27 00:26:19',NULL,NULL,NULL),
+(79,'Co Working Space',12,NULL,'2023-04-27 00:26:19',NULL,NULL,NULL),
+(80,'Toilet Pria & Wanita 1',12,NULL,'2023-04-27 00:26:19',NULL,NULL,NULL),
+(81,'Toilet Pria & Wanita 2',12,NULL,'2023-04-27 00:26:19',NULL,NULL,NULL),
+(82,'Ruang perlengkapan',13,NULL,'2023-04-27 00:30:37',NULL,NULL,NULL),
+(83,'R Dokumentasi',13,NULL,'2023-04-27 00:30:37',NULL,NULL,NULL),
+(84,'R Penggambaran',13,NULL,'2023-04-27 00:30:37',NULL,NULL,NULL),
+(85,'Gudang 1',13,NULL,'2023-04-27 00:30:37',NULL,NULL,NULL),
+(86,'Gudang 2',13,NULL,'2023-04-27 00:30:37',NULL,NULL,NULL),
+(87,'Co Working Space',13,NULL,'2023-04-27 00:30:37',NULL,NULL,NULL),
+(88,'Toilet Pria & Wanita 1',13,NULL,'2023-04-27 00:30:37',NULL,NULL,NULL),
+(89,'Toilet Pria & Wanita 2',13,NULL,'2023-04-27 00:30:37',NULL,NULL,NULL),
+(90,'Ruang Rapat Besar',14,NULL,'2023-04-27 00:32:46',NULL,NULL,NULL),
+(91,'Ruang Redaksi',14,NULL,'2023-04-27 00:32:46',NULL,NULL,NULL),
+(92,'Ruang Peneliti 1',14,NULL,'2023-04-27 00:32:46',NULL,NULL,NULL),
+(93,'Ruang Peneliti 2',14,NULL,'2023-04-27 00:32:46',NULL,NULL,NULL),
+(94,'Ruang Peneliti 3',14,NULL,'2023-04-27 00:32:46',NULL,NULL,NULL),
+(95,'Toilet Pria & Wanita',14,NULL,'2023-04-27 00:32:46',NULL,NULL,NULL),
+(96,'Toilet Pria & Wanita 2',14,NULL,'2023-04-27 00:32:46',NULL,NULL,NULL),
+(97,'Ruang Pameran',15,NULL,'2023-04-27 00:34:22',NULL,NULL,NULL),
+(98,'Ruang Mess',15,NULL,'2023-04-27 00:34:22',NULL,NULL,NULL),
+(99,'Toilet Pria / Wanita',15,NULL,'2023-04-27 00:34:22',NULL,NULL,NULL),
+(100,'Ruang Laboratorium',16,NULL,'2023-04-27 00:36:50',NULL,NULL,NULL),
+(101,'Toilet Pria & Wanita 1',16,NULL,'2023-04-27 00:36:50',NULL,NULL,NULL),
+(102,'Toilet Pria & Wanita 2',16,NULL,'2023-04-27 00:36:50',NULL,NULL,NULL),
+(103,'Ruang Perpustakaan',17,NULL,'2023-04-27 00:38:08',NULL,NULL,NULL),
+(104,'Toilet Pria & Wanita',17,NULL,'2023-04-27 00:38:08',NULL,NULL,NULL),
+(105,'Taman',18,NULL,'2023-04-27 00:38:53',NULL,NULL,NULL),
+(106,'Parkir Mobil',18,NULL,'2023-04-27 00:38:53',NULL,NULL,NULL),
+(107,'Driving Safety',19,NULL,'2023-04-27 00:41:42',NULL,NULL,NULL),
+(108,'Attendance',19,NULL,'2023-04-27 00:41:42',NULL,NULL,NULL);
 
 /*Table structure for table `users` */
 
@@ -476,20 +645,20 @@ DROP TABLE IF EXISTS `users`;
 
 CREATE TABLE `users` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `username` varchar(50) NOT NULL,
-  `email` varchar(75) NOT NULL,
+  `username` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(75) COLLATE utf8mb4_unicode_ci NOT NULL,
   `email_verified_at` timestamp NULL DEFAULT NULL,
-  `password` varchar(100) NOT NULL,
-  `fullname` varchar(50) NOT NULL,
+  `password` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `fullname` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `client_id` int(11) DEFAULT NULL,
-  `role` enum('1','2','3') NOT NULL DEFAULT '3',
-  `no_ktp` varchar(20) DEFAULT NULL,
-  `no_handphone` varchar(20) DEFAULT NULL,
-  `alamat` text DEFAULT NULL,
-  `filename` text DEFAULT NULL,
+  `role` enum('1','2','3') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '3',
+  `no_ktp` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `no_handphone` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `alamat` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `filename` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `is_blocked` tinyint(1) NOT NULL DEFAULT 0,
-  `company_id` varchar(10) DEFAULT NULL,
-  `remember_token` varchar(100) DEFAULT NULL,
+  `company_id` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `created_by` bigint(20) unsigned DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
@@ -515,7 +684,7 @@ CREATE TABLE `usersauthority` (
   `created_by` int(11) DEFAULT NULL,
   `created_at` datetime NOT NULL,
   PRIMARY KEY (`id`,`created_at`)
-) ENGINE=InnoDB AUTO_INCREMENT=72 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=72 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `usersauthority` */
 
@@ -562,7 +731,7 @@ insert  into `usersprivilege`(`id`,`user_id`,`menu_id`,`create`,`update`,`delete
 /*!50003 DROP FUNCTION IF EXISTS `getDateFromWeek` */;
 DELIMITER $$
 
-/*!50003 CREATE FUNCTION `getDateFromWeek`(eno INT(11)) RETURNS varchar(255) CHARSET utf8mb4 COLLATE utf8mb4_general_ci
+/*!50003 CREATE DEFINER=`root`@`localhost` FUNCTION `getDateFromWeek`(eno INT(11)) RETURNS varchar(255) CHARSET utf8mb4
 BEGIN
     DECLARE manager_name VARCHAR(250);
     SELECT NAME INTO manager_name FROM employees WHERE id = eno;
@@ -576,7 +745,7 @@ DELIMITER ;
 
 DELIMITER $$
 
-/*!50003 CREATE PROCEDURE `genSetupProject`(IN projectCode VARCHAR(25),IN regionId VARCHAR(25),IN userId INTEGER)
+/*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `genSetupProject`(IN projectCode VARCHAR(25),IN regionId VARCHAR(25),IN userId INTEGER)
 BEGIN
 	DECLARE finished INTEGER DEFAULT 0;
 	declare region_id integer;
@@ -605,7 +774,7 @@ DELIMITER ;
 
 DELIMITER $$
 
-/*!50003 CREATE PROCEDURE `instantInsert`()
+/*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `instantInsert`()
 BEGIN
 	DECLARE v_max INT UNSIGNED DEFAULT 500;
 	DECLARE v_counter INT UNSIGNED DEFAULT 1;

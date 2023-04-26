@@ -17,7 +17,7 @@ class LocationController extends Controller
     }
 
     public function get_datatable_location(){
-        $db = DB::table('setup_location')->join('setup_region','setup_location.region_id','=','setup_region.id')->join('setup_project','setup_project.project_code','=','setup_region.project_code')->join('m_client','m_client.id','=','setup_project.client_id')->select('setup_location.id','setup_location.location_name','setup_location.description','setup_location.address','setup_region.region_name','project_name','client_name')->get();
+        $db = DB::table('setup_location')->join('setup_region','setup_location.region_id','=','setup_region.id')->join('setup_project','setup_project.project_code','=','setup_region.project_code')->join('m_client','m_client.id','=','setup_project.client_id')->select('setup_location.id','setup_location.location_name','setup_location.description','setup_location.address','setup_region.region_name','project_name','client_name')->orderBy('setup_region.region_name')->get();
         return DataTables::of($db)->addColumn('action',function($row){
             $btn = "<a href='/location/detail_location/$row->id' class='btn btn-primary btn-xs'><i class='fas fa-eye'></i> View</a>
             <a href='/location/edit_location/".$row->id."' class=\"btn btn-secondary btn-xs\"><i class=\"fas fa-user-edit\"></i> Edit</a>
