@@ -160,7 +160,7 @@
                                                         $checkedCreate = "";
                                                         $checkedUpdate = "";
                                                         $checkedDelete = "";
-                                                        function filterMenuCreateByMenuId($menu_array,$row_menu){
+                                                        function isCreateChecked($menu_array,$row_menu){
                                                             foreach($menu_array as $arr){
                                                                 if($arr['menu_id'] == $row_menu->id){
                                                                     if($arr['create']==1){
@@ -171,7 +171,7 @@
                                                             }
                                                         }
 
-                                                        function filterMenuUpdateByMenuId($menu_array,$row_menu){
+                                                        function isUpdateChecked($menu_array,$row_menu){
                                                             foreach($menu_array as $arr){
                                                                 if($arr['menu_id'] == $row_menu->id){
                                                                     if($arr['update']==1){
@@ -182,7 +182,7 @@
                                                             }
                                                         }
 
-                                                        function filterMenuDeleteByMenuId($menu_array,$row_menu){
+                                                        function isDeleteChecked($menu_array,$row_menu){
                                                             foreach($menu_array as $arr){
                                                                 if($arr['menu_id'] == $row_menu->id){
                                                                     if($arr['delete']==1){
@@ -232,7 +232,7 @@
                                                                                         <tr>
                                                                                             <td>
                                                                                                 <div class="icheck-primary d-inline pl-5 col-md-4">
-                                                                                                    <input type="checkbox" class="menuParent{{ $a }}" id="checkbox{{ $a }}Menu{{ $i }}" name="menuParent[]" value="{{ $row_menu->id }}" {{ count($arr) > 0 ? 'checked' : '' }}>
+                                                                                                    <input type="checkbox" class="menuParent{{ $a }}" data-createId="checkbox{{ $a }}MenuCreate{{ $i }}" data-updateId="checkbox{{ $a }}MenuUpdate{{ $i }}" data-deleteId="checkbox{{ $a }}MenuDelete{{ $i }}" id="checkbox{{ $a }}Menu{{ $i }}" name="menuParent[]" value="{{ $row_menu->id }}" {{ count($arr) > 0 ? 'checked' : '' }}>
                                                                                                     <label for="checkbox{{ $a }}Menu{{ $i }}">
                                                                                                         <h5>{{ $row_menu->nama_menu }}</h5>
                                                                                                     </label>
@@ -240,7 +240,7 @@
                                                                                             </td>
                                                                                             <td>
                                                                                                 <div class="icheck-primary d-inline pl-5">
-                                                                                                    <input type="checkbox" class="menuParentCreate{{ $a }}" id="checkbox{{ $a }}MenuCreate{{ $i }}" name="menuParentCreate[]" value="1" {{ filterMenuCreateByMenuId($menu_array,$row_menu) }}>
+                                                                                                    <input type="checkbox" class="menuParentCreate{{ $a }}" id="checkbox{{ $a }}MenuCreate{{ $i }}" name="menuParentCreate[]" value="1" {{ isCreateChecked($menu_array,$row_menu) }}>
                                                                                                     <label for="checkbox{{ $a }}MenuCreate{{ $i }}">
                                                                                                         Create
                                                                                                     </label>
@@ -248,7 +248,7 @@
                                                                                             </td>
                                                                                             <td>
                                                                                                 <div class="icheck-primary d-inline pl-5">
-                                                                                                    <input type="checkbox" class="menuParentUpdate{{ $a }}" id="checkbox{{ $a }}MenuUpdate{{ $i }}" name="menuParentUpdate[]" value="1" {{ filterMenuUpdateByMenuId($menu_array,$row_menu) }}>
+                                                                                                    <input type="checkbox" class="menuParentUpdate{{ $a }}" id="checkbox{{ $a }}MenuUpdate{{ $i }}" name="menuParentUpdate[]" value="1" {{ isUpdateChecked($menu_array,$row_menu) }}>
                                                                                                     <label for="checkbox{{ $a }}MenuUpdate{{ $i }}">
                                                                                                         Update
                                                                                                     </label>
@@ -256,7 +256,7 @@
                                                                                             </td>
                                                                                             <td>
                                                                                                 <div class="icheck-primary d-inline pl-5">
-                                                                                                    <input type="checkbox" class="menuParentDelete{{ $a }}" id="checkbox{{ $a }}MenuDelete{{ $i }}" name="menuParentDelete[]" value="1" {{ filterMenuDeleteByMenuId($menu_array,$row_menu) }}>
+                                                                                                    <input type="checkbox" class="menuParentDelete{{ $a }}" id="checkbox{{ $a }}MenuDelete{{ $i }}" name="menuParentDelete[]" value="1" {{ isDeleteChecked($menu_array,$row_menu) }}>
                                                                                                     <label for="checkbox{{ $a }}MenuDelete{{ $i }}">
                                                                                                         Delete
                                                                                                     </label>
@@ -407,7 +407,6 @@ $(document).ready(function(){
     var project = "{{ $project }}";
     var arr_project = project.split(",");
     $('#project_code_text').val(arr_project);
-    console.log(arr_project);
     $.ajax({
         headers:{
             'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
@@ -592,13 +591,26 @@ $(document).ready(function(){
                 var url = window.location.href;
                 var param = url.split('/');
                 var formData = new FormData();
-                const menuParent = [];
+                const menu = [];
                 $('input[name="menuParent[]"]:checked').each(function(){
-                    menuParent.push(
-                        $(this).val()
-                    );
+                    var getDataCreateCB = $(this).attr('data-createId');
+                    var getDataUpdateCB = $(this).attr('data-updateId');
+                    var getDataDeleteCB = $(this).attr('data-deleteId');
+                    var isCreateChecked = $('#'+getDataCreateCB).is(':checked') ? 1 : 0;
+                    var isUpdateChecked = $('#'+getDataUpdateCB).is(':checked') ? 1 : 0;
+                    var isDeleteChecked = $('#'+getDataDeleteCB).is(':checked') ? 1 : 0;
+                    // menuParent.push(
+                    //     $(this).val()
+                    // );
+                    menu.push({
+                        'menu_id'   : $(this).val(),
+                        'create' : isCreateChecked,
+                        'update' : isUpdateChecked,
+                        'delete' : isDeleteChecked
+                    });
                 });
-                formData.append('menu_id',menuParent);
+                console.log(menu);
+                formData.append('menu',menu);
                 formData.append('user_id',param[5]);
                 $.ajax({
                     headers: {
@@ -607,9 +619,11 @@ $(document).ready(function(){
                     url:'/users/set_user_access_previlage/',
                     type: 'POST',
                     dataType: 'JSON',
-                    data: formData,
-                    processData:false,
-                    contentType:false,
+                    data: {
+                        'menu':menu,
+                        'user_id':param[5]
+                    },
+                    processData:true,
                     success: function(data){
                         if(data.error == 1){
                             Toast.fire({
@@ -656,7 +670,6 @@ $(document).on('change','#project_code',function(){
                                 "<div class=\"custom-control custom-checkbox\">"+
                                     "<input class=\"custom-control-input\" type=\"checkbox\" id=\"region"+i+"\" name=\"region[]\">"+
                                     "<label for=\"region"+i+"\" class=\"custom-control-label\"><h5 class=\"card-title\">Region "+data[i].region_name+"</h5></label></div>"+
-                                    
                             "</div>"+
                             "<div class=\"card-body\" id=\"div_location"+i+"\"></div></div>";
                 $('.div_region').append(region);

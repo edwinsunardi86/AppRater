@@ -153,7 +153,7 @@
 
 $(document).ready(function(){
     var counter = 0;
-    var tb_area = $('#table_add_area').DataTable();
+    var tb_area = $('#table_add_area').DataTable({paging: false,});
     var arr_service = new Array();
     var opt_service = "";
     $.ajax({
@@ -168,7 +168,6 @@ $(document).ready(function(){
                 $.each(data_service,function(i,item){
                     opt_service +="<option value="+data_service[i].service_code+">"+data_service[i].service_name+"</option>";
                 });
-            
             }        
         });
         

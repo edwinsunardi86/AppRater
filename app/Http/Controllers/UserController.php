@@ -183,7 +183,6 @@ class UserController extends Controller
         $imp_project = "";
         foreach($project as $row){
             array_push($arr_project,$row->project_code);
-            
         }
         $imp_project = implode(",",$arr_project);
         $role_user = DB::table('users')->select('id','username','fullname','email','role')->where('users.id',$id)->first();
@@ -210,41 +209,19 @@ class UserController extends Controller
         ]);
     }
 
-    // public function setUserAccessAuthority(Request $request){
-    //     $user_id = $request->user_id;
-    //     $company = $request->company;
-    //     $getAuthority = DB::table('usersauthority')->where('user_id',$user_id)->get();
-    //     if($getAuthority->count() > 0){
-    //         DB::table('usersauthority')->where('user_id',$user_id)->update([
-    //             'user_id'=>$user_id,
-    //             'company_name'=>$company,
-    //             'created_by'=>Auth::id(),
-    //             'created_at'=>date('Y-m-d H:i:s')
-    //         ]);
-    //         $confirmation = ['title'=>'Success!','message' =>'Akses Authority berhasil di update', 'icon' => 'success', 'redirect' => '/users'];
-    //     }else{
-    //         DB::table('usersauthority')->insert([
-    //             'user_id'=>$user_id,
-    //             'company_name'=>$company
-    //         ]);
-    //         $confirmation = ['title'=>'Success!','message' =>'Akses Authority berhasil di tambakan', 'icon' => 'success', 'redirect' => '/users'];
-    //     }
-    //     return $confirmation;
-    // }
     public function setUserAccessPrevilage(Request $request){
-        $get_access_id = explode(",",$request->menu_id);
-        $user_id = $request->user_id;
-        $getPrivilegeUserId = DB::table('users')->where('users.id',$user_id)->join('usersprivilege','users.id','=','usersprivilege.user_id')->get();
-        $getUserId = DB::table('users');
+        $getPrivilegeUserId = DB::table('users')->where('users.id',$request->user_id)->join('usersprivilege','users.id','=','usersprivilege.user_id')->get();
         if($getPrivilegeUserId->count() > 0){
-            DB::table('usersprivilege')->where('user_id',$user_id)->delete();
-        } 
-        for($i=0;$i < count($get_access_id);$i++){
+            DB::table('usersprivilege')->where('user_id',$request->user_id)->delete();
+        }
+        $getUserId = DB::table('users');
+        for($i = 0;$i < count($request->menu); $i++){
             DB::table('usersprivilege')->insert([
-                'user_id'=>$user_id,
-                'menu_id'=>$get_access_id[$i],
-                'created_by'=>auth()->user()->id,
-                'created_at'=>date('Y-m-d h:m:s')
+                'user_id' => $request->user_id,
+                'menu_id' => $request->menu[$i]['menu_id'],
+                'create' => $request->menu[$i]['create'],
+                'update' => $request->menu[$i]['update'],
+                'delete' => $request->menu[$i]['delete'],
             ]);
         }
         if($getUserId){

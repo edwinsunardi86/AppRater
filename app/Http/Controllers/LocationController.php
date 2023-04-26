@@ -37,6 +37,8 @@ class LocationController extends Controller
     }
 
     public function store_location(Request $request){
+        // echo count($request->location); die();
+        // var_dump($request->location); die();
         for($i=0;$i<count($request->location);$i++){
             $post = array(
                 'location_name'=>$request->location[$i]['location_name'],

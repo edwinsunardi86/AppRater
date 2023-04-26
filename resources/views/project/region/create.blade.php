@@ -122,7 +122,7 @@ $(document).ready(function(){
         ],
     });
         
-    var tb_region = $('#table_add_region').DataTable();
+    var tb_region = $('#table_add_region').DataTable({paging: false,});
 
     var counter = 1;
 

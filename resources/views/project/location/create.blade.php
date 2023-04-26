@@ -168,9 +168,9 @@ $(document).on('change','#project_code',function(){
 });
 
     var counter = 0;
-    var tb_location = $('#table_add_location').DataTable();
+    var tb_location = $('#table_add_location').DataTable({paging: false,});
     $('#addRow').on('click',function(){
-        tb_location.row.add(['<input type="text" name="location_name[]" id="location_name'+counter+'" class="form-control form-control-sm"/>','<textarea class="form-control form-control-sm " id="address'+counter+'" name="address[]" rows="7" cols="20">','<textarea class="form-control form-control-sm " id="location_description'+counter+'" name="location_description[]" rows="7" cols="20">']).draw(false);
+        tb_location.row.add(['<input type="text" name="location_name[]" id="location_name'+counter+'" data-iterate='+counter+' class="form-control form-control-sm"/>','<textarea class="form-control form-control-sm " id="address'+counter+'" name="address[]" rows="7" cols="20">','<textarea class="form-control form-control-sm " id="location_description'+counter+'" name="location_description[]" rows="7" cols="20">']).draw(false);
         counter++;
     });
     $('#addRow').click();
@@ -211,11 +211,12 @@ $(document).on('change','#project_code',function(){
             var count_location =  $('input[name^="location_name[]"]').length;
             $('input[name="location_name[]"]').each(function(i,item){
                 if($(this).val() != ""){
+                    var getDataIterate = $(this).attr('data-iterate');
                     count_val += 1;
                     arr_location.push({
-                        'location_name': $('#location_name'+i).val(),
-                        'address' : $('#address'+i).val(),
-                        'location_description': $('#location_description'+i).val(),
+                        'location_name': $('#location_name'+getDataIterate).val(),
+                        'address' : $('#address'+getDataIterate).val(),
+                        'location_description': $('#location_description'+getDataIterate).val(),
                     });
                 }
             });
