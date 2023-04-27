@@ -1,6 +1,6 @@
 /*
 SQLyog Community v13.1.7 (64 bit)
-MySQL - 10.4.27-MariaDB : Database - rater_area
+MySQL - 10.4.24-MariaDB : Database - rater_area
 *********************************************************************
 */
 
@@ -12,7 +12,7 @@ MySQL - 10.4.27-MariaDB : Database - rater_area
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-CREATE DATABASE /*!32312 IF NOT EXISTS*/`rater_area` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/`rater_area` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
 
 USE `rater_area`;
 
@@ -25,7 +25,7 @@ CREATE TABLE `dial_country` (
   `country` varchar(25) DEFAULT NULL,
   `dial_code` char(10) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=197 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=197 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `dial_country` */
 
@@ -240,7 +240,7 @@ CREATE TABLE `evaluation` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `created_by` int(25) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `evaluation` */
 
@@ -329,7 +329,7 @@ CREATE TABLE `m_client` (
   `updated_by` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `client_name` (`client_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `m_client` */
 
@@ -349,7 +349,7 @@ CREATE TABLE `m_service` (
   `updated_by` int(11) DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`service_code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `m_service` */
 
@@ -365,14 +365,14 @@ DROP TABLE IF EXISTS `menu`;
 CREATE TABLE `menu` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `menu_parent_id` smallint(6) DEFAULT NULL,
-  `nama_menu` varchar(50) NOT NULL,
-  `font_icon` varchar(50) NOT NULL,
-  `path` varchar(200) NOT NULL,
+  `nama_menu` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `font_icon` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `path` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,
   `sort` int(11) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `created_by` varchar(255) DEFAULT NULL,
+  `created_by` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
-  `updated_by` varchar(255) DEFAULT NULL,
+  `updated_by` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `menu_nama_menu_unique` (`nama_menu`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
@@ -416,7 +416,7 @@ CREATE TABLE `setup_area` (
   KEY `location_id` (`location_id`),
   CONSTRAINT `setup_area_ibfk_1` FOREIGN KEY (`service_code`) REFERENCES `m_service` (`service_code`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `setup_area_ibfk_2` FOREIGN KEY (`location_id`) REFERENCES `setup_location` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=98 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=120 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `setup_area` */
 
@@ -517,7 +517,28 @@ insert  into `setup_area`(`id`,`area_name`,`location_id`,`service_code`,`descrip
 (94,'Gedung Lab Lantai 3',21,'cls',NULL,'2023-04-27 17:07:11',1,NULL,NULL),
 (95,'Gedung Cws Lantai 1',21,'cls',NULL,'2023-04-27 17:07:11',1,NULL,NULL),
 (96,'Gedung Cws  Lantai 2',21,'cls',NULL,'2023-04-27 17:07:11',1,NULL,NULL),
-(97,'Halaman',21,'cls',NULL,'2023-04-27 17:07:11',1,NULL,NULL);
+(97,'Halaman',21,'cls',NULL,'2023-04-27 17:07:11',1,NULL,NULL),
+(98,'Security',22,'ses',NULL,'2023-04-27 21:51:09',1,NULL,NULL),
+(99,'Gedung Pameran',22,'cls',NULL,'2023-04-27 21:51:09',1,NULL,NULL),
+(100,'Gedung Utama',22,'cls',NULL,'2023-04-27 21:51:09',1,NULL,NULL),
+(101,'Security',23,'ses',NULL,'2023-04-27 22:01:05',1,NULL,NULL),
+(102,'Driver',23,'las',NULL,'2023-04-27 22:01:05',1,NULL,NULL),
+(103,'Gedung Pameran',23,'cls',NULL,'2023-04-27 22:01:05',1,NULL,NULL),
+(104,'Gedung Rapat',23,'cls',NULL,'2023-04-27 22:01:05',1,NULL,NULL),
+(105,'Gedung Mess',23,'cls',NULL,'2023-04-27 22:01:05',1,NULL,NULL),
+(106,'Gedung Penyimpanan',23,'cls',NULL,'2023-04-27 22:01:05',1,NULL,NULL),
+(107,'Security',24,'ses',NULL,'2023-04-27 22:34:58',1,NULL,NULL),
+(108,'Driver',24,'las',NULL,'2023-04-27 22:34:58',1,NULL,NULL),
+(109,'Gedung Pos Security',24,'cls',NULL,'2023-04-27 22:34:58',1,NULL,NULL),
+(110,'Gedung Mess',24,'cls',NULL,'2023-04-27 22:34:58',1,NULL,NULL),
+(111,'Gedung Bengkel',24,'cls',NULL,'2023-04-27 22:34:58',1,NULL,NULL),
+(112,'Gedung Graha',24,'cls',NULL,'2023-04-27 22:34:58',1,NULL,NULL),
+(113,'Gedung Tracking & Admin',24,'cls',NULL,'2023-04-27 22:34:58',1,NULL,NULL),
+(114,'Gedung H. Alpha',24,'cls',NULL,'2023-04-27 22:34:58',1,NULL,NULL),
+(115,'Gedung Matahari',24,'cls',NULL,'2023-04-27 22:34:58',1,NULL,NULL),
+(117,'Gedung Sunspot',24,'cls',NULL,'2023-04-27 22:34:58',1,NULL,NULL),
+(118,'Gedung Genset',24,'cls',NULL,'2023-04-27 22:34:58',1,NULL,NULL),
+(119,'Rumah Negara',24,'cls',NULL,'2023-04-27 22:34:58',1,NULL,NULL);
 
 /*Table structure for table `setup_location` */
 
@@ -537,7 +558,7 @@ CREATE TABLE `setup_location` (
   UNIQUE KEY `location_name` (`location_name`),
   KEY `region_id` (`region_id`),
   CONSTRAINT `setup_location_ibfk_1` FOREIGN KEY (`region_id`) REFERENCES `setup_region` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `setup_location` */
 
@@ -611,7 +632,7 @@ CREATE TABLE `setup_project` (
   UNIQUE KEY `project_code` (`project_code`),
   KEY `client_id` (`client_id`),
   CONSTRAINT `setup_project_ibfk_1` FOREIGN KEY (`client_id`) REFERENCES `m_client` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `setup_project` */
 
@@ -633,7 +654,7 @@ CREATE TABLE `setup_region` (
   `updated_by` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `region_name` (`region_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `setup_region` */
 
@@ -667,7 +688,7 @@ CREATE TABLE `setup_sub_area` (
   PRIMARY KEY (`id`),
   KEY `area_id` (`area_id`),
   CONSTRAINT `setup_sub_area_ibfk_1` FOREIGN KEY (`area_id`) REFERENCES `setup_area` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=445 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=517 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `setup_sub_area` */
 
@@ -1115,7 +1136,79 @@ insert  into `setup_sub_area`(`id`,`sub_area_name`,`area_id`,`description`,`crea
 (441,'Rumah Kaca Barat',97,NULL,'2023-04-27 17:19:41',NULL,NULL,NULL),
 (442,'Rumah Kaca Timur',97,NULL,'2023-04-27 17:19:41',NULL,NULL,NULL),
 (443,'Halaman depan samping dan belakang',97,NULL,'2023-04-27 17:19:41',NULL,NULL,NULL),
-(444,'TPS',97,NULL,'2023-04-27 17:19:41',NULL,NULL,NULL);
+(444,'TPS',97,NULL,'2023-04-27 17:19:41',NULL,NULL,NULL),
+(445,'Security Functions',98,NULL,'2023-04-27 21:52:25',NULL,NULL,NULL),
+(446,'Ruangan',99,NULL,'2023-04-27 21:53:28',NULL,NULL,NULL),
+(447,'Toilet',99,NULL,'2023-04-27 21:53:28',NULL,NULL,NULL),
+(448,'Halaman',99,NULL,'2023-04-27 21:53:28',NULL,NULL,NULL),
+(449,'Ruang Tamu',100,NULL,'2023-04-27 21:55:10',NULL,NULL,NULL),
+(450,'Ruang Penyimpanan Artefak',100,NULL,'2023-04-27 21:55:10',NULL,NULL,NULL),
+(451,'Ruang Kerja',100,NULL,'2023-04-27 21:55:10',NULL,NULL,NULL),
+(452,'Toilet',100,NULL,'2023-04-27 21:55:10',NULL,NULL,NULL),
+(453,'Halaman',100,NULL,'2023-04-27 21:55:10',NULL,NULL,NULL),
+(454,'Security Functions',101,NULL,'2023-04-27 22:13:34',NULL,NULL,NULL),
+(455,'Driving Safety',102,NULL,'2023-04-27 22:16:16',NULL,NULL,NULL),
+(456,'Attendance',102,NULL,'2023-04-27 22:16:16',NULL,NULL,NULL),
+(457,'Pos Security 1',103,NULL,'2023-04-27 22:21:03',NULL,NULL,NULL),
+(458,'Pos Security 2',103,NULL,'2023-04-27 22:21:03',NULL,NULL,NULL),
+(459,'Pos Security 3',103,NULL,'2023-04-27 22:21:03',NULL,NULL,NULL),
+(460,'Pos Security 4',103,NULL,'2023-04-27 22:21:03',NULL,NULL,NULL),
+(461,'Pos Security 5',103,NULL,'2023-04-27 22:21:03',NULL,NULL,NULL),
+(462,'Ruangan',104,NULL,'2023-04-27 22:24:27',NULL,NULL,NULL),
+(463,'Toilet',104,NULL,'2023-04-27 22:24:27',NULL,NULL,NULL),
+(464,'Halaman',104,NULL,'2023-04-27 22:24:27',NULL,NULL,NULL),
+(465,'Ruangan',105,NULL,'2023-04-27 22:25:57',NULL,NULL,NULL),
+(466,'Toilet',105,NULL,'2023-04-27 22:25:57',NULL,NULL,NULL),
+(467,'Halaman',105,NULL,'2023-04-27 22:26:42',NULL,NULL,NULL),
+(468,'Ruangan',106,NULL,'2023-04-27 22:28:13',NULL,NULL,NULL),
+(469,'Toilet',106,NULL,'2023-04-27 22:28:13',NULL,NULL,NULL),
+(470,'Halaman',106,NULL,'2023-04-27 22:28:13',NULL,NULL,NULL),
+(471,'Security Functions',107,NULL,'2023-04-27 22:36:25',NULL,NULL,NULL),
+(472,'Attendance',108,NULL,'2023-04-27 22:37:04',NULL,NULL,NULL),
+(473,'Driving Safety',108,NULL,'2023-04-27 22:37:04',NULL,NULL,NULL),
+(474,'Ruangan',109,NULL,'2023-04-27 22:38:30',NULL,NULL,NULL),
+(475,'Toilet',109,NULL,'2023-04-27 22:38:30',NULL,NULL,NULL),
+(476,'Ruangan',110,NULL,'2023-04-27 22:40:06',NULL,NULL,NULL),
+(477,'Toilet',110,NULL,'2023-04-27 22:40:06',NULL,NULL,NULL),
+(478,'Mess',110,NULL,'2023-04-27 22:40:06',NULL,NULL,NULL),
+(479,'Halaman',110,NULL,'2023-04-27 22:40:06',NULL,NULL,NULL),
+(480,'Workshop 1',111,NULL,'2023-04-27 22:45:58',NULL,NULL,NULL),
+(481,'Toilet',111,NULL,'2023-04-27 22:45:58',NULL,NULL,NULL),
+(482,'Workshop 2',111,NULL,'2023-04-27 22:45:58',NULL,NULL,NULL),
+(483,'Halaman',111,NULL,'2023-04-27 22:45:58',NULL,NULL,NULL),
+(484,'Ruang Layanan Umum Halaman',112,NULL,'2023-04-27 22:54:11',NULL,NULL,NULL),
+(485,'Ruang Arsip 1',112,NULL,'2023-04-27 22:54:11',NULL,NULL,NULL),
+(486,'Ruang Arsip 2',112,NULL,'2023-04-27 22:54:11',NULL,NULL,NULL),
+(487,'Ruang Arsip 3',112,NULL,'2023-04-27 22:54:11',NULL,NULL,NULL),
+(488,'Ruang Arsip 4',112,NULL,'2023-04-27 22:54:11',NULL,NULL,NULL),
+(489,'Ruang Arsip 5',112,NULL,'2023-04-27 22:54:11',NULL,NULL,NULL),
+(490,'Ruang Arsip Toilet',112,NULL,'2023-04-27 22:54:11',NULL,NULL,NULL),
+(491,'Ruang Arsip Halaman',112,NULL,'2023-04-27 22:54:11',NULL,NULL,NULL),
+(492,'Ruang CS 1',112,NULL,'2023-04-27 22:54:11',NULL,NULL,NULL),
+(493,'Ruang CS 2',112,NULL,'2023-04-27 22:54:11',NULL,NULL,NULL),
+(494,'Ruang CS 3',112,NULL,'2023-04-27 22:54:11',NULL,NULL,NULL),
+(495,'Ruang CS 4',112,NULL,'2023-04-27 22:54:11',NULL,NULL,NULL),
+(496,'Ruang CS 5',112,NULL,'2023-04-27 22:54:11',NULL,NULL,NULL),
+(497,'Ruang CS Toilet',112,NULL,'2023-04-27 22:54:11',NULL,NULL,NULL),
+(498,'Ruang CS Halaman',112,NULL,'2023-04-27 22:54:11',NULL,NULL,NULL),
+(499,'Ruangan',113,NULL,'2023-04-27 22:55:26',NULL,NULL,NULL),
+(500,'Toilet',113,NULL,'2023-04-27 22:55:26',NULL,NULL,NULL),
+(501,'Halaman',113,NULL,'2023-04-27 22:55:26',NULL,NULL,NULL),
+(502,'Ruangan',114,NULL,'2023-04-27 22:59:02',NULL,NULL,NULL),
+(503,'Toilet',114,NULL,'2023-04-27 22:59:02',NULL,NULL,NULL),
+(504,'Halaman',114,NULL,'2023-04-27 22:59:02',NULL,NULL,NULL),
+(505,'Ruangan',115,NULL,'2023-04-27 23:01:28',NULL,NULL,NULL),
+(506,'Toilet',115,NULL,'2023-04-27 23:01:28',NULL,NULL,NULL),
+(507,'Halaman',115,NULL,'2023-04-27 23:01:28',NULL,NULL,NULL),
+(508,'Ruangan',117,NULL,'2023-04-27 23:03:51',NULL,NULL,NULL),
+(509,'Toilet',117,NULL,'2023-04-27 23:03:51',NULL,NULL,NULL),
+(510,'Halaman',117,NULL,'2023-04-27 23:03:51',NULL,NULL,NULL),
+(511,'Ruangan',118,NULL,'2023-04-27 23:05:01',NULL,NULL,NULL),
+(512,'Toilet',118,NULL,'2023-04-27 23:05:01',NULL,NULL,NULL),
+(513,'Halaman',118,NULL,'2023-04-27 23:05:01',NULL,NULL,NULL),
+(514,'Ruangan',119,NULL,'2023-04-27 23:06:10',NULL,NULL,NULL),
+(515,'Toilet',119,NULL,'2023-04-27 23:06:10',NULL,NULL,NULL),
+(516,'Halaman',119,NULL,'2023-04-27 23:06:10',NULL,NULL,NULL);
 
 /*Table structure for table `users` */
 
@@ -1123,20 +1216,20 @@ DROP TABLE IF EXISTS `users`;
 
 CREATE TABLE `users` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `username` varchar(50) NOT NULL,
-  `email` varchar(75) NOT NULL,
+  `username` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(75) COLLATE utf8mb4_unicode_ci NOT NULL,
   `email_verified_at` timestamp NULL DEFAULT NULL,
-  `password` varchar(100) NOT NULL,
-  `fullname` varchar(50) NOT NULL,
+  `password` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `fullname` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `client_id` int(11) DEFAULT NULL,
-  `role` enum('1','2','3') NOT NULL DEFAULT '3',
-  `no_ktp` varchar(20) DEFAULT NULL,
-  `no_handphone` varchar(20) DEFAULT NULL,
-  `alamat` text DEFAULT NULL,
-  `filename` text DEFAULT NULL,
+  `role` enum('1','2','3') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '3',
+  `no_ktp` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `no_handphone` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `alamat` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `filename` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `is_blocked` tinyint(1) NOT NULL DEFAULT 0,
-  `company_id` varchar(10) DEFAULT NULL,
-  `remember_token` varchar(100) DEFAULT NULL,
+  `company_id` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `created_by` bigint(20) unsigned DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
@@ -1162,7 +1255,7 @@ CREATE TABLE `usersauthority` (
   `created_by` int(11) DEFAULT NULL,
   `created_at` datetime NOT NULL,
   PRIMARY KEY (`id`,`created_at`)
-) ENGINE=InnoDB AUTO_INCREMENT=72 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=72 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `usersauthority` */
 
@@ -1209,7 +1302,7 @@ insert  into `usersprivilege`(`id`,`user_id`,`menu_id`,`create`,`update`,`delete
 /*!50003 DROP FUNCTION IF EXISTS `getDateFromWeek` */;
 DELIMITER $$
 
-/*!50003 CREATE FUNCTION `getDateFromWeek`(eno INT(11)) RETURNS varchar(255) CHARSET utf8mb4 COLLATE utf8mb4_general_ci
+/*!50003 CREATE DEFINER=`root`@`localhost` FUNCTION `getDateFromWeek`(eno INT(11)) RETURNS varchar(255) CHARSET utf8mb4
 BEGIN
     DECLARE manager_name VARCHAR(250);
     SELECT NAME INTO manager_name FROM employees WHERE id = eno;
@@ -1223,7 +1316,7 @@ DELIMITER ;
 
 DELIMITER $$
 
-/*!50003 CREATE PROCEDURE `genSetupProject`(IN projectCode VARCHAR(25),IN regionId VARCHAR(25),IN userId INTEGER)
+/*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `genSetupProject`(IN projectCode VARCHAR(25),IN regionId VARCHAR(25),IN userId INTEGER)
 BEGIN
 	DECLARE finished INTEGER DEFAULT 0;
 	declare region_id integer;
@@ -1252,7 +1345,7 @@ DELIMITER ;
 
 DELIMITER $$
 
-/*!50003 CREATE PROCEDURE `instantInsert`()
+/*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `instantInsert`()
 BEGIN
 	DECLARE v_max INT UNSIGNED DEFAULT 500;
 	DECLARE v_counter INT UNSIGNED DEFAULT 1;
