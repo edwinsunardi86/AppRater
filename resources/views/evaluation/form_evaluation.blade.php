@@ -265,6 +265,7 @@ $(document).on('change','#location_name',function(){
         },
         processData:true,
         success: function(data){
+            $('#count_sub_area').remove();
             var a=1;
             $('.tb_sub_area > tbody').empty();
             $.each(data,function(i,item){
@@ -353,7 +354,7 @@ $(document).ready(function(){
                     score.push($(this).val());
                 }
             });
-
+            
             if(score.length == $('#count_sub_area').val()){
                 var formData = new FormData();
                 formData.append('client_id',$('#client_id').val());

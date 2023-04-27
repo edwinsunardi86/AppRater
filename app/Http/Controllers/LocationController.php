@@ -37,8 +37,6 @@ class LocationController extends Controller
     }
 
     public function store_location(Request $request){
-        // echo count($request->location); die();
-        // var_dump($request->location); die();
         for($i=0;$i<count($request->location);$i++){
             $post = array(
                 'location_name'=>$request->location[$i]['location_name'],
@@ -94,7 +92,7 @@ class LocationController extends Controller
     }
 
     public function delete_location(Request $request){
-        $getArea = DB::table('setup_area')->join('setup_location','setup_area.location_id','=','setup_location.id')->get();
+        $getArea = DB::table('setup_area')->join('setup_location','setup_area.location_id','=','setup_location.id')->where('setup_area.location_id',$request->location_id)->get();
         $location_id = $request->location_id;
         $get_data_location = DB::table('setup_location')->where('id',$location_id)->first();
         if($getArea->count() > 0){

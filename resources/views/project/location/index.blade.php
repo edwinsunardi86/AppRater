@@ -75,7 +75,7 @@ function deleteLocation(id,locationName){
         formData.append('location_name',locationName);
         Swal.fire({
             title: 'Perhatian!',
-            html: 'Apakah anda yakin ingin menghapus data lokasi ini?',
+            html: 'Apakah anda yakin ingin menghapus data lokasi '+locationName+'?',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText:'Delete',
