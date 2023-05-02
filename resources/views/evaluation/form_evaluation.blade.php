@@ -321,6 +321,9 @@ $(document).ready(function(){
             location_name:{
                 required:true
             },
+            date_evaluation:{
+                required:true
+            }
         },
         messages:{
             client_name:{
@@ -335,6 +338,9 @@ $(document).ready(function(){
             location_name:{
                 required:"Please choice location name"
             },
+            date_evaluation:{
+                required: "Please input date evaluation"
+            }
         },
         errorElement: 'span',
             errorPlacement: function (error, element) {

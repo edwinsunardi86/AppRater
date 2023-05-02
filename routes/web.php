@@ -23,10 +23,10 @@ use App\Http\Controllers\ProfileUserController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-Route::get('login', [LoginController::class,'index'])->middleware('guest')->name('login');
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+Route::get('/', [LoginController::class,'index'])->middleware('guest')->name('login');
 Route::post('login', [LoginController::class, 'authentication']);
 Route::post('logout', [LoginController::class, 'signout'])->name('logout');
 

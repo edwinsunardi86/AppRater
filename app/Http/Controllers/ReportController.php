@@ -27,7 +27,7 @@ class ReportController extends Controller
         WHERE h.id = '".$request->client_id."' AND YEAR(appraisal_date) = DATE_FORMAT(NOW(),'%Y') AND g.project_code = '".$request->project_code."'
         GROUP BY g.project_code,d.service_code,MONTH(appraisal_date),e.id";
                 /*WHERE h.id = '".$request->client_id."' AND YEAR(appraisal_date) = '".$request->date_appraisal."'*/
-        // die($sql);
+        // \die($sql);
         $query = DB::select($sql);
         return response()->json($query);
     }

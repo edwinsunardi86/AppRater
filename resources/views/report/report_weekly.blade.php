@@ -43,8 +43,7 @@
                                         <select name="project_code" id="project_code" class="form-control select2"></select>
                                     </div>
                                 </div>
-                                <div id="container0"></div>
-                                <div id="container1"></div>
+                                <div class="containerLocation"></div>
                             </figure>
                         </div>
                     </div>
@@ -182,15 +181,16 @@ $(document).on('change','#project_code',function(){
         success:function(data){
             var location_name = ['location_name'];
             var per_location = groupBy(data,'location_id',location_name,'location_name');
+            console.log(per_location.length);
             $.each(per_location,function(i,item){
                 var seriesOptions = [];
                 var filter_location = data.filter((location)=>(location.location_id == per_location[i].location_id));
-                console.log(filter_location);
+                
                 var arr_month = [];
                 $.each(filter_location,function(a,item){ 
                     arr_month.push(filter_location[a].MONTH);
                 });
-                //console.log(arr_month);
+                $('.containerLocation').append('<div id="container'+i+'"></div>');
                 chart = Highcharts.chart('container'+i, {
                     chart: {
                         type: 'column'
@@ -207,7 +207,6 @@ $(document).on('change','#project_code',function(){
                     xAxis:{ categories:arr_month },
                     series: []
                 });
-                // console.log(filter_location);
                 var service_name = ['service_name'];
                 var per_service = groupBy(filter_location,'service_code',service_name,'service_name');
                 //console.log(per_service);
