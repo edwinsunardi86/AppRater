@@ -179,17 +179,15 @@ $(document).on('change','#project_code',function(){
         },
         processData:true,
         success:function(data){
-            var location_name = ['location_name'];
-            var per_location = groupBy(data,'location_id',location_name,'location_name');
-            console.log(per_location.length);
-            $.each(per_location,function(i,item){
-                var seriesOptions = [];
-                var filter_location = data.filter((location)=>(location.location_id == per_location[i].location_id));
-                
-                var arr_month = [];
-                $.each(filter_location,function(a,item){ 
-                    arr_month.push(filter_location[a].MONTH);
-                });
+            // console.log(data.data);
+            // console.log(data['location'].length);
+            $.each(data['location'],function(i,item){
+                // console.log(data['location'][i].location_name);
+                var filter_data = data['data'].filter((data_score)=>data_score.location_id == data['location'][i].location_id);
+                // console.log(filter_data);
+                var service_name = ['service_name'];
+                var groupByService = groupBy(data.data,'service_name',service_name,'service_name');
+                console.log(groupByService);
                 $('.containerLocation').append('<div id="container'+i+'"></div>');
                 chart = Highcharts.chart('container'+i, {
                     chart: {
@@ -202,33 +200,77 @@ $(document).on('change','#project_code',function(){
                         text: $('#project_code').val(),
                     },
                     subtitle: {
-                        text: filter_location[i].location_name
+                        text: data['location'][i].location_name
                     },
-                    xAxis:{ categories:arr_month },
+                    xAxis:{ 
+                        categories: [
+                            'Jan',
+                            'Feb',
+                            'Mar',
+                            'Apr',
+                            'May',
+                            'Jun',
+                            'Jul',
+                            'Aug',
+                            'Sep',
+                            'Oct',
+                            'Nov',
+                            'Dec'
+                        ],
+                        crosshair: true
+                     },
                     series: []
                 });
-                var service_name = ['service_name'];
-                var per_service = groupBy(filter_location,'service_code',service_name,'service_name');
-                //console.log(per_service);
-                var arr_service = [];
-                $.each(per_service,function(a,item){
-                    arr_service.push({service_code:per_service[a].service_code,service_name:per_service[a].service_name});
-                });
-                //alert(arr_service.length);
-                for(var z = 0;z < arr_service.length; z++){
-                    var filterLocationPerService = data.filter((location)=>(location.service_code == arr_service[z]['service_code'] && location.location_id == per_location[i].location_id));
-                    //console.log(filterLocationPerService);
-                    var arr_score = [];
-                    $.each(filterLocationPerService,function(b,item){
-                    
-                        if(filterLocationPerService[b].service_code == arr_service[z].service_code){                            
-                            arr_score.push(parseInt(filterLocationPerService[b].score));
-                        }
-                    });
-                    chart.addSeries({name:arr_service[z].service_code, data:arr_score });
-                    // alert(arr_score);
-                }
             });
+            // var location_name = ['location_name'];
+            // var per_location = groupBy(data,'location_id',location_name,'location_name');
+            // $.each(per_location,function(i,item){
+            //     var seriesOptions = [];
+            //     var filter_location = data.filter((location)=>(location.location_id == per_location[i].location_id));
+                
+            //     var arr_month = [];
+            //     $.each(filter_location,function(a,item){ 
+            //         arr_month.push(filter_location[a].MONTH);
+            //     });
+            //     $('.containerLocation').append('<div id="container'+i+'"></div>');
+            //     chart = Highcharts.chart('container'+i, {
+            //         chart: {
+            //             type: 'column'
+            //         },
+            //         credits: {
+            //             enabled: false
+            //         },
+            //         title: {
+            //             text: $('#project_code').val(),
+            //         },
+            //         subtitle: {
+            //             text: filter_location[i].location_name
+            //         },
+            //         xAxis:{ categories:arr_month },
+            //         series: []
+            //     });
+            //     var service_name = ['service_name'];
+            //     var per_service = groupBy(filter_location,'service_code',service_name,'service_name');
+            //     //console.log(per_service);
+            //     var arr_service = [];
+            //     $.each(per_service,function(a,item){
+            //         arr_service.push({service_code:per_service[a].service_code,service_name:per_service[a].service_name});
+            //     });
+            //     //alert(arr_service.length);
+            //     for(var z = 0;z < arr_service.length; z++){
+            //         var filterLocationPerService = data.filter((location)=>(location.service_code == arr_service[z]['service_code'] && location.location_id == per_location[i].location_id));
+            //         //console.log(filterLocationPerService);
+            //         var arr_score = [];
+            //         $.each(filterLocationPerService,function(b,item){
+                    
+            //             if(filterLocationPerService[b].service_code == arr_service[z].service_code){                            
+            //                 arr_score.push(parseInt(filterLocationPerService[b].score));
+            //             }
+            //         });
+            //         chart.addSeries({name:arr_service[z].service_code, data:arr_score });
+            //         // alert(arr_score);
+            //     }
+            // });
             
         }
     });

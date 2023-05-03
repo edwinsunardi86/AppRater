@@ -16,20 +16,26 @@ class ReportController extends Controller
     }
 
     function getDataProjectCurrentEvaluation(Request $request){
-        $sql = "SELECT g.project_code,g.project_name,service_name,AVG(score) AS score,MONTH(appraisal_date) AS MONTH,h.client_name,e.id AS location_id,e.location_name,d.service_code,d.service_name FROM evaluation a
-        INNER JOIN setup_sub_area b ON a.sub_area_id = b.id
-        INNER JOIN setup_area c ON c.id = b.area_id
-        INNER JOIN m_service d ON d.service_code = c.service_code
-        INNER JOIN setup_location e ON e.id = c.location_id
-        INNER JOIN setup_region f ON f.id = e.region_id
-        INNER JOIN setup_project g ON g.project_code = a.project_code
-        INNER JOIN m_client h ON h.id = g.client_id
-        WHERE h.id = '".$request->client_id."' AND YEAR(appraisal_date) = DATE_FORMAT(NOW(),'%Y') AND g.project_code = '".$request->project_code."'
-        GROUP BY g.project_code,d.service_code,MONTH(appraisal_date),e.id";
-                /*WHERE h.id = '".$request->client_id."' AND YEAR(appraisal_date) = '".$request->date_appraisal."'*/
-        // \die($sql);
-        $query = DB::select($sql);
-        return response()->json($query);
+        $query = DB::table('rating')
+        ->join('setup_sub_area','setup_sub_area.id','=','rating.sub_area_id')
+        ->join('setup_area','setup_area.id','=','setup_sub_area.area_id')
+        ->join('setup_location','setup_area.location_id','=','setup_location.id')
+        ->join('setup_region','setup_location.region_id','=','setup_region.id')
+        ->join('setup_project','setup_project.project_code','=','setup_region.project_code')
+        ->join('m_client','m_client.id','=','setup_project.client_id')
+        ->join('m_service','m_service.service_code','=','setup_area.service_code')
+        ->select('setup_project.project_code','setup_project.project_name','service_name',DB::Raw('AVG(score) AS score'),DB::Raw('MONTH(appraisal_date) AS MONTH'),'m_client.client_name',DB::Raw('setup_location.id AS location_id'),'location_name','m_service.service_code')
+        ->where(['m_client.id'=>$request->client_id,'setup_project.project_code'=>$request->project_code])
+        ->whereRaw('YEAR(appraisal_date) = DATE_FORMAT(NOW(),"%Y")')
+        ->groupBy('setup_project.project_code')
+        ->groupBy('m_service.service_code')
+        ->groupBy('setup_location.id')->get();
+        $groupLocation = $query->groupBy('location_id');
+        $location = array();
+        foreach($groupLocation as $row){
+            array_push($location,array('location_id'=>$row[0]->location_id,'location_name'=>$row[0]->location_name));
+        }
+        return response()->json(array('location'=>$location,'data'=>$query));
     }
 
 
