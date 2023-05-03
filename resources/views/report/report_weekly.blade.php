@@ -179,49 +179,99 @@ $(document).on('change','#project_code',function(){
         },
         processData:true,
         success:function(data){
-            // console.log(data.data);
-            // console.log(data['location'].length);
+            // console.log(data['data']);
+            
             $.each(data['location'],function(i,item){
-                // console.log(data['location'][i].location_name);
-                var filter_data = data['data'].filter((data_score)=>data_score.location_id == data['location'][i].location_id);
-                // console.log(filter_data);
-                var service_name = ['service_name'];
-                var groupByService = groupBy(data.data,'service_name',service_name,'service_name');
-                console.log(groupByService);
-                $('.containerLocation').append('<div id="container'+i+'"></div>');
-                chart = Highcharts.chart('container'+i, {
-                    chart: {
-                        type: 'column'
-                    },
-                    credits: {
-                        enabled: false
-                    },
-                    title: {
-                        text: $('#project_code').val(),
-                    },
-                    subtitle: {
-                        text: data['location'][i].location_name
-                    },
-                    xAxis:{ 
-                        categories: [
-                            'Jan',
-                            'Feb',
-                            'Mar',
-                            'Apr',
-                            'May',
-                            'Jun',
-                            'Jul',
-                            'Aug',
-                            'Sep',
-                            'Oct',
-                            'Nov',
-                            'Dec'
-                        ],
-                        crosshair: true
-                     },
-                    series: []
+                // console.log(i);
+                var dataLocationIteration = data['location'][i].location_id;
+                // console.log(dataLocationIteration);
+                var filterMonth = data['data'].filter((data_score)=>(data_score.location_id == data['location'][i].location_id));
+                console.log(filterMonth);
+                var arr_month = [];
+                $.each(filterMonth,function(b,item){
+                    let month;
+                    switch(filterMonth[b].MONTH){
+                        case 1:
+                            month = "Jan";
+                            break;
+                        case 2:
+                            month = "Feb";
+                            break;
+                        case 3:
+                            month = "Mar";
+                            break;
+                        case 4:
+                            month = "Apr";
+                            break;
+                        case 5:
+                            month = "May";
+                            break;
+                        case 6:
+                            month = "Jun";
+                            break;
+                        case 7:
+                            month = "Jul";
+                            break;
+                        case 8:
+                            month = "Aug";
+                            break;
+                        case 9:
+                            month = "Sep";
+                            break;
+                        case 10:
+                            month = "Oct";
+                            break;
+                        case 11:
+                            month = "Nov";
+                            break;
+                        case 12:
+                            month = "Dec";
+                            break;
+                    }
+                    arr_month.push(month);
+                    
+
+                    var service_name = ['service_name'];
+                    var groupByService = groupBy(filterMonth,'service_name',service_name,'service_name');
+                    
+                    $('.containerLocation').append('<div id="container'+i+'"></div>');
+                    chart = Highcharts.chart('container'+i, {
+                        chart: {
+                            type: 'column'
+                        },
+                        credits: {
+                            enabled: false
+                        },
+                        title: {
+                            text: $('#project_code').val(),
+                        },
+                        subtitle: {
+                            text: data['location'][i].location_name
+                        },
+                        xAxis:{ 
+                            categories: arr_month,
+                            crosshair: true
+                        },
+                        series: []
+                    });
+                    var arr_score = [];
+                    $.each(groupByService,function(a,item){
+                        var filterDataLocationPerService = data['data'].filter((data_score)=>data_score.location_id == data['location'][i].location_id && groupByService[a].service_name == data_score.service_name && data['data'] && filterMonth[b].MONTH == data_score.MONTH);
+                        // console.log(filterDataLocationPerService);
+                        
+                        $.each(filterDataLocationPerService,function(z,item){
+                            arr_score.push(parseInt(filterDataLocationPerService[z].score));
+                        });
+                        // console.log(arr_score);
+                        chart.addSeries({name:groupByService[a].service_name, data:arr_score });
+                    });
                 });
+                // console.log(arr_month);
+                
+                
+
             });
+            
             // var location_name = ['location_name'];
             // var per_location = groupBy(data,'location_id',location_name,'location_name');
             // $.each(per_location,function(i,item){

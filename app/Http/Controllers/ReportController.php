@@ -16,8 +16,8 @@ class ReportController extends Controller
     }
 
     function getDataProjectCurrentEvaluation(Request $request){
-        $query = DB::table('rating')
-        ->join('setup_sub_area','setup_sub_area.id','=','rating.sub_area_id')
+        $query = DB::table('evaluation')
+        ->join('setup_sub_area','setup_sub_area.id','=','evaluation.sub_area_id')
         ->join('setup_area','setup_area.id','=','setup_sub_area.area_id')
         ->join('setup_location','setup_area.location_id','=','setup_location.id')
         ->join('setup_region','setup_location.region_id','=','setup_region.id')
@@ -29,7 +29,9 @@ class ReportController extends Controller
         ->whereRaw('YEAR(appraisal_date) = DATE_FORMAT(NOW(),"%Y")')
         ->groupBy('setup_project.project_code')
         ->groupBy('m_service.service_code')
-        ->groupBy('setup_location.id')->get();
+        ->groupBy('setup_location.id')
+        ->groupBy(DB::Raw('MONTH(appraisal_date)'))
+        ->get();
         $groupLocation = $query->groupBy('location_id');
         $location = array();
         foreach($groupLocation as $row){
