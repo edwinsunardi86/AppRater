@@ -78,7 +78,7 @@
                                     </div>
                                 </div>
                             </form>
-                            <table class="table table-bordered table-striped" style="width:100%">
+                            <table class="table table-score table-bordered table-striped" style="width:100%">
                                 <thead>
                                     <th>Sub Area</th>
                                     <th>Week 1</th>
@@ -90,32 +90,10 @@
                                 </thead>
                                 <tbody>
                                     @foreach($service as $row)
-                                    <tr data-service="{{ $row->service_code }}"><td colspan="7" >{{ $row->service_name }}</td><tr>
+                                    <tr data-service="{{ $row->service_code }}" class="{{ $row->service_code }}"><td class="bg-red" colspan="7">{{ $row->service_name }}</td><tr>
                                     @endforeach
                                 </tbody>
                             </table>
-                            <ul id="one" class="level-1">
-                                <li class="item-i">I</li>
-                                <li id="ii" class="item-ii">II
-                                  <ul class="level-2">
-                                    <li class="item-a">A</li>
-                                    <li class="item-b">B
-                                      <ul class="level-3">
-                                        <li class="item-1">1</li>
-                                        <li class="item-2">2</li>
-                                        <li class="item-3">3</li>
-                                      </ul>
-                                    </li>
-                                    <li class="item-c">C</li>
-                                  </ul>
-                                  <ul class="level-3">
-                                    <li class="item-1">1</li>
-                                    <li class="item-2">2</li>
-                                    <li class="item-3">3</li>
-                                  </ul>
-                                </li>
-                                <li class="item-iii">III</li>
-                              </ul>
                         </div>
                     </div>
                 </div>
@@ -324,9 +302,21 @@ $(document).on('change','#year_project,#month_project',function(){
             // $('.table > tbody').append('<tr><td>sdsadsa</td><td>sdsadsa</td><td>sdsadsa</td><td>sdsadsa</td><td>sdsadsa</td><td>sdsadsa</td><td>sdsadsa</td></tr>');
             // $('.table > tbody').append('<tr><td>sdsadsa</td><td>sdsadsa</td><td>sdsadsa</td><td>sdsadsa</td><td>sdsadsa</td><td>sdsadsa</td><td>sdsadsa</td></tr>');
             
-            $.each(data,function(i,item){
+            // $.each(data,function(i,item){
                 
-                $('<tr><td>sadsadda</td></tr>').insertAfter($('.table > tbody > tr').attribute('data-service',data[i].service_code));
+            //     $('<tr><td>sadsadda</td></tr>').insertAfter($('.table > tbody > tr').attribute('data-service',data[i].service_code));
+            // });
+            $('.table-score tr[data-service]').each(function(i,item){
+                var data_service = $(this).attr('data-service');
+                // alert(data_service);
+                $.each(data,function(a,item){
+                    
+                    if(data_service == data[a].service_code){
+                        $('<tr><td>'+data[a].sub_area_name+'</td><td>'+parseFloat(data[a].score_week1)+'</td><td>'+parseFloat(data[a].score_week2)+'</td><td>'+parseFloat(data[a].score_week3)+'</td><td>'+parseFloat(data[a].score_week4)+'</td><td>'+parseFloat(data[a].score_week5)+'</td><td>'+parseFloat(data[a].score_week6)+'</td></tr>').insertAfter($('.table-score tr.'+data[a].service_code));
+                        // $('<tr><td>'+data[a].sub_area_name+'</td></tr>').insertAfter($(this).attr('data-service'));
+                        // alert(data[a].service_code);
+                    }
+                });
             });
         }
     });
