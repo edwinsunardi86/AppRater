@@ -12,6 +12,8 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileUserController;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -135,6 +137,7 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'evaluation'],fun
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'report'],function(){
     Route::get('/report_weekly',[ReportController::class,'report_weekly'])->middleware(['auth','authorization']);
     Route::post('/getDataProjectCurrentEvaluation',[ReportController::class,'getDataProjectCurrentEvaluation']);
+    Route::get('/reportScorePerLocation',[ReportController::class,'report_score_per_location']);
 });
 
 Route::get('client/getDatatableClientToSelected',[ClientController::class,'get_datatable_client_to_selected'])->name('data_client_to_selected:dt')->middleware('auth');
@@ -147,6 +150,7 @@ Route::post('dashboard/getAppraisalWeekly',[DashboardController::class,'get_appr
 Route::get('/getUserAccessAuthority',[UserController::class,'getUserAccessAuthority'])->middleware('auth');
 Route::post('/getUserAuthorityLocationToSelectedByRegion',[UserController::class,'getUserAuthorityLocationToSelectedByRegion'])->middleware('auth');
 Route::post('/dailyAppraisalPerWeek',[DashboardController::class,'dailyAppraisalPerWeek']);
+Route::post('/getDataScorePerLocation',[ReportController::class,'get_data_score_per_location']);
 
 // Route::post('project/getRegionSetupProject',[ProjectController::class,'get_region_setup_project'])->middleware('auth');
 // Route::post('project/getLocationSetupProject',[ProjectController::class,'get_location_setup_project'])->middleware('auth');
