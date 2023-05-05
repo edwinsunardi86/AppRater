@@ -26,7 +26,7 @@
                         </div>
                         
                         <div class="card-body">
-                            <form method="post" id="form_evaluation" class="form-horizontal">
+                            <form method="post" id="convert_to_pdf" class="form-horizontal">
                                 <div class="form-group row">
                                     <label for="inputClientName" class="col-sm-2 col-form-label">Client Name</label>
                                     <div class="col-sm-4">
@@ -75,6 +75,11 @@
                                     </div>
                                     <div class="col-sm-2">
                                         <select class="form-control" name="year_project" id="year_project"></select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-2">
+                                        <button class="btn btn-block btn-outline-warning btn-sm">Download</button>
                                     </div>
                                 </div>
                             </form>
@@ -298,26 +303,75 @@ $(document).on('change','#year_project,#month_project',function(){
             'month':$('#month_project').val(),
             'year':$('#year_project').val()
         },
-        success:function(data)
-            // $.each(data,function(i,item){
-                
-            //     $('<tr><td>sadsadda</td></tr>').insertAfter($('.table > tbody > tr').attribute('data-service',data[i].service_code));
-            // });
+        success:function(data){
+            $('.tr_score').remove();
             $('.table-score tr[data-service]').each(function(i,item){
                 var data_service = $(this).attr('data-service');
-                // alert(data_service);
                 $.each(data,function(a,item){
-                    
                     if(data_service == data[a].service_code){
-                        $('<tr><td>'+data[a].sub_area_name+'</td><td>'+parseFloat(data[a].score_week1)+'</td><td>'+parseFloat(data[a].score_week2)+'</td><td>'+parseFloat(data[a].score_week3)+'</td><td>'+parseFloat(data[a].score_week4)+'</td><td>'+parseFloat(data[a].score_week5)+'</td><td>'+parseFloat(data[a].score_week6)+'</td></tr>').insertAfter($('.table-score tr.'+data[a].service_code));
-                        // $('<tr><td>'+data[a].sub_area_name+'</td></tr>').insertAfter($(this).attr('data-service'));
-                        // alert(data[a].service_code);
+                        $('<tr class="tr_score"><td>'+data[a].sub_area_name+'</td><td>'+parseFloat(data[a].score_week1)+'</td><td>'+parseFloat(data[a].score_week2)+'</td><td>'+parseFloat(data[a].score_week3)+'</td><td>'+parseFloat(data[a].score_week4)+'</td><td>'+parseFloat(data[a].score_week5)+'</td><td>'+parseFloat(data[a].score_week6)+'</td></tr>').insertAfter($('.table-score tr.'+data[a].service_code));
                     }
                 });
             });
         }
     });
-    
 });
+$(document).ready(function(){
+    $('#convert_to_pdf').validate({
+    rules:{
+        location_name:{
+            required:true
+        },
+        month_project:{
+            required:true
+        },
+        year_project:{
+            required:true
+        }
+    },
+    messages:{
+        location_name:{
+            required:"Please choice location name"
+        },
+        month_project:{
+            required: "Please choice month"
+        },
+        year_project:{
+            required:"Please choice year"
+        }
+    },
+    errorElement: 'span',
+            errorPlacement: function (error, element) {
+            error.addClass('invalid-feedback');
+            element.closest('.form-group').append(error);
+        },
+        highlight: function (element, errorClass, validClass) {
+            $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element, errorClass, validClass) {
+            $(element).removeClass('is-invalid');
+        },
+        submitHandler: function() {
+            // $.ajax({
+            //         headers:{
+            //             'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+            //         },
+            //         url:"/downloadPDFReportScorePerLocation",
+            //         type:"POST",
+            //         dataType:"JSON",
+            //         data: {
+            //             'location_id':$('#location_name').val()
+            //         },
+            //         processData:true,
+            //         success: function(data){
+
+            //         }
+            //     });
+
+            window.open('/downloadPDFReportScorePerLocation/'+$('#project_code').val()+'/'+$('#location_name').val()+'/'+$('#month_project').val()+'/'+$('#year_project').val());
+        }
+    });
+});
+
 </script>
 @endsection

@@ -151,7 +151,7 @@ Route::get('/getUserAccessAuthority',[UserController::class,'getUserAccessAuthor
 Route::post('/getUserAuthorityLocationToSelectedByRegion',[UserController::class,'getUserAuthorityLocationToSelectedByRegion'])->middleware('auth');
 Route::post('/dailyAppraisalPerWeek',[DashboardController::class,'dailyAppraisalPerWeek']);
 Route::post('/getDataScorePerLocation',[ReportController::class,'get_data_score_per_location']);
-
+Route::get('/downloadPDFReportScorePerLocation/{project_code}/{location_id}/{month}/{year}',[ReportController::class,'downloadPDFReportScorePerLocation']);
 // Route::post('project/getRegionSetupProject',[ProjectController::class,'get_region_setup_project'])->middleware('auth');
 // Route::post('project/getLocationSetupProject',[ProjectController::class,'get_location_setup_project'])->middleware('auth');
 // Route::post('project/getAreaSetupProject',[ProjectController::class,'get_area_setup_project'])->middleware('auth');
