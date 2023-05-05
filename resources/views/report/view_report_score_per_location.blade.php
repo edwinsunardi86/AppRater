@@ -298,10 +298,7 @@ $(document).on('change','#year_project,#month_project',function(){
             'month':$('#month_project').val(),
             'year':$('#year_project').val()
         },
-        success:function(data){
-            // $('.table > tbody').append('<tr><td>sdsadsa</td><td>sdsadsa</td><td>sdsadsa</td><td>sdsadsa</td><td>sdsadsa</td><td>sdsadsa</td><td>sdsadsa</td></tr>');
-            // $('.table > tbody').append('<tr><td>sdsadsa</td><td>sdsadsa</td><td>sdsadsa</td><td>sdsadsa</td><td>sdsadsa</td><td>sdsadsa</td><td>sdsadsa</td></tr>');
-            
+        success:function(data)
             // $.each(data,function(i,item){
                 
             //     $('<tr><td>sadsadda</td></tr>').insertAfter($('.table > tbody > tr').attribute('data-service',data[i].service_code));
