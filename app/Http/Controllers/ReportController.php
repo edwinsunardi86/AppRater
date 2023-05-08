@@ -83,7 +83,9 @@ class ReportController extends Controller
         ->join('setup_project','setup_project.project_code','=','setup_region.project_code')
         ->join('m_client','m_client.id','=','setup_project.client_id')
         ->join('m_service','m_service.service_code','=','setup_area.service_code')
-        ->select('m_service.service_code','m_service.service_name','setup_sub_area.sub_area_name',DB::Raw('IFNULL(AVG(CASE WHEN(WEEK(appraisal_date) - WEEK(DATE_FORMAT(appraisal_date,"%Y-%m-01")))+1 = 1 THEN score END),0) AS score_week1,
+        ->select('m_service.service_code','m_service.service_name','setup_sub_area.sub_area_name',
+        DB::Raw('
+        IFNULL(AVG(CASE WHEN(WEEK(appraisal_date) - WEEK(DATE_FORMAT(appraisal_date,"%Y-%m-01")))+1 = 1 THEN score END),0) AS score_week1,
         IFNULL(AVG(CASE WHEN(WEEK(appraisal_date) - WEEK(DATE_FORMAT(appraisal_date,"%Y-%m-01")))+1 = 2 THEN score END),0) AS score_week2,
         IFNULL(AVG(CASE WHEN(WEEK(appraisal_date) - WEEK(DATE_FORMAT(appraisal_date,"%Y-%m-01")))+1 = 3 THEN score END),0) AS score_week3,
         IFNULL(AVG(CASE WHEN(WEEK(appraisal_date) - WEEK(DATE_FORMAT(appraisal_date,"%Y-%m-01")))+1 = 4 THEN score END),0) AS score_week4,
@@ -93,9 +95,51 @@ class ReportController extends Controller
         ->whereRaw("MONTH(appraisal_date) = '".$month."' AND YEAR(appraisal_date) = '".$year."' AND setup_location.id = '".$location_id."'")
         ->groupBy("setup_sub_area.id")
         ->get();
+
+        $first_date_sql = date_create($year.'-'.$month.'-01');
+        $first_date = date_format($first_date_sql,'D, M 1 '.$year);
+        $find_last_date = date('Y-m-t',strtotime($year.'-'.$month.'-01'));
+        $last_date_sql = date_create($find_last_date);
+        $last_date = date_format($last_date_sql,'D, M 1 '.$year);
+        $first_week = date("W", strtotime($year.'-'.$month.'-01'));
+        $last_week = date("W", strtotime($find_last_date));
+        
+        $sql_work_day = "SELECT (DATEDIFF('$find_last_date','$year-$month-01'))-((WEEK('$find_last_date')-WEEK('$year-$month-01'))*2) - (CASE WHEN WEEKDAY('$find_last_date') = 6 THEN 1 ELSE 0 END) - (CASE WHEN WEEKDAY('$find_last_date') = 5 THEN 1 ELSE 0 END) AS work_day";
+        $work_days = DB::select($sql_work_day);
+
+        $query_avg_score = DB::table('evaluation')
+        ->join('setup_sub_area','setup_sub_area.id','=','evaluation.sub_area_id')
+        ->join('setup_area','setup_area.id','=','setup_sub_area.area_id')
+        ->join('setup_location','setup_area.location_id','=','setup_location.id')
+        ->join('setup_region','setup_location.region_id','=','setup_region.id')
+        ->join('setup_project','setup_project.project_code','=','setup_region.project_code')
+        ->join('m_client','m_client.id','=','setup_project.client_id')
+        ->select(DB::Raw('AVG(score) AS score'),'m_client.client_name')
+        ->where('setup_project.project_code',$project_code)
+        ->first();
+
+        if($query_avg_score->score >= 74){
+            $rating = 'KB';
+        }elseif($query_avg_score->score >= 89 ){
+            $rating = 'B';
+        }elseif($query_avg_score->score >= 95){
+            $rating = 'CB';
+        }elseif($query_avg_score->score == 100){
+            $rating = 'SB';
+        }
         $pdf = PDF::loadView('pdf.documentScoreSatisfaction',[
-            'query'=>$query
+            'query'                 =>  $query,
+            'year'                  =>  $year,
+            'month'                 =>  $month,
+            'first_date'            =>  $first_date,
+            'last_date'             =>  $last_date,
+            'first_week'            =>  $first_week,
+            'last_week'             =>  $last_week,
+            'work_days'             =>  $work_days,
+            'avg_score_location'    =>  $query_avg_score,
+            'rating'                =>  $rating,
         ]);
-        return $pdf->download('invoice.pdf');
+        //return $pdf->download('invoice.pdf');
+        return $pdf->stream();
     }
 }

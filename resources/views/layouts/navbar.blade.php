@@ -1,3 +1,12 @@
+<style>
+  /* mengatur ukuran canvas tanda tangan  */
+  canvas {
+      border: 1px solid #ccc;
+      border-radius: 0.5rem;
+      width: 100%;
+      height: 400px;
+  }
+</style>
 <!-- Navbar -->
 <nav class="main-header navbar navbar-expand bg-gradient-primary navbar-dark">
     <!-- Left navbar links -->
@@ -21,22 +30,20 @@
           <i class="fas fa-user-cog"></i>
         </a>
         <div class="dropdown-menu dropdown-menu-md dropdown-menu-right">
-          <a href="#" class="dropdown-item" data-toggle="modal" data-target="#modal-sm">
-            <i class="fas fa-sign-out-alt"></i> Log Out
-          </a>
-          <div class="dropdown-divider"></div>
           <a href="/change_password" class="dropdown-item">
             <i class="fas fa-key"></i> Change Password
           </a>
+          <div class="dropdown-divider"></div>
+          <a href="#" class="dropdown-item" data-toggle="modal" data-target="#modal-sm">
+            <i class="fas fa-sign-out-alt"></i> Log Out
+          </a>
         </div>
       </li>
-      
-        <li class="nav-item">
+      <li class="nav-item">
           <a class="nav-link" data-widget="fullscreen" href="#" role="button">
             <i class="fas fa-expand-arrows-alt"></i>
           </a>
-        </li>
-      </div>
+      </li>
     </ul>
   </nav>
   <!-- /.navbar -->
@@ -66,3 +73,5 @@
     <!-- /.modal-dialog -->
   </div>
   <!-- /.modal -->
+
+

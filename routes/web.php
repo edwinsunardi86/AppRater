@@ -12,6 +12,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileUserController;
+use App\Http\Controllers\SignController;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 /*
@@ -138,6 +139,10 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'report'],functio
     Route::get('/report_weekly',[ReportController::class,'report_weekly'])->middleware(['auth','authorization']);
     Route::post('/getDataProjectCurrentEvaluation',[ReportController::class,'getDataProjectCurrentEvaluation']);
     Route::get('/reportScorePerLocation',[ReportController::class,'report_score_per_location']);
+});
+
+Route::group(['middleware'=>['auth','authorization'],'prefix'=>'sign'],function(){
+    Route::get('/signature_digital',[SignController::class,'signatureDigital']);
 });
 
 Route::get('client/getDatatableClientToSelected',[ClientController::class,'get_datatable_client_to_selected'])->name('data_client_to_selected:dt')->middleware('auth');

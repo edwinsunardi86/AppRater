@@ -109,6 +109,7 @@ $(document).ready(function(){
 <script src="/plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js"></script>
 <!-- Tempusdominus Bootstrap 4 -->
 <script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
 <script src="/plugins/require/require.js"></script>
 <script>
 var Toast = Swal.mixin({
@@ -138,6 +139,42 @@ var date = new Date();
 var currentMonth = date.getMonth();
 var currentDate = date.getDate();
 var currentYear = date.getFullYear();
+
+
+
+document.addEventListener('DOMContentLoaded', function () {
+                resizeCanvas();
+            })
+    
+            //script ini berfungsi untuk menyesuaikan tanda tangan dengan ukuran canvas
+            function resizeCanvas() {
+                var ratio = Math.max(window.devicePixelRatio || 1, 1);
+                canvas.width = canvas.offsetWidth * ratio;
+                canvas.height = canvas.offsetHeight * ratio;
+                canvas.getContext("2d").scale(ratio, ratio);
+            }
+    
+    
+            var canvas = document.getElementById('signature-pad');
+    
+            //warna dasar signaturepad
+            var signaturePad = new SignaturePad(canvas, {
+                backgroundColor: 'rgb(255, 255, 255)'
+            });
+    
+            //saat tombol clear diklik maka akan menghilangkan seluruh tanda tangan
+            document.getElementById('clear').addEventListener('click', function () {
+                signaturePad.clear();
+            });
+    
+            //saat tombol undo diklik maka akan mengembalikan tanda tangan sebelumnya
+            document.getElementById('undo').addEventListener('click', function () {
+                var data = signaturePad.toData();
+                if (data) {
+                    data.pop(); // remove the last dot or line
+                    signaturePad.fromData(data);
+                }
+            });
 
 </script>
 </body>
