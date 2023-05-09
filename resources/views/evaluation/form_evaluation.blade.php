@@ -439,7 +439,7 @@ $(document).ready(function(){
     }));
     
     $.get('/getUserAccessAuthority',function(data){
-        // console.log(data);
+        console.log(data);
         var project_name = ['project_name'];
         var project = groupBy(data,'project_code',project_name,'project_name');
         $.each(project,function(i,item){
@@ -466,6 +466,7 @@ $(document).ready(function(){
             });
 
             $(document).on('change','#region_name',function(location){
+                $('select#location_name option').remove();
                 var location_name = ['location_name'];
                 var filter_location = data.filter(region => region.region_id == $('#region_name').val());
                 var location = groupBy(filter_location,'location_id',location_name,'location_name');

@@ -139,10 +139,12 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'report'],functio
     Route::get('/report_weekly',[ReportController::class,'report_weekly'])->middleware(['auth','authorization']);
     Route::post('/getDataProjectCurrentEvaluation',[ReportController::class,'getDataProjectCurrentEvaluation']);
     Route::get('/reportScorePerLocation',[ReportController::class,'report_score_per_location']);
+    Route::post('/approvalByClient',[ReportController::class,'approvalByClient']);
 });
 
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'sign'],function(){
     Route::get('/signature_digital',[SignController::class,'signatureDigital']);
+    Route::post('/storeSignatureDigital',[SignController::class,'storeSignatureDigital']);
 });
 
 Route::get('client/getDatatableClientToSelected',[ClientController::class,'get_datatable_client_to_selected'])->name('data_client_to_selected:dt')->middleware('auth');

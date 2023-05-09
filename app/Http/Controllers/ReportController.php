@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\ReportModel;
+use Illuminate\Support\Facades\Auth;
 use PDF;
 
 class ReportController extends Controller
@@ -53,49 +55,12 @@ class ReportController extends Controller
     }
 
     function get_data_score_per_location(Request $request){
-        $query = DB::table('evaluation')
-        ->join('setup_sub_area','setup_sub_area.id','=','evaluation.sub_area_id')
-        ->join('setup_area','setup_area.id','=','setup_sub_area.area_id')
-        ->join('setup_location','setup_area.location_id','=','setup_location.id')
-        ->join('setup_region','setup_location.region_id','=','setup_region.id')
-        ->join('setup_project','setup_project.project_code','=','setup_region.project_code')
-        ->join('m_client','m_client.id','=','setup_project.client_id')
-        ->join('m_service','m_service.service_code','=','setup_area.service_code')
-        ->select('m_service.service_code','m_service.service_name','setup_sub_area.sub_area_name',DB::Raw('IFNULL(AVG(CASE WHEN(WEEK(appraisal_date) - WEEK(DATE_FORMAT(appraisal_date,"%Y-%m-01")))+1 = 1 THEN score END),0) AS score_week1,
-        IFNULL(AVG(CASE WHEN(WEEK(appraisal_date) - WEEK(DATE_FORMAT(appraisal_date,"%Y-%m-01")))+1 = 2 THEN score END),0) AS score_week2,
-        IFNULL(AVG(CASE WHEN(WEEK(appraisal_date) - WEEK(DATE_FORMAT(appraisal_date,"%Y-%m-01")))+1 = 3 THEN score END),0) AS score_week3,
-        IFNULL(AVG(CASE WHEN(WEEK(appraisal_date) - WEEK(DATE_FORMAT(appraisal_date,"%Y-%m-01")))+1 = 4 THEN score END),0) AS score_week4,
-        IFNULL(AVG(CASE WHEN(WEEK(appraisal_date) - WEEK(DATE_FORMAT(appraisal_date,"%Y-%m-01")))+1 = 5 THEN score END),0) AS score_week5,
-        IFNULL(AVG(CASE WHEN(WEEK(appraisal_date) - WEEK(DATE_FORMAT(appraisal_date,"%Y-%m-01")))+1 = 6 THEN score END),0) AS score_week6'))
-        ->where('setup_project.project_code',$request->project_code)
-        ->whereRaw("MONTH(appraisal_date) = '".$request->month."' AND YEAR(appraisal_date) = '".$request->year."' AND setup_location.id = '".$request->location_id."'")
-        ->groupBy("setup_sub_area.id")
-        ->get();
-        return response()->json($query);
+        $data = ReportModel::getDataScorePerLocation($request->project_code,$request->location_id,$request->month,$request->year);
+        return response()->json($data);
     }
 
     function downloadPDFReportScorePerLocation($project_code,$location_id,$month,$year){
-        $query = DB::table('evaluation')
-        ->join('setup_sub_area','setup_sub_area.id','=','evaluation.sub_area_id')
-        ->join('setup_area','setup_area.id','=','setup_sub_area.area_id')
-        ->join('setup_location','setup_area.location_id','=','setup_location.id')
-        ->join('setup_region','setup_location.region_id','=','setup_region.id')
-        ->join('setup_project','setup_project.project_code','=','setup_region.project_code')
-        ->join('m_client','m_client.id','=','setup_project.client_id')
-        ->join('m_service','m_service.service_code','=','setup_area.service_code')
-        ->select('m_service.service_code','m_service.service_name','setup_sub_area.sub_area_name',
-        DB::Raw('
-        IFNULL(AVG(CASE WHEN(WEEK(appraisal_date) - WEEK(DATE_FORMAT(appraisal_date,"%Y-%m-01")))+1 = 1 THEN score END),0) AS score_week1,
-        IFNULL(AVG(CASE WHEN(WEEK(appraisal_date) - WEEK(DATE_FORMAT(appraisal_date,"%Y-%m-01")))+1 = 2 THEN score END),0) AS score_week2,
-        IFNULL(AVG(CASE WHEN(WEEK(appraisal_date) - WEEK(DATE_FORMAT(appraisal_date,"%Y-%m-01")))+1 = 3 THEN score END),0) AS score_week3,
-        IFNULL(AVG(CASE WHEN(WEEK(appraisal_date) - WEEK(DATE_FORMAT(appraisal_date,"%Y-%m-01")))+1 = 4 THEN score END),0) AS score_week4,
-        IFNULL(AVG(CASE WHEN(WEEK(appraisal_date) - WEEK(DATE_FORMAT(appraisal_date,"%Y-%m-01")))+1 = 5 THEN score END),0) AS score_week5,
-        IFNULL(AVG(CASE WHEN(WEEK(appraisal_date) - WEEK(DATE_FORMAT(appraisal_date,"%Y-%m-01")))+1 = 6 THEN score END),0) AS score_week6'))
-        ->where('setup_project.project_code',$project_code)
-        ->whereRaw("MONTH(appraisal_date) = '".$month."' AND YEAR(appraisal_date) = '".$year."' AND setup_location.id = '".$location_id."'")
-        ->groupBy("setup_sub_area.id")
-        ->get();
-
+        $data = ReportModel::getDataScorePerLocation($project_code,$location_id,$month,$year);
         $first_date_sql = date_create($year.'-'.$month.'-01');
         $first_date = date_format($first_date_sql,'D, M 1 '.$year);
         $find_last_date = date('Y-m-t',strtotime($year.'-'.$month.'-01'));
@@ -118,6 +83,9 @@ class ReportController extends Controller
         ->where('setup_project.project_code',$project_code)
         ->first();
 
+        $approval = ReportModel::getDataPICnCLientPerPeriodProject($project_code,$location_id,$month,$year);
+        // $approval->clie
+        // var_dump($approval); die();
         if($query_avg_score->score >= 74){
             $rating = 'KB';
         }elseif($query_avg_score->score >= 89 ){
@@ -128,7 +96,7 @@ class ReportController extends Controller
             $rating = 'SB';
         }
         $pdf = PDF::loadView('pdf.documentScoreSatisfaction',[
-            'query'                 =>  $query,
+            'query'                 =>  $data,
             'year'                  =>  $year,
             'month'                 =>  $month,
             'first_date'            =>  $first_date,
@@ -141,5 +109,30 @@ class ReportController extends Controller
         ]);
         //return $pdf->download('invoice.pdf');
         return $pdf->stream();
+    }
+
+    function approvalByClient(Request $request){
+        $get_sign_approval = DB::table('sign_approval')
+        ->join('usersauthority','usersauthority.user_id','=','sign_approval.client')
+        ->join('users','users.id','=','usersauthority.user_id')
+        ->join('setup_location','setup_location.id','=','sign_approval.location_id')
+        ->join('setup_region','setup_location.region_id','=','setup_region.id')
+        ->join('setup_project','setup_project.project_code','=','setup_region.project_code')
+        // ->where('usersauthority.location_id',$request->location_id)
+        // ->where('period_project',$request->month.'-'.$request->year)
+        ->get();
+        if($get_sign_approval->count() > 0){
+            $confirmation = ['title'=>'Warning!','message' => 'Project'.$get_sign_approval[0]->project_name.'dengan periode '.$request->month.'-'.$request->year.' sudah diapprove oleh'.$get_sign_approval[0]->fullname, 'icon' => 'error'];
+        }else{
+            $post = array(
+                'client'=>Auth::user()->id,
+                'location_id'=>$request->location_id,
+                'period_project'=>$request->month.'-'.$request->year
+            );
+            DB::table('sign_approval')->insert($post);
+            $confirmation = ['title'=>'Warning!','message' => 'Project ini dengan periode '.$request->month.'-'.$request->year.' success approve', 'icon' => 'success'];
+        }
+        // var_dump($get_sign_approval); die();
+        return response()->json($confirmation);
     }
 }

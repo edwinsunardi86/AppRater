@@ -59,6 +59,7 @@
                                     <label for="locationName" class="col-sm-2 col-form-label">Bulan-Tahun</label>
                                     <div class="col-sm-2">
                                         <select class="form-control" name="month_project" id="month_project">
+                                            <option value="">Pilih</option>
                                             <option value="01">January</option>
                                             <option value="02">February</option>
                                             <option value="03">March</option>
@@ -78,6 +79,11 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
+                                    <div class="col-sm-2">
+                                        @if(Auth::user()->role == 3)
+                                            <button type="button" class="btn btn-block btn-outline-primary btn-sm" id="modal_approval" data-toggle='modal' data-target="#modal_sign">Sign</button>
+                                        @endif
+                                    </div>
                                     <div class="col-sm-2">
                                         <button class="btn btn-block btn-outline-warning btn-sm">Download</button>
                                     </div>
@@ -136,12 +142,33 @@
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
             </div>
         </div>
         <!-- /.modal-content -->
     </div>
     <!-- /.modal-dialog -->
+</div>
+<div class="modal fade" id="modal_sign">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <form id="sign_report" class="form-horizontal">
+                <div class="modal-header">
+                    <h4 class="modal-title">Sign Approval</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="overflow:scroll">
+                    <h2>Warning</h2>
+                    <p>Do you want approve sign this report?</p>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="submit" class="btn btn-primary">Approve</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 <script>
 $(document).ready(function(){
@@ -352,26 +379,56 @@ $(document).ready(function(){
             $(element).removeClass('is-invalid');
         },
         submitHandler: function() {
-            // $.ajax({
-            //         headers:{
-            //             'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
-            //         },
-            //         url:"/downloadPDFReportScorePerLocation",
-            //         type:"POST",
-            //         dataType:"JSON",
-            //         data: {
-            //             'location_id':$('#location_name').val()
-            //         },
-            //         processData:true,
-            //         success: function(data){
-
-            //         }
-            //     });
-
-            window.open('/downloadPDFReportScorePerLocation/'+$('#project_code').val()+'/'+$('#location_name').val()+'/'+$('#month_project').val()+'/'+$('#year_project').val());
+                window.open('/downloadPDFReportScorePerLocation/'+$('#project_code').val()+'/'+$('#location_name').val()+'/'+$('#month_project').val()+'/'+$('#year_project').val());
         }
     });
 });
+
+@if(Auth::user()->role == 3)
+    $(document).on('click','#modal_approval',function(){
+        var project_code = $('#project_code').val();
+        var location_id = $('#location_name').val();
+        var month_project = $('#month_project').val();
+        var year_project = $('#year_project').val();
+        if(location_id == "" || month_project == "" || year_project == ""){
+            Swal.fire({
+                icon:'error',
+                title:'Warning',
+                text:'Please complete filter report',
+            });
+        }else{
+            $('#sign_report').submit(function(e){
+                e.preventDefault();
+                $.ajax({
+                    headers:{
+                    'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+                    },
+                    url:'/report/approvalByClient',
+                    dataType:'JSON',
+                    type:'POST',
+                    data:{
+                        'location_id':location_id,
+                        'month': month_project,
+                        'year': year_project,
+                        'project_code':project_code
+                    },
+                    processData:true,
+                    success:function(data){
+                        Swal.fire({
+                            title:data.title,
+                            html:data.message,
+                            icon:data.icon
+                        });
+                    }
+                });
+            });
+        }
+    });
+
+@else
+        
+@endif
+
 
 </script>
 @endsection
