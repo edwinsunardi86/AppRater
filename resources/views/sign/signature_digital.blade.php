@@ -26,12 +26,12 @@
                         </div>
                         <div class="card-body">
                             <form method="post" id="form_signature" class="form-horizontal">
-                                <div class="row p-10">
+                                <div class="row p-10 col-sm-4">
                                     <canvas id="signature-pad" class="signature-pad">
                                         Your browser does not support the HTML canvas tag.
                                     </canvas>
                                 </div>
-                                <div class="row inline">
+                                <div class="row inline col-sm-4">
                                     <div class="col col-sm justify-content-md-center pt-3">
                                         <center>
                                             
@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function () {
     
             //script ini berfungsi untuk menyesuaikan tanda tangan dengan ukuran canvas
             function resizeCanvas() {
-                var ratio = Math.max(window.devicePixelRatio || 1, 1);
+                var ratio = Math.max(window.devicePixelRatio || 0.5, 0.5);
                 canvas.width = canvas.offsetWidth * ratio;
                 canvas.height = canvas.offsetHeight * ratio;
                 canvas.getContext("2d").scale(ratio, ratio);

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables as DataTables;
+use App\Models\DashboardModel;
 class DashboardController extends Controller
 {
     public function dashboard_v1(){
@@ -31,15 +32,26 @@ class DashboardController extends Controller
     }
 
     function dailyAppraisalPerWeek(Request $request){
-        $query = DB::table('setup_location')->
-        join('setup_region','setup_region.id','=','setup_location.region_id')->
-        join('setup_project','setup_project.project_code','=','setup_region.project_code')->
-        join('evaluation','evaluation.project_code','=','setup_project.project_code')->
-        join('setup_area','setup_area.location_id','=','setup_location.id')->
-        join('setup_sub_area','setup_sub_area.area_id','setup_area.id')->
+        $query = DB::table('setup_location AS a')->
+        join('setup_region AS b','b.id','=','a.region_id')->
+        join('setup_project AS c','c.project_code','=','b.project_code')->
+        //join('evaluation AS d','d.project_code','=','c.project_code')->
+        join('setup_area AS e','e.location_id','=','a.id')->
+        join('setup_sub_area AS f','f.area_id','e.id')->
         where('setup_location.id',$request->location_id)->
         where(DB::Raw('YEARWEEK(appraisal_date)'),$request->year_project.$request->week_project)->get();
         // var_dump($query);
         return Datatables::of($query)->make(true);
+    }
+
+    function getDataEvaluationProjectMonthlyPerYear(Request $request){
+        $query = DashboardModel::getDataEvaluationProjectMonthlyPerYear($request->project_code,$request->location_id,$request->year);
+        // var_dump($query);
+        $groupLocation = $query->groupBy('location_id');
+        $location = array();
+        foreach($groupLocation as $row){
+            array_push($location,array('location_id'=>$row[0]->location_id,'location_name'=>$row[0]->location_name));
+        }
+        return response()->json(array('location'=>$location,'data'=>$query));
     }
 }

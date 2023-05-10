@@ -22,69 +22,104 @@
                 <div class="col-12">
                     <div class="card card-primary">
                         <div class="card-header">
-                            <h3 class="card-title">Dashboard</h3>
+                            <h3 class="card-title">Weekly</h3>
                         </div>
                         <form method="post" id="form_evaluation" class="form-horizontal">
                         <div class="card-body">
                             @if(Auth::user()->role == 1)
-                            <div class="form-group row">
-                                <label for="inputClientName" class="col-sm-2 col-form-label">Client Name</label>
-                                <div class="col-sm-4">
-                                    <input type="text" class="form-control" name="client_name" id="client_name" readonly>
-                                    <input type="hidden" class="form-control" name="client_id" id="client_id" readonly>
+                                <div class="form-group row">
+                                    <label for="inputClientName" class="col-sm-2 col-form-label">Client Name</label>
+                                    <div class="col-sm-4">
+                                        <input type="text" class="form-control" name="client_name" id="client_name" readonly>
+                                        <input type="hidden" class="form-control" name="client_id" id="client_id" readonly>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#modal-xl">Cari</button>
+                                    </div>
                                 </div>
-                                <div class="col-sm-2">
-                                    <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#modal-xl">Cari</button>
+                                <div class="form-group row">
+                                    <label for="projectName" class="col-sm-2 col-form-label">Project Name</label>
+                                    <div class="col-sm-4">
+                                        <select name="project_code" id="project_code" class="form-control select2"></select>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="inputClientDescription" class="col-sm-2 col-form-label">Client Description</label>
-                                <div class="col-sm-4">
-                                    <textarea class="form-control" name="client_description" id="client_description" rows="5" readonly></textarea>
+                                <div class="form-group row">
+                                    <label for="regionName" class="col-sm-2 col-form-label">Region</label>
+                                    <div class="col-sm-4">
+                                        <select name="region_name" id="region_name" class="form-control select2"></select>
+                                    </div>
                                 </div>
-                            </div>
+                                <div class="form-group row">
+                                    <label for="locationName" class="col-sm-2 col-form-label">Location</label>
+                                    <div class="col-sm-4">
+                                        <select name="location_name" id="location_name" class="form-control select2"></select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="yearProject" class="col-sm-2 col-form-label">Year</label>
+                                    <div class="col-sm-4">
+                                        <select class="form-control" name="year_project" id="year_project"></select>
+                                    </div>
+                                </div>
                             @endif
-                            <div class="form-group row">
-                                <label for="projectName" class="col-sm-2 col-form-label">Project Name</label>
-                                <div class="col-sm-4">
-                                    <select name="project_code" id="project_code" class="form-control select2"></select>
+                            <div class="row justify-content-around">
+                                <div class="card card-info card-outline col-5">
+                                    <div class="card-header">
+                                        <h5 class="card-title">Weekly</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="form-group row">
+                                            <label for="locationName" class="col-sm-2 col-form-label">Bulan</label>
+                                            <div class="col-sm-2">
+                                                <select class="form-control" name="month_project" id="month_project">
+                                                    <option value="01">January</option>
+                                                    <option value="02">February</option>
+                                                    <option value="03">March</option>
+                                                    <option value="04">April</option>
+                                                    <option value="05">Mei</option>
+                                                    <option value="06">June</option>
+                                                    <option value="07">July</option>
+                                                    <option value="08">August</option>
+                                                    <option value="09">September</option>
+                                                    <option value="10">October</option>
+                                                    <option value="11">November</option>
+                                                    <option value="12">December</option>
+                                                </select>
+                                            </div>
+                                            {{-- <div class="col-sm-2">
+                                                <select class="form-control" name="year_project" id="year_project"></select>
+                                            </div> --}}
+                                        </div>
+                                        <div id="small-box-report" class="row"></div>
+                                    </div>
+                                </div>
+                                <div class="card card-success card-outline col-5">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Chart Satisfaction Per Year</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <figure class="highcharts-figure">
+                                            {{-- <div class="form-group row">
+                                                <label for="inputClientName" class="col-sm-2 col-form-label">Client Name</label>
+                                                <div class="col-sm-4">
+                                                    <input type="text" class="form-control" name="client_name" id="client_name" readonly>
+                                                    <input type="hidden" class="form-control" name="client_id" id="client_id" readonly>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#modal-xl">Cari</button>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="projectName" class="col-sm-2 col-form-label">Project Name</label>
+                                                <div class="col-sm-4">
+                                                    <select name="project_code" id="project_code" class="form-control select2"></select>
+                                                </div>
+                                            </div> --}}
+                                            <div class="containerLocation"></div>
+                                        </figure>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                <label for="regionName" class="col-sm-2 col-form-label">Region</label>
-                                <div class="col-sm-4">
-                                    <select name="region_name" id="region_name" class="form-control select2"></select>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="locationName" class="col-sm-2 col-form-label">Location</label>
-                                <div class="col-sm-4">
-                                    <select name="location_name" id="location_name" class="form-control select2"></select>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="locationName" class="col-sm-2 col-form-label">Bulan-Tahun</label>
-                                <div class="col-sm-2">
-                                    <select class="form-control" name="month_project" id="month_project">
-                                        <option value="01">January</option>
-                                        <option value="02">February</option>
-                                        <option value="03">March</option>
-                                        <option value="04">April</option>
-                                        <option value="05">Mei</option>
-                                        <option value="06">June</option>
-                                        <option value="07">July</option>
-                                        <option value="08">August</option>
-                                        <option value="09">September</option>
-                                        <option value="10">October</option>
-                                        <option value="11">November</option>
-                                        <option value="12">December</option>
-                                    </select>
-                                </div>
-                                <div class="col-sm-2">
-                                    <select class="form-control" name="year_project" id="year_project"></select>
-                                </div>
-                            </div>
-                            <div id="small-box-report" class="row"></div>
                         </div>
                     </div>
                 </div>
@@ -159,7 +194,12 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
+<script src="/plugins/Highcharts-10.3.3/code/highcharts.js"></script>
+<script src="/plugins/Highcharts-10.3.3/code/modules/exporting.js"></script>
+<script src="/plugins/Highcharts-10.3.3/code/modules/export-data.js"></script>
+<script src="/plugins/Highcharts-10.3.3/code/modules/accessibility.js"></script>
 <script>
+/*----------------------------------------------WEEKLY-------------------------------------------*/
 @if(Auth::user()->role == 1)
 $(document).ready(function(){
     var i = 1;
@@ -169,9 +209,9 @@ $(document).ready(function(){
     destroy: true,
     ajax:'{!! route("data_client_to_selected:dt") !!}',
     columns:[
-        {data:'', name:'', render:function(row, type, set){
-            return i++;
-        }},
+        { data:i, name: i, render: function (data, type, row, meta) {
+                return meta.row + meta.settings._iDisplayStart + 1;
+            }},
         { data:'client_name', name:'client_name' },
         { data:'address', name:'address' },
         { data: 'contact1', name:'contact1' },
@@ -183,12 +223,12 @@ $(document).ready(function(){
     });
 });
 
-$(document).on('click','.pilih_client',function(){
-    $('#client_id').val(($(this).attr('data-id')));
-    $('#client_name').val(($(this).attr('data-client_name')));
-    $('#client_description').val($(this).attr('data-client-description'));
-    $('#modal-xl').modal('toggle');
-});
+// $(document).on('click','.pilih_client',function(){
+//     $('#client_id').val(($(this).attr('data-id')));
+//     $('#client_name').val(($(this).attr('data-client_name')));
+//     $('#client_description').val($(this).attr('data-client-description'));
+//     $('#modal-xl').modal('toggle');
+// });
 
 $(document).on('click','.pilih_client',function(){
     $('#client_id').val(($(this).attr('data-id')));
@@ -381,7 +421,7 @@ $(document).ready(function(){
 });
 @endif
 
-$(document).on('change','#location_name',function(){
+$(document).on('change','#location_name,#project_code,#region_name',function(){
     $.ajax({
         headers:{
             'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
@@ -392,6 +432,7 @@ $(document).on('change','#location_name',function(){
         data:{
             'project_code':$('#project_code').val(),
             'location_id':$('#location_name').val(),
+            'region_id':$('#region_name').val()
         },
         processData:true,
         success: function(data){
@@ -408,6 +449,7 @@ $(document).on('change','#location_name',function(){
             });
         }
     });
+    
 });
 
 $(document).on('change','#year_project,#month_project',function(){
@@ -458,6 +500,128 @@ $(document).on('change','#year_project,#month_project',function(){
                         "</div>";
                 $('#small-box-report').append(cardbox);
             });
+
+            function groupBy(list, group, key, value) {
+        return Array.from(list
+            .reduce(
+                (map, object) => map.set(object[group], Object.assign(
+                    map.get(object[group]) || { [group]: object[group] },
+                    { [key]: object[value] }
+                )), new Map
+            )
+            .values()
+        );
+    }
+
+        $.ajax({
+            headers:{
+                'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+            },
+            url:"/getDataEvaluationProjectMonthlyPerYear",
+            type:"POST", 
+            dataType:"JSON",
+            data:{
+                project_code:$('#project_code').val(),
+                location_id:$('#location_name').val(),
+                year:$('#year_project').val(),
+            },
+            processData:true,
+            success:function(data){
+                console.log(data['data']);
+                $.each(data['location'],function(i,item){
+                    var dataLocationIteration = data['location'][i].location_id;
+                    var filterMonth = data['data'].filter((data_score)=>(data_score.location_id == data['location'][i].location_id));
+                    var arr_month = [];
+                    $.each(filterMonth,function(b,item){
+                        let month;
+                        switch(filterMonth[b].MONTH){
+                            case '01':
+                                month = "Jan";
+                                break;
+                            case '02':
+                                month = "Feb";
+                                break;
+                            case '03':
+                                month = "Mar";
+                                break;
+                            case '04':
+                                month = "Apr";
+                                break;
+                            case '05':
+                                month = "May";
+                                break;
+                            case '06':
+                                month = "Jun";
+                                break;
+                            case '07':
+                                month = "Jul";
+                                break;
+                            case '08':
+                                month = "Aug";
+                                break;
+                            case '09':
+                                month = "Sep";
+                                break;
+                            case '10':
+                                month = "Oct";
+                                break;
+                            case '11':
+                                month = "Nov";
+                                break;
+                            case '12':
+                                month = "Dec";
+                                break;
+                        }
+                        arr_month.push(month);
+                    });
+                    
+                    $('.containerLocation').append('<div id="container'+i+'"></div>');
+                        chart = Highcharts.chart('container'+i, {
+                            chart: {
+                                type: 'column'
+                            },
+                            credits: {
+                                enabled: false
+                            },
+                            title: {
+                                text: $('#project_code').val(),
+                            },
+                            subtitle: {
+                                text: data['location'][i].location_name
+                            },
+                            xAxis:{ 
+                                categories: arr_month,
+                                crosshair: true
+                            },
+                            yAxis: {
+                                min: 0,
+                                max:100,
+                                tickInterval:10,
+                                title: {
+                                    text: 'Rainfall (mm)'
+                                }
+                            },
+                            series: []
+                        });
+                        var service_name = ['service_name'];
+                        var groupByService = groupBy(filterMonth,'service_name',service_name,'service_name');
+                        
+                        var series = [];
+                        
+                        $.each(groupByService,function(a,item){
+                            var filterGroupServiceData = filterMonth.filter((data_group)=>data_group.service_name == groupByService[a].service_name);
+                            var arr_score = [];
+                            $.each(filterGroupServiceData,function(b,item){
+                                if(groupByService[a].service_name == filterGroupServiceData[b].service_name){
+                                    arr_score.push(parseFloat(filterGroupServiceData[b].score));
+                                }
+                            });
+                            series.push({name:groupByService[a].service_name,data:arr_score});
+                            chart.addSeries({name:groupByService[a].service_name,data:arr_score});
+                        });
+                    });
+                }
+            });
         }
     });
 });
@@ -492,6 +656,8 @@ $(document).on('click','.data_daily',function(){
     });
 });
     
-    
+
+
+/*-------------------------------------------------CHART SATISFACTION-------------------------------------------*/
 </script>
 @endsection

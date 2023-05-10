@@ -39,7 +39,7 @@ class ReportModel extends Model
         // ->join('users','users.id','=','sign_approval.client')
         // ->where(['setup_project.project_code'=>$project_code, 'setup_location.id'=>$location_id,'period_project'=>$month."-".$year])->first();
 
-        $sql = "SELECT e.fullname AS nama_user_client,f.fullname AS nama_pic FROM sign_approval a
+        $sql = "SELECT e.fullname AS nama_user_client,f.fullname AS nama_user_pic,sign_date_client,e.sign_binary AS sign_client FROM sign_approval a
         INNER JOIN setup_location b ON a.location_id = b.id
         INNER JOIN setup_region c ON b.region_id = c.id
         INNER JOIN setup_project d ON d.project_code = c.project_code

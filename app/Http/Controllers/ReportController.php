@@ -86,6 +86,7 @@ class ReportController extends Controller
         $approval = ReportModel::getDataPICnCLientPerPeriodProject($project_code,$location_id,$month,$year);
         // $approval->clie
         // var_dump($approval); die();
+        // echo $approval[0]->sign_client; die();
         if($query_avg_score->score >= 74){
             $rating = 'KB';
         }elseif($query_avg_score->score >= 89 ){
@@ -95,6 +96,9 @@ class ReportController extends Controller
         }elseif($query_avg_score->score == 100){
             $rating = 'SB';
         }
+
+        $datetime_client = date_create($approval[0]->sign_date_client);
+        $date_client = date_format($datetime_client,'d F Y');
         $pdf = PDF::loadView('pdf.documentScoreSatisfaction',[
             'query'                 =>  $data,
             'year'                  =>  $year,
@@ -106,6 +110,10 @@ class ReportController extends Controller
             'work_days'             =>  $work_days,
             'avg_score_location'    =>  $query_avg_score,
             'rating'                =>  $rating,
+            'user_client'           =>  $approval[0]->nama_user_client,
+            'user_pic'              =>  $approval[0]->nama_user_pic,
+            'sign_client'           =>  $approval[0]->sign_client,
+            'date_client'           =>  $date_client
         ]);
         //return $pdf->download('invoice.pdf');
         return $pdf->stream();
@@ -125,9 +133,10 @@ class ReportController extends Controller
             $confirmation = ['title'=>'Warning!','message' => 'Project'.$get_sign_approval[0]->project_name.'dengan periode '.$request->month.'-'.$request->year.' sudah diapprove oleh'.$get_sign_approval[0]->fullname, 'icon' => 'error'];
         }else{
             $post = array(
-                'client'=>Auth::user()->id,
-                'location_id'=>$request->location_id,
-                'period_project'=>$request->month.'-'.$request->year
+                'client'            =>  Auth::user()->id,
+                'location_id'       =>  $request->location_id,
+                'period_project'    =>  $request->month.'-'.$request->year,
+                'sign_date_client'  =>  date("Y-m-d H:i:s")
             );
             DB::table('sign_approval')->insert($post);
             $confirmation = ['title'=>'Warning!','message' => 'Project ini dengan periode '.$request->month.'-'.$request->year.' success approve', 'icon' => 'success'];

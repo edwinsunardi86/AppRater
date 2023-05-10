@@ -29,7 +29,7 @@
 						</div>
 						<div style="height:70%"><center><p style="font-size:70px">{{ $rating }}</p></center></div>
 						<div style="height:15%; background-color:#4f772d; color: #fff">
-							<center>{{ $avg_score_location->score }} %</center> 
+							<center>{{ $avg_score_location->score }} %</center>
 						</div>
 					</div>
 				</td>
@@ -89,23 +89,22 @@
 	<div style="width:100%">
 		<table style="width:100%">
 			<tr>
-				<td>
-					<div style="height:100px">
-						<center>PT. SHIELD ON SERVICE, TBK</center>
-					</div>
-					<div>
-						<p>Nama :</p>
-						<p>Tanggal :</p>
-					</div>
+				<td style="width:30%">
+					<table style="width:100%">
+						<tr><td colspan="3">PT. SHIELD ON SERVICE, TBK</td></tr>
+						<tr><td colspan="3"><div style="height:25%;"></div></td></tr>
+						<tr><td style="text-align:left; width:15%">Nama</td><td style="width:0px">:</td><td style="text-align:left"></td></tr>
+						<tr><td style="text-align:left">Tanggal</td><td>:</td><td style="text-align:left"></td></tr>
+					</table>
 				</td>
-				<td>
-					<div style="height:100px">
-						<center>{{ $avg_score_location->client_name }}</center>
-					</div>
-					<div>
-						<p>Nama :</p>
-						<p>Tanggal :</p>
-					</div>
+				<td style="width:40%"></td>
+				<td style="width:30%">
+					<table  style="width:100%">
+						<tr><td colspan="3">{{ $avg_score_location->client_name }}</td></tr>
+						<tr><td colspan="3"><div style="height:25%;"><img style="width:100%" src="{{ $sign_client }}"/></div></td></tr>
+						<tr><td style="text-align:left; width:15%">Nama</td><td style="width:0px">:</td><td style="text-align:left">{{ $user_client }}</td></tr>
+						<tr><td style="text-align:left">Tanggal</td><td>:</td><td style="text-align:left">{{ $date_client }}</td></tr>
+					</table>
 				</td>
 			</tr>
 		</table>

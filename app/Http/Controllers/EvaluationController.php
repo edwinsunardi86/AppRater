@@ -61,7 +61,13 @@ class EvaluationController extends Controller
             INNER JOIN setup_sub_area b ON b.id = a.sub_area_id
             INNER JOIN setup_area c ON c.id = b.area_id
             INNER JOIN setup_location d ON d.id = c.location_id
-            where a.project_code ="'.$project_code.'" and d.id = "'.$location_id.'" group by year(appraisal_date)';
+            INNER JOIN setup_region e ON e.id = d.region_id
+            where a.project_code ="'.$project_code.'"'; 
+            if($request->location_id != ""){
+                $sql = $sql."and d.id = '".$location_id."'";
+            }
+            $sql = $sql." group by year(appraisal_date)";
+            
             $get_year = DB::select($sql);
             return response()->json($get_year);
     }

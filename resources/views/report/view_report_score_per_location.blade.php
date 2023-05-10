@@ -78,6 +78,22 @@
                                         <select class="form-control" name="year_project" id="year_project"></select>
                                     </div>
                                 </div>
+                                <table class="table table-score table-bordered table-striped" style="width:100%">
+                                    <thead>
+                                        <th>Sub Area</th>
+                                        <th>Week 1</th>
+                                        <th>Week 2</th>
+                                        <th>Week 3</th>
+                                        <th>Week 4</th>
+                                        <th>Week 5</th>
+                                        <th>Week 6</th>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($service as $row)
+                                        <tr data-service="{{ $row->service_code }}" class="{{ $row->service_code }}"><td class="bg-red" colspan="7">{{ $row->service_name }}</td><tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
                                 <div class="form-group row">
                                     <div class="col-sm-2">
                                         @if(Auth::user()->role == 3)
@@ -89,22 +105,6 @@
                                     </div>
                                 </div>
                             </form>
-                            <table class="table table-score table-bordered table-striped" style="width:100%">
-                                <thead>
-                                    <th>Sub Area</th>
-                                    <th>Week 1</th>
-                                    <th>Week 2</th>
-                                    <th>Week 3</th>
-                                    <th>Week 4</th>
-                                    <th>Week 5</th>
-                                    <th>Week 6</th>
-                                </thead>
-                                <tbody>
-                                    @foreach($service as $row)
-                                    <tr data-service="{{ $row->service_code }}" class="{{ $row->service_code }}"><td class="bg-red" colspan="7">{{ $row->service_name }}</td><tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
                         </div>
                     </div>
                 </div>
