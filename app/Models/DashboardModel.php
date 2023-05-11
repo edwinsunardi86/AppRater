@@ -9,7 +9,7 @@ class DashboardModel extends Model
 {
     use HasFactory;
 
-    static function getDataEvaluationProjectMonthlyPerYear($project_code,$location_id,$year){
+    static function getDataEvaluationProjectMonthlyPerYear($project_code,$region_id,$location_id,$year){
         $query = DB::table('evaluation')
         ->join('setup_sub_area','setup_sub_area.id','=','evaluation.sub_area_id')
         ->join('setup_area','setup_area.id','=','setup_sub_area.area_id')
@@ -18,15 +18,22 @@ class DashboardModel extends Model
         ->join('setup_project','setup_project.project_code','=','setup_region.project_code')
         ->join('m_client','m_client.id','=','setup_project.client_id')
         ->join('m_service','m_service.service_code','=','setup_area.service_code')
-        ->select('setup_project.project_code','setup_project.project_name','service_name',DB::Raw('AVG(score) AS score'),DB::Raw('DATE_FORMAT(appraisal_date,"%m") AS MONTH'),'m_client.client_name',DB::Raw('setup_location.id AS location_id'),'location_name','m_service.service_code')
+        ->select('setup_project.project_code','setup_project.project_name','service_name',DB::Raw('AVG(score) AS score'),DB::Raw('DATE_FORMAT(appraisal_date,"%b") AS MONTH'),'m_client.client_name',DB::Raw('setup_location.id AS location_id'),'location_name','m_service.service_code')
         ->where(['setup_project.project_code'=>$project_code]);
+        if($region_id != ""){
+            $query = $query->where('setup_region.id','=',$region_id);
+        }
         if($location_id != ""){
             $query = $query->where('setup_location.id','=',$location_id);
         }
-        $query=$query->whereRaw('YEAR(appraisal_date) = '.$year)
-        ->groupBy('setup_project.project_code')
+        if($year != ""){
+            $query=$query->whereRaw('YEAR(appraisal_date) = '.$year);
+        }
+        
+        $query = $query->groupBy('setup_project.project_code')
         ->groupBy('m_service.service_code')
         ->groupByRaw('DATE_FORMAT(appraisal_date,"%m")')
+        ->orderByRaw('DATE_FORMAT(appraisal_date,"%m") ASC')
         ->get();
 
         return $query;

@@ -1,5 +1,53 @@
 @extends('layouts.main')
 @section('container')
+<style>
+    .highcharts-figure,
+.highcharts-data-table table {
+  min-width: 310px;
+  max-width: 800px;
+  margin: 1em auto;
+}
+
+#container {
+  height: 400px;
+}
+
+.highcharts-data-table table {
+  font-family: Verdana, sans-serif;
+  border-collapse: collapse;
+  border: 1px solid #ebebeb;
+  margin: 10px auto;
+  text-align: center;
+  width: 100%;
+  max-width: 500px;
+}
+
+.highcharts-data-table caption {
+  padding: 1em 0;
+  font-size: 1.2em;
+  color: #555;
+}
+
+.highcharts-data-table th {
+  font-weight: 600;
+  padding: 0.5em;
+}
+
+.highcharts-data-table td,
+.highcharts-data-table th,
+.highcharts-data-table caption {
+  padding: 0.5em;
+}
+
+.highcharts-data-table thead tr,
+.highcharts-data-table tr:nth-child(even) {
+  background: #f8f8f8;
+}
+
+.highcharts-data-table tr:hover {
+  background: #f1f7ff;
+}
+</style>
 <div class="content-wrapper">
     <section class="content-header">
         <div class="container-fluid">
@@ -63,14 +111,14 @@
                                 </div>
                             @endif
                             <div class="row justify-content-around">
-                                <div class="card card-info card-outline col-5">
+                                <div class="card card-info card-outline col-6">
                                     <div class="card-header">
                                         <h5 class="card-title">Weekly</h5>
                                     </div>
                                     <div class="card-body">
                                         <div class="form-group row">
                                             <label for="locationName" class="col-sm-2 col-form-label">Bulan</label>
-                                            <div class="col-sm-2">
+                                            <div class="col-sm-3">
                                                 <select class="form-control" name="month_project" id="month_project">
                                                     <option value="01">January</option>
                                                     <option value="02">February</option>
@@ -93,7 +141,7 @@
                                         <div id="small-box-report" class="row"></div>
                                     </div>
                                 </div>
-                                <div class="card card-success card-outline col-5">
+                                <div class="card card-success card-outline col-6">
                                     <div class="card-header">
                                         <h3 class="card-title">Chart Satisfaction Per Year</h3>
                                     </div>
@@ -115,7 +163,7 @@
                                                     <select name="project_code" id="project_code" class="form-control select2"></select>
                                                 </div>
                                             </div> --}}
-                                            <div class="containerLocation"></div>
+                                            <div id="container"></div>
                                         </figure>
                                     </div>
                                 </div>
@@ -173,11 +221,12 @@
                 </button>
             </div>
             <div class="modal-body" style="overflow:scroll">
-                <table class="display table table-bordered table-striped table-hover" id="table-appraisal">
+                <table class="display table table-bordered table-striped table-hover" id="table-appraisal" style="width:100%">
                     <thead>
                         <tr>
                             <th>No</th>
                             <th>Date</th>
+                            <th>Location Name</th>
                             <th>Area</th>
                             <th>Sub Area</th>
                             <th>Score</th>
@@ -308,7 +357,7 @@ $(document).on('change','#project_code',function(){
             $('.table_add_location > tbody').empty();
             $('select#region_name option').remove();
             $('select#region_name').append($('<option>',{
-                    text:"Choice Region",
+                    text:"ALL Region",
                     value:""
                 }));
             $.each(data,function(i,item){
@@ -337,7 +386,7 @@ $(document).on('change','#region_name',function(){
             $('.tb_sub_area > tbody').empty();
             $('select#location_name option').remove();
             $('select#location_name').append($('<option>',{
-                text:"Choice Location",
+                text:"ALL Location",
                 value:""
             }));
             $.each(data,function(i,item){
@@ -391,7 +440,7 @@ $(document).ready(function(){
             var region  = groupBy(filter_region,'region_id',region_name,'region_name');
             $('#region_name').append($('<option>',{
                 value:"",
-                text:"Choice Region"
+                text:"ALL"
             }));
             $.each(region,function(i,item){
                 $('#region_name').append($('<option>',{
@@ -406,7 +455,7 @@ $(document).ready(function(){
                 var location = groupBy(filter_location,'location_id',location_name,'location_name');
                 $('#location_name').append($('<option>',{
                     value:"",
-                    text:"Choice Location"
+                    text:"ALL"
                 }));
                 
                 $.each(location, function(i,item){
@@ -452,7 +501,7 @@ $(document).on('change','#location_name,#project_code,#region_name',function(){
     
 });
 
-$(document).on('change','#year_project,#month_project',function(){
+$(document).on('change','#year_project,#month_project,#location_name,#region_name',function(){
     $.ajax({
         headers:{
             'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
@@ -465,6 +514,7 @@ $(document).on('change','#year_project,#month_project',function(){
             'year_project' : $('#year_project').val(),
             'project_code' : $('#project_code').val(),
             'location_id' : $('#location_name').val(),
+            'region_id' : $('#region_name').val()
         },
         processData:true,
         success: function(data){
@@ -513,113 +563,100 @@ $(document).on('change','#year_project,#month_project',function(){
         );
     }
 
-        $.ajax({
-            headers:{
-                'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
-            },
-            url:"/getDataEvaluationProjectMonthlyPerYear",
-            type:"POST", 
-            dataType:"JSON",
-            data:{
-                project_code:$('#project_code').val(),
-                location_id:$('#location_name').val(),
-                year:$('#year_project').val(),
-            },
-            processData:true,
-            success:function(data){
-                console.log(data['data']);
-                $.each(data['location'],function(i,item){
-                    var dataLocationIteration = data['location'][i].location_id;
-                    var filterMonth = data['data'].filter((data_score)=>(data_score.location_id == data['location'][i].location_id));
-                    var arr_month = [];
-                    $.each(filterMonth,function(b,item){
-                        let month;
-                        switch(filterMonth[b].MONTH){
-                            case '01':
-                                month = "Jan";
-                                break;
-                            case '02':
-                                month = "Feb";
-                                break;
-                            case '03':
-                                month = "Mar";
-                                break;
-                            case '04':
-                                month = "Apr";
-                                break;
-                            case '05':
-                                month = "May";
-                                break;
-                            case '06':
-                                month = "Jun";
-                                break;
-                            case '07':
-                                month = "Jul";
-                                break;
-                            case '08':
-                                month = "Aug";
-                                break;
-                            case '09':
-                                month = "Sep";
-                                break;
-                            case '10':
-                                month = "Oct";
-                                break;
-                            case '11':
-                                month = "Nov";
-                                break;
-                            case '12':
-                                month = "Dec";
-                                break;
-                        }
-                        arr_month.push(month);
+            $.ajax({
+                headers:{
+                    'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+                },
+                url:"/getDataEvaluationProjectMonthlyPerYear",
+                type:"POST", 
+                dataType:"JSON",
+                data:{
+                    project_code:$('#project_code').val(),
+                    region_id : $('#region_name').val(),
+                    location_id:$('#location_name').val(),
+                    year:$('#year_project').val(),
+                },
+                processData:true,
+                success:function(data){
+                    var project_code = $('select[name="project_code"]:selected').select2('data');
+                    var arr_month = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                    var get_location = $('#location_name option:selected').val() == "" ? "ALL Location (Periode "+$("#year_project").val()+")" : $('#location_name option:selected').text();
+                    var get_region = $('#region_name option:selected').val() == "" ? "ALL Region" : $('#region_name option:selected').text();
+                    chart = Highcharts.chart('container', {
+                        chart: {
+                            type: 'column'
+                        },
+                        credits: {
+                            enabled: false
+                        },
+                        title: {
+                            text: $('#project_code option:selected').text(),
+                        },
+                        subtitle: {
+                            useHTML:true,
+                            text: "<table><tr><td><strong>Region</strong></td><td>:</td><td><strong>"+get_region+"</strong></td></tr><tr><td>Location</td><td>:</td><td>"+get_location+"</td></tr></table>"
+                        },
+                        xAxis:{ 
+                            categories: arr_month,
+                            crosshair: true
+                        },
+                        yAxis: {
+                            min: 0,
+                            max:100,
+                            tickInterval:10,
+                            title: {
+                                text: 'Score(%)'
+                            }
+                        },
+                        series: []
                     });
                     
-                    $('.containerLocation').append('<div id="container'+i+'"></div>');
-                        chart = Highcharts.chart('container'+i, {
-                            chart: {
-                                type: 'column'
-                            },
-                            credits: {
-                                enabled: false
-                            },
-                            title: {
-                                text: $('#project_code').val(),
-                            },
-                            subtitle: {
-                                text: data['location'][i].location_name
-                            },
-                            xAxis:{ 
-                                categories: arr_month,
-                                crosshair: true
-                            },
-                            yAxis: {
-                                min: 0,
-                                max:100,
-                                tickInterval:10,
-                                title: {
-                                    text: 'Rainfall (mm)'
-                                }
-                            },
-                            series: []
-                        });
-                        var service_name = ['service_name'];
-                        var groupByService = groupBy(filterMonth,'service_name',service_name,'service_name');
-                        
-                        var series = [];
-                        
-                        $.each(groupByService,function(a,item){
-                            var filterGroupServiceData = filterMonth.filter((data_group)=>data_group.service_name == groupByService[a].service_name);
-                            var arr_score = [];
-                            $.each(filterGroupServiceData,function(b,item){
-                                if(groupByService[a].service_name == filterGroupServiceData[b].service_name){
-                                    arr_score.push(parseFloat(filterGroupServiceData[b].score));
-                                }
+                    var service_name = ['service_name'];
+                    var groupByService = groupBy(data,'service_name',service_name,'service_name');
+                    var month = ['MONTH'];
+                    var groupByMonth = groupBy(data,'MONTH',month,'MONTH');
+                    // var series = [];
+                    
+                    $.each(groupByService,function(i,item){
+                        var arr_score = []; 
+                        $.each(arr_month,function(a,item){
+                            var value_month = [];
+                            $.each(groupByMonth,function(b,item){
+                                value_month.push(groupByMonth[b].MONTH);
                             });
-                            series.push({name:groupByService[a].service_name,data:arr_score});
-                            chart.addSeries({name:groupByService[a].service_name,data:arr_score});
+                            if(value_month.includes(arr_month[a])){
+                                var filterGroupServiceData = data.filter((data_group)=>data_group.service_name == groupByService[i].service_name && data_group.MONTH.includes(arr_month[a])==true);
+                                arr_score.push(parseFloat(filterGroupServiceData[0].score));
+                            }else{
+                                arr_score.push(0);
+                            }
                         });
+                        // series.push({name:groupByService[i].service_name,data:arr_score});
+                        chart.addSeries({name:groupByService[i].service_name,data:arr_score});
                     });
+
+
+                    var scoreMonthAllService = [];
+                    var value_month = [];
+                    $.each(groupByMonth,function(b,item){
+                            value_month.push(groupByMonth[b].MONTH);
+                    });
+                    $.each(arr_month,function(z,item){
+                        if(value_month.includes(arr_month[z])){
+                                var filterMonthly = data.filter((dataMonth)=>dataMonth.MONTH == arr_month[z]);
+                                var scoreMonthPerService = 0;
+                                $.each(filterMonthly,function(c,item){
+                                    scoreMonthPerService += parseFloat(filterMonthly[c].score)
+                                });
+                                const avgScore = scoreMonthPerService / filterMonthly.length;
+                                scoreMonthAllService.push(parseFloat(avgScore));
+                            
+                        }else{
+                            scoreMonthAllService.push(0);
+                        }
+                    });
+                    chart.addSeries({ name:'Average All Service',data:scoreMonthAllService });
+                    
                 }
             });
         }
@@ -641,7 +678,8 @@ $(document).on('click','.data_daily',function(){
             data:{
                 'location_id':$('#location_name').val(),
                 'year_project':$(this).attr('data-yearappraisal'),
-                'week_project':$(this).attr('data-weekappraisal')
+                'week_project':$(this).attr('data-weekappraisal'),
+                'project_code':$('#project_code').val()
             },
         },
         columns:[
@@ -649,6 +687,7 @@ $(document).on('click','.data_daily',function(){
                 return i++;
             }},
             {data:'appraisal_date', name:'appraisal_date'},
+            {data:'location_name', name:'location_name'},
             {data:'area_name', name:'area_name'},
             {data:'sub_area_name', name:'sub_area_name'},
             {data:'score', name:'score'},
