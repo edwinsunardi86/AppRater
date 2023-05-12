@@ -6,15 +6,18 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables as DataTables;
 use App\Models\DashboardModel;
+use App\Models\LocationModel;
 use PDO;
 
 class DashboardController extends Controller
 {
     public function dashboard_v1(){
+        $service = DB::table('m_service')->get();
         return view('dashboard.dashboard_v1',[
-            'title'=>'Dashboard V1',
-            'active_gm'=>'Dashboard',
-            'active_m'=>'dashboard_v1'
+            'title'     =>  'Dashboard V1',
+            'active_gm' =>  'Dashboard',
+            'active_m'  =>  'dashboard_v1',
+            'service'   =>  $service   
         ]);
     }
 
@@ -42,13 +45,6 @@ class DashboardController extends Controller
     }
 
     function dailyAppraisalPerWeek(Request $request){
-        // $query = DB::table('setup_location AS a')
-        // ->join('setup_region AS b','b.id','=','a.region_id')
-        // ->join('setup_project AS c','c.project_code','=','b.project_code')
-        // ->join('evaluation AS d','d.project_code','=','c.project_code')
-        // ->join('setup_area AS e','e.location_id','=','a.id')
-        // ->join('setup_sub_area AS f','f.area_id','=','e.id')
-        // ->where('c.project_code',$request->project_code);
         $sql ="SELECT * FROM setup_location AS a 
         INNER JOIN setup_region AS b ON b.id = a.region_id 
         INNER JOIN setup_project AS c ON c.project_code = b.project_code 
@@ -61,17 +57,25 @@ class DashboardController extends Controller
         if($request->location_id != ""){
             $sql = $sql.' AND a.id = '.$request->location_id;
         }
-        if($request->year_project){
+        if($request->year_project !=""){
             $sql = $sql.' AND YEARWEEK(appraisal_date)='.$request->year_project.$request->week_project;
         }
         $query = DB::select($sql);
-        // $query=$query->whereRaw('YEARWEEK(appraisal_date)='.$request->year_project.$request->week_project)->get();
-        // var_dump($query);
         return Datatables::of($query)->make(true);
     }
 
     function getDataEvaluationProjectMonthlyPerYear(Request $request){
         $query = DashboardModel::getDataEvaluationProjectMonthlyPerYear($request->project_code,$request->region_id,$request->location_id,$request->year);
+        return response()->json($query);
+    }
+
+    function getDataSummaryMonthlyPerLocation(Request $request){
+        $query = DashboardModel::getDataSummaryMonthlyPerLocation($request->project_code, $request->region_id, $request->location_id,$request->year);
+        return response()->json($query);
+    }
+
+    function getFilterLocation(Request $request){
+        $query = LocationModel::getLocation($request->project_code,$request->region_id,$request->location_id);
         return response()->json($query);
     }
 }

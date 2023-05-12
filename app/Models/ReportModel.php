@@ -32,13 +32,6 @@ class ReportModel extends Model
     }
 
     static function getDataPICnCLientPerPeriodProject($project_code, $location_id, $month, $year){
-        // $query = DB::table('sign_approval')
-        // ->join('setup_location','sign_approval.location_id','=','setup_location.id')
-        // ->join('setup_region','setup_location.region_id','=','setup_region.id')
-        // ->join('setup_project','setup_project.project_code','=','setup_region.project_code')
-        // ->join('users','users.id','=','sign_approval.client')
-        // ->where(['setup_project.project_code'=>$project_code, 'setup_location.id'=>$location_id,'period_project'=>$month."-".$year])->first();
-
         $sql = "SELECT e.fullname AS nama_user_client,f.fullname AS nama_user_pic,sign_date_client,e.sign_binary AS sign_client FROM sign_approval a
         INNER JOIN setup_location b ON a.location_id = b.id
         INNER JOIN setup_region c ON b.region_id = c.id

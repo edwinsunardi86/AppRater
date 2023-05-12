@@ -74,7 +74,7 @@
                         </div>
                         <form method="post" id="form_evaluation" class="form-horizontal">
                         <div class="card-body">
-                            @if(Auth::user()->role == 1)
+                            @if(Auth::user()->role == 1 || Auth::user()->role == 2)
                                 <div class="form-group row">
                                     <label for="inputClientName" class="col-sm-2 col-form-label">Client Name</label>
                                     <div class="col-sm-4">
@@ -85,6 +85,7 @@
                                         <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#modal-xl">Cari</button>
                                     </div>
                                 </div>
+                            @endif
                                 <div class="form-group row">
                                     <label for="projectName" class="col-sm-2 col-form-label">Project Name</label>
                                     <div class="col-sm-4">
@@ -104,14 +105,25 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
+                                    <label for="yearProject" class="col-sm-2 col-form-label">Service</label>
+                                    <div class="col-sm-4">
+                                        <select class="form-control" name="service" id="service">
+                                            <option value="">ALL</option>
+                                            @foreach($service as $row)
+                                                <option value="{{ $row->service_code }}">{{ $row->service_name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
                                     <label for="yearProject" class="col-sm-2 col-form-label">Year</label>
                                     <div class="col-sm-4">
                                         <select class="form-control" name="year_project" id="year_project"></select>
                                     </div>
                                 </div>
-                            @endif
+                            
                             <div class="row justify-content-around">
-                                <div class="card card-info card-outline col-6">
+                                <div class="card card-info card-outline col-5">
                                     <div class="card-header">
                                         <h5 class="card-title">Weekly</h5>
                                     </div>
@@ -141,30 +153,43 @@
                                         <div id="small-box-report" class="row"></div>
                                     </div>
                                 </div>
-                                <div class="card card-success card-outline col-6">
+                                <div class="card card-success card-outline col-5">
                                     <div class="card-header">
                                         <h3 class="card-title">Chart Satisfaction Per Year</h3>
                                     </div>
                                     <div class="card-body">
                                         <figure class="highcharts-figure">
-                                            {{-- <div class="form-group row">
-                                                <label for="inputClientName" class="col-sm-2 col-form-label">Client Name</label>
-                                                <div class="col-sm-4">
-                                                    <input type="text" class="form-control" name="client_name" id="client_name" readonly>
-                                                    <input type="hidden" class="form-control" name="client_id" id="client_id" readonly>
-                                                </div>
-                                                <div class="col-sm-2">
-                                                    <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#modal-xl">Cari</button>
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label for="projectName" class="col-sm-2 col-form-label">Project Name</label>
-                                                <div class="col-sm-4">
-                                                    <select name="project_code" id="project_code" class="form-control select2"></select>
-                                                </div>
-                                            </div> --}}
                                             <div id="container"></div>
                                         </figure>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="card card-danger card-outline col-12">
+                                        <div class="card-header">
+                                            <h5 class="card-title">Summary</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <table class="table table-striped table-bordered" id="table-summary">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Lokasi</th>
+                                                        <th>Jan</th>
+                                                        <th>Feb</th>
+                                                        <th>Mar</th>
+                                                        <th>Apr</th>
+                                                        <th>May</th>
+                                                        <th>Jun</th>
+                                                        <th>Jul</th>
+                                                        <th>Aug</th>
+                                                        <th>Sep</th>
+                                                        <th>Oct</th>
+                                                        <th>Nov</th>
+                                                        <th>Dec</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -248,6 +273,18 @@
 <script src="/plugins/Highcharts-10.3.3/code/modules/export-data.js"></script>
 <script src="/plugins/Highcharts-10.3.3/code/modules/accessibility.js"></script>
 <script>
+    var arr_month = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function groupBy(list, group, key, value) {
+        return Array.from(list
+            .reduce(
+                (map, object) => map.set(object[group], Object.assign(
+                    map.get(object[group]) || { [group]: object[group] },
+                    { [key]: object[value] }
+                )), new Map
+            )
+            .values()
+        );
+}
 /*----------------------------------------------WEEKLY-------------------------------------------*/
 @if(Auth::user()->role == 1)
 $(document).ready(function(){
@@ -271,13 +308,6 @@ $(document).ready(function(){
         ],
     });
 });
-
-// $(document).on('click','.pilih_client',function(){
-//     $('#client_id').val(($(this).attr('data-id')));
-//     $('#client_name').val(($(this).attr('data-client_name')));
-//     $('#client_description').val($(this).attr('data-client-description'));
-//     $('#modal-xl').modal('toggle');
-// });
 
 $(document).on('click','.pilih_client',function(){
     $('#client_id').val(($(this).attr('data-id')));
@@ -450,6 +480,7 @@ $(document).ready(function(){
             });
 
             $(document).on('change','#region_name',function(location){
+                $('#location_name').empty();
                 var location_name = ['location_name'];
                 var filter_location = data.filter(region => region.region_id == $('#region_name').val());
                 var location = groupBy(filter_location,'location_id',location_name,'location_name');
@@ -550,20 +581,46 @@ $(document).on('change','#year_project,#month_project,#location_name,#region_nam
                         "</div>";
                 $('#small-box-report').append(cardbox);
             });
+        }
+    });
+});
 
-            function groupBy(list, group, key, value) {
-        return Array.from(list
-            .reduce(
-                (map, object) => map.set(object[group], Object.assign(
-                    map.get(object[group]) || { [group]: object[group] },
-                    { [key]: object[value] }
-                )), new Map
-            )
-            .values()
-        );
-    }
+$(document).on('click','.data_daily',function(){
+    var i = 1;
+    $('#table-appraisal').DataTable({
+        processing:true,
+        serverSide:true,
+        destroy: true,
+        ajax:{
+            headers:{
+                'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+            },
+            url:'/dailyAppraisalPerWeek',
+            type:"POST",
+            data:{
+                'location_id':$('#location_name').val(),
+                'year_project':$(this).attr('data-yearappraisal'),
+                'week_project':$(this).attr('data-weekappraisal'),
+                'project_code':$('#project_code').val()
+            },
+        },
+        columns:[
+            {data:'', name:'', render:function(row, type, set){
+                return i++;
+            }},
+            {data:'appraisal_date', name:'appraisal_date'},
+            {data:'location_name', name:'location_name'},
+            {data:'area_name', name:'area_name'},
+            {data:'sub_area_name', name:'sub_area_name'},
+            {data:'score', name:'score'},
+        ]
+    });
+});
 
-            $.ajax({
+/*-------------------------------------------------CHART SATISFACTION-------------------------------------------*/
+
+$(document).on('change','#year_project,#month_project,#location_name,#region_name',function(){
+    $.ajax({
                 headers:{
                     'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
                 },
@@ -579,7 +636,6 @@ $(document).on('change','#year_project,#month_project,#location_name,#region_nam
                 processData:true,
                 success:function(data){
                     var project_code = $('select[name="project_code"]:selected').select2('data');
-                    var arr_month = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
                     var get_location = $('#location_name option:selected').val() == "" ? "ALL Location (Periode "+$("#year_project").val()+")" : $('#location_name option:selected').text();
                     var get_region = $('#region_name option:selected').val() == "" ? "ALL Region" : $('#region_name option:selected').text();
                     chart = Highcharts.chart('container', {
@@ -631,7 +687,6 @@ $(document).on('change','#year_project,#month_project,#location_name,#region_nam
                                 arr_score.push(0);
                             }
                         });
-                        // series.push({name:groupByService[i].service_name,data:arr_score});
                         chart.addSeries({name:groupByService[i].service_name,data:arr_score});
                     });
 
@@ -650,53 +705,69 @@ $(document).on('change','#year_project,#month_project,#location_name,#region_nam
                                 });
                                 const avgScore = scoreMonthPerService / filterMonthly.length;
                                 scoreMonthAllService.push(parseFloat(avgScore));
-                            
                         }else{
                             scoreMonthAllService.push(0);
                         }
                     });
                     chart.addSeries({ name:'Average All Service',data:scoreMonthAllService });
-                    
                 }
             });
+});
+
+/*---------------------------------------------Summary-----------------------------------------*/
+
+$(document).on('change','#project_code,#region_name,#location_name',function(){
+    $.ajax({
+        headers:{
+            'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+        },
+        url:"/getFilterLocation",
+        type:"POST", 
+        dataType:"JSON",
+        data:{
+            project_code:$('#project_code').val(),
+            region_id:$('#region_name').val(),
+            location_id:$('#location_name').val(),
+        },
+        processData:true,
+        success:function(getLocation){
+            var table = "";
+            // $('table#table-summary > tbody').append('<tr><td>HAHAHAHAH</td></tr>');
+            $.ajax({
+                headers:{
+                    'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+                },
+                url:"/getDataSummaryMonthlyPerLocation",
+                type:"POST",
+                dataType:"JSON",
+                data:{
+                    project_code:$('#project_code').val(),
+                    region_id:$('#region_name').val(),
+                    location_id:$('#location_name').val(),
+                    year:$('#year_project').val(),
+                },
+                success:function(dataSummaryLocation){
+                    // console.log(dataSummaryLocation);
+                    $.each(getLocation,function(i,item){
+                        var mapSummaryLocation = dataSummaryLocation.filter((data_location)=>data_location.location_id == getLocation[i].location_id);
+                        var arrSummaryPerLocation = [];
+                        var html_td ="";
+                        $.each(mapSummaryLocation,function(a,item){
+                            arrSummaryPerLocation.push({location_id:mapSummaryLocation[a].location_id,Jan:mapSummaryLocation[a].Jan,Feb:mapSummaryLocation[a].Feb,Mar:mapSummaryLocation[a].Mar,May:mapSummaryLocation[a].May,Jun:mapSummaryLocation[a].Jun,Jul:mapSummaryLocation[a].Jul,Aug:mapSummaryLocation[a].Aug,Sep:mapSummaryLocation[a].Sep,Oct:mapSummaryLocation[a].Oct,Nov:mapSummaryLocation[a].Nov,Dec:mapSummaryLocation[a].Dec});
+                        });
+                        console.log(arrSummaryPerLocation.some(item=>item.location_id == getLocation[i].location_id));
+                        if(arrSummaryPerLocation.some(item=>item.location_id == getLocation[i].location_id)===true){
+                            table="<tr><td>ada</td></tr>";
+                        }else{
+                            table="<tr><td></td></tr>";
+                        }
+                        $('table#table-summary > tbody').append(table);
+                    });
+                }
+            });
+            
         }
     });
 });
-
-$(document).on('click','.data_daily',function(){
-    var i = 1;
-    $('#table-appraisal').DataTable({
-        processing:true,
-        serverSide:true,
-        destroy: true,
-        ajax:{
-            headers:{
-                'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
-            },
-            url:'/dailyAppraisalPerWeek',
-            type:"POST",
-            data:{
-                'location_id':$('#location_name').val(),
-                'year_project':$(this).attr('data-yearappraisal'),
-                'week_project':$(this).attr('data-weekappraisal'),
-                'project_code':$('#project_code').val()
-            },
-        },
-        columns:[
-            {data:'', name:'', render:function(row, type, set){
-                return i++;
-            }},
-            {data:'appraisal_date', name:'appraisal_date'},
-            {data:'location_name', name:'location_name'},
-            {data:'area_name', name:'area_name'},
-            {data:'sub_area_name', name:'sub_area_name'},
-            {data:'score', name:'score'},
-        ]
-    });
-});
-    
-
-
-/*-------------------------------------------------CHART SATISFACTION-------------------------------------------*/
 </script>
 @endsection

@@ -156,10 +156,12 @@ Route::post('project/getProjectToSelected',[ProjectController::class,'get_projec
 Route::post('dashboard/getAppraisalWeekly',[DashboardController::class,'get_appraisal_weekly'])->middleware('auth');
 Route::get('/getUserAccessAuthority',[UserController::class,'getUserAccessAuthority'])->middleware('auth');
 Route::post('/getUserAuthorityLocationToSelectedByRegion',[UserController::class,'getUserAuthorityLocationToSelectedByRegion'])->middleware('auth');
-Route::post('/dailyAppraisalPerWeek',[DashboardController::class,'dailyAppraisalPerWeek']);
-Route::post('/getDataScorePerLocation',[ReportController::class,'get_data_score_per_location']);
-Route::get('/downloadPDFReportScorePerLocation/{project_code}/{location_id}/{month}/{year}',[ReportController::class,'downloadPDFReportScorePerLocation']);
+Route::post('/dailyAppraisalPerWeek',[DashboardController::class,'dailyAppraisalPerWeek'])->middleware('auth');
+Route::post('/getDataScorePerLocation',[ReportController::class,'get_data_score_per_location'])->middleware('auth');
+Route::get('/downloadPDFReportScorePerLocation/{project_code}/{location_id}/{month}/{year}',[ReportController::class,'downloadPDFReportScorePerLocation'])->middleware('auth');
 Route::post('/getDataEvaluationProjectMonthlyPerYear',[DashboardController::class,'getDataEvaluationProjectMonthlyPerYear'])->middleware('auth');
+Route::post('/getDataSummaryMonthlyPerLocation',[DashboardController::class,'getDataSummaryMonthlyPerLocation'])->middleware('auth');
+Route::post('/getFilterLocation',[DashboardController::class,'getFilterLocation'])->middleware('auth');
 // Route::post('project/getRegionSetupProject',[ProjectController::class,'get_region_setup_project'])->middleware('auth');
 // Route::post('project/getLocationSetupProject',[ProjectController::class,'get_location_setup_project'])->middleware('auth');
 // Route::post('project/getAreaSetupProject',[ProjectController::class,'get_area_setup_project'])->middleware('auth');
