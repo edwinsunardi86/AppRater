@@ -30,8 +30,8 @@ use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 //     return view('welcome');
 // });
 Route::get('/', [LoginController::class,'index'])->middleware('guest')->name('login');
-Route::post('login', [LoginController::class, 'authentication']);
-Route::post('logout', [LoginController::class, 'signout'])->name('logout');
+Route::post('/login', [LoginController::class, 'authentication']);
+Route::post('/logout', [LoginController::class, 'signout'])->name('logout');
 
 Route::get('dashboard_v1', [DashboardController::class,'dashboard_v1'])->middleware('auth');
 Route::get('linkstorage', function () {
@@ -66,7 +66,7 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'client'],functio
 
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'region'],function(){
     Route::get('/', [RegionController::class,'index']);
-    Route::get('getDatatableRegion',[RegionController::class,'get_datatable_region'])->name('data_region:dt');
+    Route::get('/getDatatableRegion',[RegionController::class,'get_datatable_region'])->name('data_region:dt');
     Route::get('/add_region',[RegionController::class,'add_region']);
     Route::post('/store_region',[RegionController::class,'store_region']);
     Route::get('/detail_region/{id}',[RegionController::class,'detail_region']);
@@ -140,6 +140,7 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'report'],functio
     Route::post('/getDataProjectCurrentEvaluation',[ReportController::class,'getDataProjectCurrentEvaluation']);
     Route::get('/reportScorePerLocation',[ReportController::class,'report_score_per_location']);
     Route::post('/approvalByClient',[ReportController::class,'approvalByClient']);
+    Route::get('/reportScoreMonthlyComponent',[ReportController::class,'reportScoreMonthlyComponent']);
 });
 
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'sign'],function(){
@@ -147,20 +148,22 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'sign'],function(
     Route::post('/storeSignatureDigital',[SignController::class,'storeSignatureDigital']);
 });
 
-Route::get('client/getDatatableClientToSelected',[ClientController::class,'get_datatable_client_to_selected'])->name('data_client_to_selected:dt')->middleware('auth');
-Route::post('region/getDataRegionToSelected',[RegionController::class,'get_data_region_to_selected'])->middleware('auth');
-Route::post('location/getDataLocationToSelected',[LocationController::class,'get_data_location_to_selected_by_region'])->middleware('auth');
-Route::post('area/getDataAreaSelected',[AreaController::class,'get_data_area_to_selected'])->middleware('auth');
-Route::post('sub_area/getDataSubAreaSelected',[SubAreaController::class,'get_data_sub_area_to_selected'])->middleware('auth');
-Route::post('project/getProjectToSelected',[ProjectController::class,'get_project_to_selected'])->middleware('auth');
-Route::post('dashboard/getAppraisalWeekly',[DashboardController::class,'get_appraisal_weekly'])->middleware('auth');
+Route::get('/client/getDatatableClientToSelected',[ClientController::class,'get_datatable_client_to_selected'])->name('data_client_to_selected:dt')->middleware('auth');
+Route::post('/region/getDataRegionToSelected',[RegionController::class,'get_data_region_to_selected'])->middleware('auth');
+Route::post('/location/getDataLocationToSelected',[LocationController::class,'get_data_location_to_selected_by_region'])->middleware('auth');
+Route::post('/area/getDataAreaSelected',[AreaController::class,'get_data_area_to_selected'])->middleware('auth');
+Route::post('/sub_area/getDataSubAreaSelected',[SubAreaController::class,'get_data_sub_area_to_selected'])->middleware('auth');
+Route::post('/project/getProjectToSelected',[ProjectController::class,'get_project_to_selected'])->middleware('auth');
+Route::post('/dashboard/getAppraisalWeekly',[DashboardController::class,'get_appraisal_weekly'])->middleware('auth');
 Route::get('/getUserAccessAuthority',[UserController::class,'getUserAccessAuthority'])->middleware('auth');
 Route::post('/getUserAuthorityLocationToSelectedByRegion',[UserController::class,'getUserAuthorityLocationToSelectedByRegion'])->middleware('auth');
 Route::post('/dailyAppraisalPerWeek',[DashboardController::class,'dailyAppraisalPerWeek'])->middleware('auth');
 Route::post('/getDataScorePerLocation',[ReportController::class,'get_data_score_per_location'])->middleware('auth');
+Route::post('/getDataScoreMonthlyComponent',[ReportController::class,'getDataScoreMonthlyComponent'])->middleware('auth');
 Route::get('/downloadPDFReportScorePerLocation/{project_code}/{location_id}/{month}/{year}',[ReportController::class,'downloadPDFReportScorePerLocation'])->middleware('auth');
 Route::post('/getDataEvaluationProjectMonthlyPerYear',[DashboardController::class,'getDataEvaluationProjectMonthlyPerYear'])->middleware('auth');
 Route::post('/getDataSummaryMonthlyPerLocation',[DashboardController::class,'getDataSummaryMonthlyPerLocation'])->middleware('auth');
+
 Route::post('/getFilterLocation',[DashboardController::class,'getFilterLocation'])->middleware('auth');
 // Route::post('project/getRegionSetupProject',[ProjectController::class,'get_region_setup_project'])->middleware('auth');
 // Route::post('project/getLocationSetupProject',[ProjectController::class,'get_location_setup_project'])->middleware('auth');

@@ -219,34 +219,6 @@ $(document).on('click','.pilih_client',function(){
     $('#modal-xl').modal('toggle');
 });
 
-$(document).on('click','.pilih_client',function(){
-    $.ajax({
-        headers:{
-            'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
-        },
-        url:"/region/get_data_region_to_selected",
-        type:"POST",
-        dataType:"JSON",
-        data:{
-            client_id:$('#client_id').val()
-        },
-        processData:true,
-        success: function(data){
-            $('select#region_name').find('option').remove();
-            $.each(data, function(i,item){
-                $('#region_name').append($('<option>',{
-                    value:data[i].id,
-                    text:data[i].region_name
-                }));
-                $('#region_name option').each(function(){
-                    if(this.selected){
-                        $('#region_description').val(data[i].description);
-                    }
-                });
-            });
-        }
-    });
-});
 $('#dateContractEdit').daterangepicker({
   locale: {
     format:'YYYY/MM/DD'

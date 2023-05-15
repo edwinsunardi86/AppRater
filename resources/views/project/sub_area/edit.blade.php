@@ -169,7 +169,8 @@ $(document).on('change','#region_name',function(){
         type:"POST",
         dataType:"JSON",
         data:{
-            region_id:$('#region_name').val()
+            region_id:$('#region_name').val(),
+            _token: '{{csrf_token()}}'
         },
         processData:true,
         success:function(data){
@@ -215,6 +216,7 @@ $(document).on('click','.pilih_client',function(){
         dataType:"JSON",
         data:{
             "client_id":$('#client_id').val(),
+            _token: '{{csrf_token()}}'
         },
         processData:true,
         success:function(data){
@@ -248,6 +250,7 @@ $(document).on('change','#project_code',function(){
         dataType:"JSON",
         data:{
             "project_code":$('#project_code').val(),
+            _token: '{{csrf_token()}}'
         },
         processData:true,
         success:function(data){
@@ -279,6 +282,7 @@ $(document).on('change','#location_name',function(){
         dataType:"JSON",
         data:{
             "location_id":$('#location_name').val(),
+            _token: '{{csrf_token()}}'
         },
         processData:true,
         success:function(data){
@@ -365,7 +369,8 @@ $(document).ready(function(){
                     sub_area_id:$('#sub_area_id').val(),
                     sub_area_name:$('#sub_area_name').val(),
                     area_id:$('#area_name').val(),
-                    sub_area_description:$('#sub_area_description').val()
+                    sub_area_description:$('#sub_area_description').val(),
+                    _token: '{{csrf_token()}}'
                 },
                 processData:true,
                 success: function(data){

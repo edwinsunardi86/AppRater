@@ -126,6 +126,7 @@ $(document).ready(function(){
             formData.append('dial_country',$('#dial_country').val());
             formData.append('mobile',$('#mobile').val());
             formData.append('description',$('#description').val());
+            formData.append('_token',$('meta[name=csrf-token]').attr('content'));
             
             $.ajax({
                 headers:{

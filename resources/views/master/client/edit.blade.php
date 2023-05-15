@@ -134,12 +134,12 @@ $(document).ready(function(){
             formData.append('dial_country',$('#dial_country').val());
             formData.append('mobile',$('#mobile').val());
             formData.append('description',$('#description').val());
-            
+            formData.append('_token',$('meta[name=csrf-token]').attr('content'));
             $.ajax({
                 headers:{
                     'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
                 },
-                url:"/client/update_client/" ,
+                url:"/client/update_client" ,
                 type:"POST",
                 dataType:"JSON",
                 data:formData,

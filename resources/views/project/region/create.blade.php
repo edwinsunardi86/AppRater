@@ -157,6 +157,7 @@ $(document).on('click','.pilih_client',function(){
         dataType:"JSON",
         data:{
             "client_id":$('#client_id').val(),
+            _token: '{{csrf_token()}}'
         },
         processData:true,
         success:function(data){
@@ -197,7 +198,8 @@ $('#form_region').submit(function(e){
         type:"POST",
         dataType:"JSON",
         data:{
-            region:arr_region
+            region:arr_region,
+            _token: '{{csrf_token()}}'
         },
         processData:true,
         success: function(data){
@@ -212,9 +214,5 @@ $('#form_region').submit(function(e){
         }
      });
 });
-
-
-
-
 </script>
 @endsection

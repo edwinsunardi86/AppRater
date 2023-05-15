@@ -69,29 +69,6 @@
                                         <textarea class="form-control" name="location_description" id="location_description" rows="5" readonly></textarea>
                                     </div>
                                 </div>
-                                {{-- <div class="form-group row">
-                                    <label for="inputAreaName" class="col-sm-2 col-form-label">Area</label>
-                                    <div class="col-sm-4">
-                                        <input type="text" class="form-control" name="area_name" id="area_name" rows="5">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="inputDescription" class="col-sm-2 col-form-label">Description</label>
-                                    <div class="col-sm-4">
-                                        <textarea class="form-control" name="description" id="description" rows="5"></textarea>
-                                    </div>
-                                </div> --}}
-                                {{-- <div class="form-group row">
-                                    <label for="selectServiceName" class="col-sm-2 col-form-label">Service</label>
-                                    <div class="col-sm-4">
-                                        <select name="service" id="service" class="form-control">
-                                            <option value="">Choice Service</option>
-                                            @foreach($service as $row)
-                                            <option value="{{ $row->service_code }}">{{ $row->service_name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div> --}}
                                 <button type="button" id="addRow" class="btn btn-xl btn-primary mb-5 ml-2">Add New Row</button>
                                 <button type="button" id="removeRow" class="btn btn-xl btn-danger mb-5 ml-2">Remove Row</button>
                                 <table id="table_add_area" class="table table-bordered table-stripped" style="width:100%">
@@ -293,7 +270,8 @@ $(document).on('change','#region_name',function(){
         type:"POST",
         dataType:"JSON",
         data:{
-            region_id:$('#region_name').val()
+            region_id:$('#region_name').val(),
+            _token: '{{csrf_token()}}'
         },
         processData:true,
         success:function(data){
@@ -335,6 +313,7 @@ $(document).on('click','.pilih_client',function(){
         dataType:"JSON",
         data:{
             "client_id":$('#client_id').val(),
+            _token: '{{csrf_token()}}'
         },
         processData:true,
         success:function(data){
@@ -364,6 +343,7 @@ $(document).on('change','#project_code',function(){
         dataType:"JSON",
         data:{
             "project_code":$('#project_code').val(),
+            _token: '{{csrf_token()}}'
         },
         processData:true,
         success:function(data){

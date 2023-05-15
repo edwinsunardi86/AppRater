@@ -180,6 +180,7 @@ $(document).on('click','.pilih_client',function(){
         dataType:"JSON",
         data:{
             "client_id":$('#client_id').val(),
+            _token: '{{csrf_token()}}'
         },
         processData:true,
         success:function(data){
@@ -209,6 +210,7 @@ $(document).on('change','#project_code',function(){
         dataType:"JSON",
         data:{
             "project_code":$('#project_code').val(),
+            _token: '{{csrf_token()}}'
         },
         processData:true,
         success:function(data){
@@ -319,7 +321,8 @@ $(document).ready(function(){
                     dataType:"JSON",
                     data:{
                         area_id:$('#area_name').val(),
-                        sub_area:arr_sub_area
+                        sub_area:arr_sub_area,
+                        _token: '{{csrf_token()}}'
                     },
                     processData:true,
                     success: function(data){
@@ -353,6 +356,7 @@ $(document).on('change','#location_name',function(){
         dataType:"JSON",
         data:{
             location_id:$('#location_name').val(),
+            _token: '{{csrf_token()}}'
         },
         processData:true,
         success:function(data){
@@ -369,28 +373,6 @@ $(document).on('change','#location_name',function(){
     });
 });
 
-// $.get('/area/getDataAreaSelected',function(data,status){
-//     $('#area_name').append($('<option>',{
-//             value: "",
-//             text: "Choice Area",
-//         }));
-//     $.each(data,function(i,item){
-//         $('#area_name').append($('<option>',{
-//             value: data[i].id,
-//             text: data[i].area_name,
-//         }));
-//         $('#area_name').change(function(){
-//             if($('#area_name').find(':selected').val() == ""){
-//                 $('#area_description').val("");
-//             }else{
-//                 var id = $('#area_name').find(':selected').val();
-//                 $.get('/area/getDataDescriptionById/'+id,function(data_desc,status){
-//                     $('#area_description').val(data_desc.area_description);
-//                 });
-//             }
-//         });
-//     });
-// });
 $(document).on('change','#region_name',function(){
     $.ajax({
         headers:{
@@ -400,7 +382,8 @@ $(document).on('change','#region_name',function(){
         type:"POST",
         dataType:"JSON",
         data:{
-            region_id:$('#region_name').val()
+            region_id:$('#region_name').val(),
+            _token: '{{csrf_token()}}'
         },
         processData:true,
         success:function(data){

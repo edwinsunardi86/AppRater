@@ -144,4 +144,19 @@ class ReportController extends Controller
         // var_dump($get_sign_approval); die();
         return response()->json($confirmation);
     }
+
+    function reportScoreMonthlyComponent(){
+        $get_m_service = DB::table('m_service')->orderBy('service_code','desc');
+        return view('report.reportScoreMonthlyPerLocation',[
+            'title' => 'Report Score Monthly Per Location',
+            'active_gm' => 'Report',
+            'active_m'=>'report/reportScoreMonthlyPerLocation',
+            'service'=>$get_m_service->get()
+        ]);
+    }
+
+    function getDataScoreMonthlyComponent(Request $request){
+        $data = ReportModel::getDataScoreMonthlyComponent($request->project_code,$request->location_id,$request->month,$request->year);
+        return response()->json($data);
+    }
 }

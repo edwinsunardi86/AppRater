@@ -148,6 +148,7 @@ $(document).on('change','#project_code',function(){
         dataType:"JSON",
         data:{
             "project_code":$('#project_code').val(),
+            _token: '{{csrf_token()}}'
         },
         processData:true,
         success:function(data){
@@ -230,7 +231,8 @@ $(document).on('change','#project_code',function(){
                     dataType:"JSON",
                     data:{
                         region_id:$('#region_name').val(),
-                        location:arr_location
+                        location:arr_location,
+                        _token: '{{csrf_token()}}'
                     },
                     processData:true,
                     success: function(data){
@@ -272,6 +274,7 @@ $(document).on('click','.pilih_client',function(){
         dataType:"JSON",
         data:{
             "client_id":$('#client_id').val(),
+            _token: '{{csrf_token()}}'
         },
         processData:true,
         success:function(data){

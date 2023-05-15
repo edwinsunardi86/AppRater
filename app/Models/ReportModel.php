@@ -26,7 +26,7 @@ class ReportModel extends Model
         IFNULL(AVG(CASE WHEN(WEEK(appraisal_date) - WEEK(DATE_FORMAT(appraisal_date,"%Y-%m-01")))+1 = 6 THEN score END),0) AS score_week6'))
         ->where('setup_project.project_code',$project_code)
         ->whereRaw("MONTH(appraisal_date) = '".$month."' AND YEAR(appraisal_date) = '".$year."' AND setup_location.id = '".$location_id."'")
-        ->groupBy("setup_sub_area.id")
+        ->groupBy("setup_sub_area.id1")
         ->get();
         return $query;
     }
@@ -42,4 +42,16 @@ class ReportModel extends Model
         $query = DB::select($sql);
         return $query;
     }
+
+    static function getDataScoreMonthlyComponent($project_code,$location_id,$month,$year){
+        $query = DB::table('report_summary_monthly_component')
+        ->where('project_code','=',$project_code)
+        ->where('location_id',$location_id)
+        ->where('year',$year)
+        ->where('month',$month)
+        ->select('sub_area_id','sub_area_name','service_code','service_name',DB::Raw("
+        AVG(score) AS score"))
+        ->groupBy('sub_area_id');
+        return $query->get();
+    }   
 }

@@ -323,6 +323,7 @@ $(document).on('click','.pilih_client',function(){
         dataType:"JSON",
         data:{
             "client_id":$('#client_id').val(),
+            _token: '{{csrf_token()}}',
         },
         processData:true,
         success:function(data){
@@ -352,6 +353,7 @@ $(document).ready(function(){
         dataType:"JSON",
         data:{
             "project_code":$('#project_code').val(),
+            _token: '{{csrf_token()}}',
         },
         processData:true,
         success:function(data){
@@ -381,6 +383,7 @@ $(document).on('change','#project_code',function(){
         dataType:"JSON",
         data:{
             "project_code":$('#project_code').val(),
+            _token: '{{csrf_token()}}',
         },
         processData:true,
         success:function(data){
@@ -410,6 +413,7 @@ $(document).on('change','#region_name',function(){
         dataType:"JSON",
         data:{
             region_id:$('#region_name').val(),
+            _token: '{{csrf_token()}}',
         },
         processData:true,
         success: function(data){
@@ -512,7 +516,8 @@ $(document).on('change','#location_name,#project_code,#region_name',function(){
         data:{
             'project_code':$('#project_code').val(),
             'location_id':$('#location_name').val(),
-            'region_id':$('#region_name').val()
+            'region_id':$('#region_name').val(),
+            _token: '{{csrf_token()}}',
         },
         processData:true,
         success: function(data){
@@ -545,7 +550,8 @@ $(document).on('change','#year_project,#month_project,#location_name,#region_nam
             'year_project' : $('#year_project').val(),
             'project_code' : $('#project_code').val(),
             'location_id' : $('#location_name').val(),
-            'region_id' : $('#region_name').val()
+            'region_id' : $('#region_name').val(),
+            _token: '{{csrf_token()}}',
         },
         processData:true,
         success: function(data){
@@ -601,7 +607,8 @@ $(document).on('click','.data_daily',function(){
                 'location_id':$('#location_name').val(),
                 'year_project':$(this).attr('data-yearappraisal'),
                 'week_project':$(this).attr('data-weekappraisal'),
-                'project_code':$('#project_code').val()
+                'project_code':$('#project_code').val(),
+                _token: '{{csrf_token()}}',
             },
         },
         columns:[
@@ -632,6 +639,7 @@ $(document).on('change','#year_project,#month_project,#location_name,#region_nam
                     region_id : $('#region_name').val(),
                     location_id:$('#location_name').val(),
                     year:$('#year_project').val(),
+                    _token: '{{csrf_token()}}',
                 },
                 processData:true,
                 success:function(data){
@@ -728,6 +736,7 @@ $(document).on('change','#project_code,#region_name,#location_name',function(){
             project_code:$('#project_code').val(),
             region_id:$('#region_name').val(),
             location_id:$('#location_name').val(),
+            _token: '{{csrf_token()}}',
         },
         processData:true,
         success:function(getLocation){
@@ -745,21 +754,25 @@ $(document).on('change','#project_code,#region_name,#location_name',function(){
                     region_id:$('#region_name').val(),
                     location_id:$('#location_name').val(),
                     year:$('#year_project').val(),
+                    _token: '{{csrf_token()}}',
                 },
                 success:function(dataSummaryLocation){
-                    // console.log(dataSummaryLocation);
+                    $('table#table-summary > tbody').empty();
                     $.each(getLocation,function(i,item){
                         var mapSummaryLocation = dataSummaryLocation.filter((data_location)=>data_location.location_id == getLocation[i].location_id);
                         var arrSummaryPerLocation = [];
                         var html_td ="";
+                        var a = 0;
                         $.each(mapSummaryLocation,function(a,item){
-                            arrSummaryPerLocation.push({location_id:mapSummaryLocation[a].location_id,Jan:mapSummaryLocation[a].Jan,Feb:mapSummaryLocation[a].Feb,Mar:mapSummaryLocation[a].Mar,May:mapSummaryLocation[a].May,Jun:mapSummaryLocation[a].Jun,Jul:mapSummaryLocation[a].Jul,Aug:mapSummaryLocation[a].Aug,Sep:mapSummaryLocation[a].Sep,Oct:mapSummaryLocation[a].Oct,Nov:mapSummaryLocation[a].Nov,Dec:mapSummaryLocation[a].Dec});
+                            arrSummaryPerLocation.push({location_id:mapSummaryLocation[a].location_id,Jan:mapSummaryLocation[a].Jan,Feb:mapSummaryLocation[a].Feb,Mar:mapSummaryLocation[a].Mar,Apr:mapSummaryLocation[a].Apr,May:mapSummaryLocation[a].May,Jun:mapSummaryLocation[a].Jun,Jul:mapSummaryLocation[a].Jul,Aug:mapSummaryLocation[a].Aug,Sep:mapSummaryLocation[a].Sep,Oct:mapSummaryLocation[a].Oct,Nov:mapSummaryLocation[a].Nov,Dec:mapSummaryLocation[a].Dec});
+
                         });
-                        console.log(arrSummaryPerLocation.some(item=>item.location_id == getLocation[i].location_id));
+                         console.log(arrSummaryPerLocation.some(item=>item.location_id == getLocation[i].location_id));
                         if(arrSummaryPerLocation.some(item=>item.location_id == getLocation[i].location_id)===true){
-                            table="<tr><td>ada</td></tr>";
+                            table="<tr><td>"+getLocation[i].location_name+"</td><td>"+parseFloat(arrSummaryPerLocation[a].Jan)+"</td><td>"+parseFloat(arrSummaryPerLocation[a].Feb)+"</td><td>"+parseFloat(arrSummaryPerLocation[a].Mar)+"</td><td>"+parseFloat(arrSummaryPerLocation[a].Apr)+"</td><td>"+parseFloat(arrSummaryPerLocation[a].May)+"</td><td>"+parseFloat(arrSummaryPerLocation[a].Jun)+"</td><td>"+parseFloat(arrSummaryPerLocation[a].Jul)+"</td><td>"+parseFloat(arrSummaryPerLocation[a].Aug)+"</td><td>"+parseFloat(arrSummaryPerLocation[a].Sep)+"</td><td>"+parseFloat(arrSummaryPerLocation[a].Oct)+"</td><td>"+parseFloat(arrSummaryPerLocation[a].Nov)+"</td><td>"+parseFloat(arrSummaryPerLocation[a].Dec)+"</td></tr>";
+                            a++;
                         }else{
-                            table="<tr><td></td></tr>";
+                            table="<tr><td>"+getLocation[i].location_name+"</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>";
                         }
                         $('table#table-summary > tbody').append(table);
                     });
