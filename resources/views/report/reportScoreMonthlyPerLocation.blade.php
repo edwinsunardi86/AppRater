@@ -27,6 +27,7 @@
                         
                         <div class="card-body">
                             <form method="post" id="convert_to_pdf" class="form-horizontal">
+                                @if(Auth::user()->role == 1 || Auth::user()->role == 2)
                                 <div class="form-group row">
                                     <label for="inputClientName" class="col-sm-2 col-form-label">Client Name</label>
                                     <div class="col-sm-4">
@@ -37,6 +38,7 @@
                                         <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#modal-xl">Cari</button>
                                     </div>
                                 </div>
+                                @endif
                                 <div class="form-group row">
                                     <label for="projectName" class="col-sm-2 col-form-label">Project Name</label>
                                     <div class="col-sm-4">
@@ -90,14 +92,46 @@
                                         @endforeach
                                     </tbody>
                                 </table>
+                                <div class="row p-10 col-sm-4">
+                                    <canvas id="signature-pad" class="signature-pad">
+                                        Your browser does not support the HTML canvas tag.
+                                    </canvas>
+                                </div>
+                                <div class="row p-3 inline col-sm-4">
+                                    <div class="col col-sm justify-content-md-center pt-3">
+                                        <center>
+                                            
+                                        </center>
+                                        <!-- tombol undo  -->
+                                        <center><button type="button" class="btn btn-dark" id="undo">
+                                            <span class="fas fa-undo"></span>
+                                            Undo
+                                        </button>
+                                        </center>
+                                    </div>
+                                    <div class="col col-sm justify-content-md-center pt-3">
+                                        <!-- tombol hapus tanda tangan  -->
+                                      <center><button type="button" class="btn btn-danger" id="clear">
+                                        <span class="fas fa-eraser"></span>
+                                        Clear
+                                        </button></center>
+                                    </div>
+                                    {{-- <div class="col col-sm justify-content-md-center pt-3">
+                                        <!-- tombol submit  -->
+                                      <center><button type="submit" class="btn btn-primary" id="submit">
+                                        <span class="fas fa-submit"></span>
+                                        Submit
+                                        </button></center>
+                                    </div> --}}
+                                </div>
                                 <div class="form-group row">
-                                    <div class="col-sm-2">
+                                    {{-- <div class="col-sm-2">
                                         @if(Auth::user()->role == 3)
                                             <button type="button" class="btn btn-block btn-outline-primary btn-sm" id="modal_approval" data-toggle='modal' data-target="#modal_sign">Sign</button>
                                         @endif
-                                    </div>
+                                    </div> --}}
                                     <div class="col-sm-2">
-                                        <button class="btn btn-block btn-outline-warning btn-sm">Download</button>
+                                        <button type="submit" class="btn btn-block btn-outline-warning btn-sm">Download</button>
                                     </div>
                                 </div>
                             </form>
@@ -166,6 +200,7 @@
         </div>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
 <script>
 $(document).ready(function(){
 $( "li.item-a" )
@@ -192,6 +227,29 @@ $( "li.item-a" )
     });
 });
 
+@if(Auth::user()->role == 1)
+$(document).ready(function(){
+    var i = 1;
+    var tb_client = $('#table_client').DataTable({
+    processing:true,
+    serverSide:true,
+    destroy: true,
+    ajax:'{!! route("data_client_to_selected:dt") !!}',
+    columns:[
+        { data:i, name: i, render: function (data, type, row, meta) {
+                return meta.row + meta.settings._iDisplayStart + 1;
+            }},
+        { data:'client_name', name:'client_name' },
+        { data:'address', name:'address' },
+        { data: 'contact1', name:'contact1' },
+        { data: 'contact2', name: 'contact2' },
+        { data: 'contact_mobile', name: 'contact_mobile'},
+        { data: 'description', name: 'description'},
+        { data: 'action', name: 'action'}
+        ],
+    });
+});
+
 $(document).on('click','.pilih_client',function(){
     $('#client_id').val(($(this).attr('data-id')));
     $('#client_name').val(($(this).attr('data-client_name')));
@@ -202,10 +260,11 @@ $(document).on('click','.pilih_client',function(){
             'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
         },
         url:"/project/getProjectToSelected",
-        type:"POST", 
+        type:"POST",
         dataType:"JSON",
         data:{
             "client_id":$('#client_id').val(),
+            _token: '{{csrf_token()}}',
         },
         processData:true,
         success:function(data){
@@ -225,6 +284,36 @@ $(document).on('click','.pilih_client',function(){
     });
 });
 
+$(document).ready(function(){
+    $.ajax({
+        headers:{
+            'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+        },
+        url:"/region/getDataRegionToSelected",
+        type:"POST",
+        dataType:"JSON",
+        data:{
+            "project_code":$('#project_code').val(),
+            _token: '{{csrf_token()}}',
+        },
+        processData:true,
+        success:function(data){
+            $('.table_add_location > tbody').empty();
+            $('select#region_name option').remove();
+            $('select#region_name').append($('<option>',{
+                    text:"Choice Region",
+                    value:""
+                }));
+            $.each(data,function(i,item){
+                $('select#region_name').append($('<option>',{
+                    text:data[i].region_name,
+                    value:data[i].id
+                }));
+            });
+        }
+    });
+});
+
 $(document).on('change','#project_code',function(){
     $.ajax({
         headers:{
@@ -235,13 +324,14 @@ $(document).on('change','#project_code',function(){
         dataType:"JSON",
         data:{
             "project_code":$('#project_code').val(),
+            _token: '{{csrf_token()}}',
         },
         processData:true,
         success:function(data){
             $('.table_add_location > tbody').empty();
             $('select#region_name option').remove();
             $('select#region_name').append($('<option>',{
-                    text:"Choice Region",
+                    text:"ALL Region",
                     value:""
                 }));
             $.each(data,function(i,item){
@@ -264,13 +354,14 @@ $(document).on('change','#region_name',function(){
         dataType:"JSON",
         data:{
             region_id:$('#region_name').val(),
+            _token: '{{csrf_token()}}',
         },
         processData:true,
         success: function(data){
             $('.tb_sub_area > tbody').empty();
             $('select#location_name option').remove();
             $('select#location_name').append($('<option>',{
-                text:"Choice Location",
+                text:"ALL Location",
                 value:""
             }));
             $.each(data,function(i,item){
@@ -282,6 +373,78 @@ $(document).on('change','#region_name',function(){
         }
     });
 });
+
+@endif
+
+@if(Auth::user()->role==3)
+function groupBy(list, group, key, value) {
+    return Array.from(list
+        .reduce(
+            (map, object) => map.set(object[group], Object.assign(
+                map.get(object[group]) || { [group]: object[group] },
+                { [key]: object[value] }
+            )), new Map
+        )
+        .values()
+    );
+}
+function regionProject(project_code){
+    var project_code = $('#project_code').val()
+    return project_code;
+}
+
+
+$(document).ready(function(){
+    $('#project_code').append($('<option>',{
+                value:"",
+                text:"Choice Project"
+    }));
+    
+    $.get('/getUserAccessAuthority',function(data){
+        var project_name = ['project_name'];
+        var project = groupBy(data,'project_code',project_name,'project_name');
+        $.each(project,function(i,item){
+            $('#project_code').append($('<option>',{
+                value:project[i].project_code,
+                text:project[i].project_name
+            }));
+        });
+        $(document).on('change','#project_code',function(){
+            var region_name = ['region_name'];
+            var filter_region = data.filter(project => project.project_code == $('#project_code').val());
+            var region  = groupBy(filter_region,'region_id',region_name,'region_name');
+            $('#region_name').append($('<option>',{
+                value:"",
+                text:"ALL"
+            }));
+            $.each(region,function(i,item){
+                $('#region_name').append($('<option>',{
+                    value:region[i].region_id,
+                    text:region[i].region_name
+                }));
+            });
+
+            $(document).on('change','#region_name',function(location){
+                $('#location_name').empty();
+                var location_name = ['location_name'];
+                var filter_location = data.filter(region => region.region_id == $('#region_name').val());
+                var location = groupBy(filter_location,'location_id',location_name,'location_name');
+                $('#location_name').append($('<option>',{
+                    value:"",
+                    text:"ALL"
+                }));
+                
+                $.each(location, function(i,item){
+                    $('#location_name').append($('<option>',{
+                        value:location[i].location_id,
+                        text:location[i].location_name
+                    }));
+                });
+            });
+        });
+    });
+});
+@endif
 
 $(document).on('change','#location_name',function(){
     $.ajax({
@@ -317,11 +480,11 @@ $(document).on('change','#year_project,#month_project',function(){
     let summary;
     if(score == 100){
         summary = "SB";
-    }else if(score >= 95){
+    }else if(score >= 95 && score <= 99){
         summary = "CB";
-    }else if(score >= 89){
+    }else if(score >= 89 && score <= 94){
         summary = "B";
-    }else{
+    }else if(score >=74 && score <= 88){
         summary = "KB";
     }
     return summary;
@@ -408,7 +571,40 @@ $(document).ready(function(){
             $(element).removeClass('is-invalid');
         },
         submitHandler: function() {
-                window.open('/downloadPDFReportScorePerLocation/'+$('#project_code').val()+'/'+$('#location_name').val()+'/'+$('#month_project').val()+'/'+$('#year_project').val());
+            var location_id = $('#location_name option:selected').val();
+            var project_code = $('#project_code option:selected').val();
+            var month = $('#month_project').val();
+            var year = $('#year_project').val();
+                // window.open('/downloadPDFReportScorePerLocation/'+$('#project_code').val()+'/'+$('#location_name').val()+'/'+$('#month_project').val()+'/'+$('#year_project').val());
+                var signature = signaturePad.toDataURL();
+                $.ajax({
+                    headers:{
+                        'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+                    },
+                    url:'/report/approvalSignReportScoreMonthly',
+                    type:'POST',
+                    data:{
+                        'signature'     :   signature,
+                        'location_id'   :   location_id,
+                        'project_code'  :   project_code,
+                        'month'         :   month,
+                        'year'          :   year
+                    },
+                    processData:true,
+                    xhrFields: {
+                        responseType: 'blob'
+                    },
+                    success: function(response){
+                        var blob = new Blob([response]);
+                        var link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(blob);
+                        link.download = "ReportScoreMonthly"+project_code+location_id+month+year+".pdf";
+                        link.click();
+                    },
+                    error: function(blob){
+                        console.log(blob);
+                    }
+                });
         }
     });
 });
@@ -458,6 +654,45 @@ $(document).ready(function(){
         
 @endif
 
-
+document.addEventListener('DOMContentLoaded', function () {
+                resizeCanvas();
+            })
+    
+            //script ini berfungsi untuk menyesuaikan tanda tangan dengan ukuran canvas
+            function resizeCanvas() {
+                var ratio = Math.max(window.devicePixelRatio || 0.5, 0.5);
+                canvas.width = canvas.offsetWidth * ratio;
+                canvas.height = canvas.offsetHeight * ratio;
+                canvas.getContext("2d").scale(ratio, ratio);
+            }
+    
+    
+            var canvas = document.getElementById('signature-pad');
+    
+            //warna dasar signaturepad
+            var signaturePad = new SignaturePad(canvas, {
+                backgroundColor: 'rgb(255, 255, 255)'
+            });
+    
+            //saat tombol clear diklik maka akan menghilangkan seluruh tanda tangan
+            document.getElementById('clear').addEventListener('click', function () {
+                signaturePad.clear();
+            });
+    
+            //saat tombol undo diklik maka akan mengembalikan tanda tangan sebelumnya
+            document.getElementById('undo').addEventListener('click', function () {
+                var data = signaturePad.toData();
+      if (data) {
+    data.pop(); // remove the last dot or line
+    signaturePad.fromData(data);
+    }
+});
+$(document).ready(function(){
+    $('#form_signature').submit(function(e){
+        e.preventDefault();
+        var signature = signaturePad.toDataURL();
+        
+    });
+});
 </script>
 @endsection

@@ -140,7 +140,8 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'report'],functio
     Route::post('/getDataProjectCurrentEvaluation',[ReportController::class,'getDataProjectCurrentEvaluation']);
     Route::get('/reportScorePerLocation',[ReportController::class,'report_score_per_location']);
     Route::post('/approvalByClient',[ReportController::class,'approvalByClient']);
-    Route::get('/reportScoreMonthlyComponent',[ReportController::class,'reportScoreMonthlyComponent']);
+    Route::get('/reportScoreMonthlyPerLocation',[ReportController::class,'reportScoreMonthlyPerLocation']);
+    Route::post('/approvalSignReportScoreMonthly',[ReportController::class,'approvalSignReportScoreMonthly']);
 });
 
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'sign'],function(){

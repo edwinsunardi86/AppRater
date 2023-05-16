@@ -59,6 +59,37 @@ class ReportController extends Controller
         return response()->json($data);
     }
 
+    function approvalSignReportScoreMonthly(Request $request){
+        $data = ReportModel::getDataScoreMonthlyComponent($request->project_code,$request->location_id,$request->month,$request->year);
+        $avgSatisfactionPerService = ReportModel::getDataScoreMonthlyComponentGroupService($request->project_code,$request->location_id,$request->month,$request->year);
+        $avg_satisfaction = ReportModel::average_satisfaction($request->project_code,$request->month,$request->year,$request->location_id);
+        if($avg_satisfaction->score >= 74){
+            $rating = 'KB';
+        }elseif($avg_satisfaction->score >= 89){
+            $rating = 'B';
+        }elseif($avg_satisfaction->score >= 95){
+            $rating = 'CB';
+        }elseif($avg_satisfaction->score == 100){
+            $rating = 'SB';
+        }
+        $pdf = PDF::loadView('pdf.documentScoreSatisfaction',[
+            'project_name'      => $avg_satisfaction->project_name,
+            'service'           => $avgSatisfactionPerService,
+            'signature_client'  => $request->signature,
+            'date_sign_client'  => date("j-F-Y"),
+            'month'             => $request->month,
+            'year'              => $request->year,
+            'data'              => $data,
+            'rating'            => $rating,
+            'avg_satisfaction'  => $avg_satisfaction
+            ]
+        );
+        $filename = "ReportScoreMonthly".$request->month."-".$request->year;
+        $pdf->save(public_path().'/'.$filename);
+        $pdf = public_path($filename);
+        return response()->download($pdf);
+    }
+
     function downloadPDFReportScorePerLocation($project_code,$location_id,$month,$year){
         $data = ReportModel::getDataScorePerLocation($project_code,$location_id,$month,$year);
         $first_date_sql = date_create($year.'-'.$month.'-01');
@@ -145,7 +176,7 @@ class ReportController extends Controller
         return response()->json($confirmation);
     }
 
-    function reportScoreMonthlyComponent(){
+    function reportScoreMonthlyPerLocation(){
         $get_m_service = DB::table('m_service')->orderBy('service_code','desc');
         return view('report.reportScoreMonthlyPerLocation',[
             'title' => 'Report Score Monthly Per Location',

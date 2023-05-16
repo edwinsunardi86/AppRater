@@ -26,7 +26,7 @@ class ReportModel extends Model
         IFNULL(AVG(CASE WHEN(WEEK(appraisal_date) - WEEK(DATE_FORMAT(appraisal_date,"%Y-%m-01")))+1 = 6 THEN score END),0) AS score_week6'))
         ->where('setup_project.project_code',$project_code)
         ->whereRaw("MONTH(appraisal_date) = '".$month."' AND YEAR(appraisal_date) = '".$year."' AND setup_location.id = '".$location_id."'")
-        ->groupBy("setup_sub_area.id1")
+        ->groupBy("setup_sub_area.id")
         ->get();
         return $query;
     }
@@ -53,5 +53,42 @@ class ReportModel extends Model
         AVG(score) AS score"))
         ->groupBy('sub_area_id');
         return $query->get();
-    }   
+    }
+
+    static function getDataScoreMonthlyComponentGroupService($project_code,$location_id,$month,$year){
+        $query = DB::table('report_summary_monthly_component')
+        ->where('project_code','=',$project_code)
+        ->where('location_id',$location_id)
+        ->where('year',$year)
+        ->where('month',$month)
+        ->select('service_code','service_name',DB::Raw("
+        AVG(score) AS score"))
+        ->groupBy('service_code');
+        return $query->get();
+    }
+
+    static function average_satisfaction($project_code,$month,$year,$location_id){
+        $query_avg_score = DB::table('evaluation')
+        ->join('setup_sub_area','setup_sub_area.id','=','evaluation.sub_area_id')
+        ->join('setup_area','setup_area.id','=','setup_sub_area.area_id')
+        ->join('setup_location','setup_area.location_id','=','setup_location.id')
+        ->join('setup_region','setup_location.region_id','=','setup_region.id')
+        ->join('setup_project','setup_project.project_code','=','setup_region.project_code')
+        ->join('m_client','m_client.id','=','setup_project.client_id')
+        ->select(DB::Raw('AVG(score) AS score'),'m_client.client_name','project_name');
+        if($project_code != ""){
+            $query_avg_score = $query_avg_score->where('setup_project.project_code',$project_code);
+        }
+        
+        if($location_id != ""){
+            $query_avg_score = $query_avg_score->where('setup_location.id',$location_id);
+        }
+
+        if($month != "" && $year != ""){
+            $query_avg_score = $query_avg_score->whereRaw("DATE_FORMAT(appraisal_date,'%Y-%b')='".$year."-".$month."'");
+        }
+
+        $query_avg_score = $query_avg_score->first();
+        return $query_avg_score;
+    }
 }

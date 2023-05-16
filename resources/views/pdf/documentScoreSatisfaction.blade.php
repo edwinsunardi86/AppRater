@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Membuat Laporan PDF Dengan DOMPDF Laravel</title>
+	<title>Report Score Monthly Location (Component)</title>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 <body>
@@ -13,80 +13,95 @@
 	</style>
 	<div>
 		<center>
-			<h5>Report Score Per Location</h4>
+			<h5>Report Score Monthly Location</h4>
 		</center>
 		<table style="width:100%">
 			<tr>
-				<td rowspan ="5"><img src="assets/images/LOGO-PT-SOS.png" alt="" style="width:100px"></td>
-				<td>YEAR</td>
-				<td><strong></strong>{{ $year }}</td>
+				<td style="width:20%"><img src="assets/images/LOGO-PT-SOS.png" alt="" style="width:100px"></td>
+				{{-- <td><strong>YEAR</strong></td>
+				<td><strong>{{ $year }}</strong></td>
 				<td><strong>MONTH</strong></td>
-				<td>{{ $month }}</td>
-				<td rowspan = "5">
-					<div style="width:100%; background-color:#219ebc; height:15%">
-						<div style="height:15%; background-color:#4f772d; color: #fff">
-							<center>Average Value</center> 
+				<td>{{ $month }}</td> --}}
+                <td>
+                    <table style="background-color:#f0f0f0; width:90%; height:10%; align:center; margin-left:5px; margin-right:5px;">
+                        <tr>
+                            <td><strong>Bulan</strong></td><td>:</td><td><div style="border-radius:15px; background-color:#dbdbdb; padding-left:15px; margin:5px 5px 0px 5px">{{ $month }}</div></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tahun</strong></td><td>:</td><td><div style="border-radius:15px; background-color:#dbdbdb; padding-left:15px; margin:5px 5px 0px 5px">{{ $year }}</div></td>
+                        </tr>
+                    </table>
+                </td>
+				<td style="width:25%">
+					<div style="width:100%; height:10%; align:top">
+						<div style="height:15%; background-color:#355519; color: #fff;">
+							<center style="font-size:10px;font-family: Arial, Helvetica, sans-serif;">AVERAGE VALUE</center> 
 						</div>
-						<div style="height:70%"><center><p style="font-size:70px">{{ $rating }}</p></center></div>
-						<div style="height:15%; background-color:#4f772d; color: #fff">
-							<center>{{ $avg_score_location->score }} %</center>
+						<div style="height:70%; background-color:#c2c2c2;"><center><p style="font-size:40px;font-family: Arial, Helvetica, sans-serif;">{{ $rating }}</p></center></div>
+						<div style="height:15%; background-color:#85a16c;color:#000;">
+							<center style="font-size:10px;font-family: Arial, Helvetica, sans-serif;">{{ $avg_satisfaction->score }} %</center>
 						</div>
 					</div>
 				</td>
 			</tr>
-			<tr>
-				<td>START DATE</td>
-				<td><strong></strong>{{ $first_date }}</td>
-				<td><strong>START WEEK</strong></td>
-				<td>{{ $first_week }}</td>
-			</tr>
-			<tr>
-				<td>FINISH DATE</td>
-				<td><strong></strong>{{ $last_date }}</td>
-				<td><strong>END WEEK</strong></td>
-				<td>{{ $last_week }}</td>
-			</tr>
-			<tr>
-				<td>WORKDAYS</td>
-				<td>{{ $work_days[0]->work_day }}</td>
-				<td><strong>CHECKED DAYS</strong></td>
-				<td>1</td>
-			</tr>
 		</table>
-		<div class="row">
+    </div>
+    <div style="margin-top:10px">
+        <div class="row">
 			<table class='table table-bordered table-striped'>
 				<thead>
 					<tr>
 						<th>No</th>
 						<th>Sub Area Name</th>
-						<th>Week 1</th>
-						<th>Week 2</th>
-						<th>Week 3</th>
-						<th>Week 4</th>
-						<th>Week 5</th>
-						<th>Week 6</th>
+						<th>Score</th>
+						<th>Summary</th>
 					</tr>
 				</thead>
 				<tbody>
 					@php $i = 1; @endphp
-					@foreach($query as $row)
-					<tr>
-						<td>{{ $i }}</td>
-						<td>{{ $row->sub_area_name }}</td>
-						<td>{{ $row->score_week1 }}</td>
-						<td>{{ $row->score_week2 }}</td>
-						<td>{{ $row->score_week3 }}</td>
-						<td>{{ $row->score_week4 }}</td>
-						<td>{{ $row->score_week5 }}</td>
-						<td>{{ $row->score_week6 }}</td>
-					</tr>
-					@php $i++ @endphp
-					@endforeach
+                    @foreach($service as $row_service)
+                    <tr style="background-color:red">
+                        <td colspan="2">{{ $row_service->service_name }}</td>
+                        <td>{{ $row_service->score }}</td>
+                        <td>
+                            @if($row_service->score >= 74 && $row_service->score <= 88)
+                                KB
+                            @elseif($row_service->score >= 89 && $row_service->score <= 94)
+                                B
+                            @elseif($row_service->score >= 95 && $row_service->score <= 99)
+                                CB
+                            @elseif($row_service->score == 100)
+                                SB
+                            @endif
+                        </td>
+                    </tr>
+                        @foreach($data as $row_sub_area)
+                            @if($row_sub_area->service_code == $row_service->service_code)
+                            <tr>
+                                <td>{{ $i }}</td>
+                                <td>{{ $row_sub_area->sub_area_name }}</td>
+                                <td>{{ $row_sub_area->score }}</td>
+                                <td>
+                                @if($row_sub_area->score >= 74 && $row_sub_area->score <= 88)
+                                    KB
+                                @elseif($row_sub_area->score >= 89 && $row_sub_area->score <= 94)
+                                    B
+                                @elseif($row_sub_area->score >= 95 && $row_sub_area->score <= 99)
+                                    CB
+                                @elseif($row_sub_area->score == 100)
+                                    SB
+                                @endif
+                                </td>
+                            </tr>
+                            @endif
+                        @php $i++ @endphp
+                        @endforeach
+                    @endforeach
 				</tbody>
 			</table>
 		</div>
-	</div>
-	<div style="width:100%">
+    </div>
+    <div style="width:100%">
 		<table style="width:100%">
 			<tr>
 				<td style="width:30%">
@@ -100,10 +115,10 @@
 				<td style="width:40%"></td>
 				<td style="width:30%">
 					<table  style="width:100%">
-						<tr><td colspan="3">{{ $avg_score_location->client_name }}</td></tr>
-						<tr><td colspan="3"><div style="height:25%;"><img style="width:100%" src="{{ $sign_client }}"/></div></td></tr>
-						<tr><td style="text-align:left; width:15%">Nama</td><td style="width:0px">:</td><td style="text-align:left">{{ $user_client }}</td></tr>
-						<tr><td style="text-align:left">Tanggal</td><td>:</td><td style="text-align:left">{{ $date_client }}</td></tr>
+						<tr><td colspan="3">{{  $avg_satisfaction->client_name }}</td></tr>
+						<tr><td colspan="3"><div style="height:25%;"><img style="width:100%" src="{{ $signature_client }}"/></div></td></tr>
+						<tr><td style="text-align:left; width:15%">Nama</td><td style="width:0px">:</td><td style="text-align:left">{{ Auth::user()->fullname }}</td></tr>
+						<tr><td style="text-align:left">Tanggal</td><td>:</td><td style="text-align:left">{{ $date_sign_client }}</td></tr>
 					</table>
 				</td>
 			</tr>
