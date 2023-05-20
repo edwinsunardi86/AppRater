@@ -175,6 +175,7 @@ $(document).on('click','.pilih_client',function(){
         dataType:"JSON",
         data:{
             "client_id":$('#client_id').val(),
+            _token: '{{csrf_token()}}'
         },
         processData:true,
         success:function(data){
@@ -183,7 +184,7 @@ $(document).on('click','.pilih_client',function(){
             $('select#project_code').append($('<option>',{
                     text:"Choice Project",
                     value:""
-                }));
+            }));
             $.each(data,function(i,item){
                 $('select#project_code').append($('<option>',{
                     text:data[i].project_name,
@@ -203,7 +204,8 @@ $(document).on('change','#project_code',function(){
         type:"POST",
         dataType:"JSON",
         data:{
-            project_code:$('#project_code').val()
+            project_code:$('#project_code').val(),
+            _token: '{{csrf_token()}}'
         },
         processData:true,
         success: function(data){
@@ -232,7 +234,8 @@ $(document).on('change','#region_name',function(){
         type:"POST",
         dataType:"JSON",
         data:{
-            region_id:$('#region_name').val()
+            region_id:$('#region_name').val(),
+            _token: '{{csrf_token()}}'
         },
         processData:true,
         success: function(data){
@@ -261,7 +264,8 @@ $(document).on('change','#location_name',function(){
         type:"POST",
         dataType:"JSON",
         data:{
-            location_id:$('#location_name').val()
+            location_id:$('#location_name').val(),
+            _token: '{{csrf_token()}}'
         },
         processData:true,
         success: function(data){
@@ -368,6 +372,7 @@ $(document).ready(function(){
                 formData.append('date_evaluation',$('#date_evaluation').val())
                 formData.append('region_id',$('#region_name').val());
                 formData.append('location_id',$('#location_name').val());
+                formData.append('_token',$('meta[name=csrf-token]').attr('content'));
                 var sub_area_id = [];
                     
                 for(var i = 1;i<=$('input[name="count_sub_area"]').length;i++){

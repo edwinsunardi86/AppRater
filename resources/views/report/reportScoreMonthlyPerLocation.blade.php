@@ -457,6 +457,7 @@ $(document).on('change','#location_name',function(){
         data:{
             'project_code':$('#project_code').val(),
             'location_id':$('#location_name').val(),
+            _token: '{{csrf_token()}}'
         },
         processData:true,
         success: function(data){
@@ -493,14 +494,15 @@ $(document).on('change','#year_project,#month_project',function(){
         headers:{
             'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
         },
-        url:'/getDataScoreMonthlyComponent',
+        url:'/getDataScoreMonthlyPerLocation',
         type:"POST",
         dataType:"JSON",
         data:{
             'project_code':$('#project_code').val(),
             'location_id':$('#location_name').val(),
             'month':$('#month_project').val(),
-            'year':$('#year_project').val()
+            'year':$('#year_project').val(),
+            _token: '{{csrf_token()}}'
         },
         success:function(data){
             $('.tr_score').remove();
@@ -588,7 +590,8 @@ $(document).ready(function(){
                         'location_id'   :   location_id,
                         'project_code'  :   project_code,
                         'month'         :   month,
-                        'year'          :   year
+                        'year'          :   year,
+                        _token: '{{csrf_token()}}'
                     },
                     processData:true,
                     xhrFields: {
@@ -635,7 +638,8 @@ $(document).ready(function(){
                         'location_id':location_id,
                         'month': month_project,
                         'year': year_project,
-                        'project_code':project_code
+                        'project_code':project_code,
+                        _token: '{{csrf_token()}}'
                     },
                     processData:true,
                     success:function(data){

@@ -384,6 +384,8 @@ $(document).on('click','.pilih_client',function(){
         dataType:"JSON",
         data:{
             "client_id":$('#client_id').val(),
+            _token: '{{csrf_token()}}',
+            
         },
         processData:true,
         success:function(data){
@@ -416,6 +418,7 @@ $(document).ready(function(){
         dataType:"JSON",
         data:{
             "client_id":$('#client_id').val(),
+            _token: '{{csrf_token()}}',
         },
         processData:true,
         success:function(data){
@@ -435,10 +438,6 @@ $(document).ready(function(){
                     }
                     return item == data[i].project_code;
                 });
-
-                // if(){
-                //     $('select#project_code > option[value="'+data[i].project_code+'"]').attr('selected',true);
-                // }
             });
            
         }
@@ -451,7 +450,8 @@ $(document).ready(function(){
         type:"POST",
         dataType:"JSON",
         data:{
-            "project_code":arr_project, 
+            "project_code":arr_project,
+            _token: '{{csrf_token()}}',
         },
         processData:true,
         success:function(data){
@@ -476,6 +476,7 @@ $(document).ready(function(){
                     data:{
                         'user_id':{{ $role->id }},
                         "region_id":data[i].id,
+                        _token: '{{csrf_token()}}',
                     },
                     processData:true,
                     success:function(dataUserAuth){
@@ -494,6 +495,7 @@ $(document).ready(function(){
                     dataType:"JSON",
                     data:{
                         "region_id":data[i].id,
+                        _token: '{{csrf_token()}}',
                     },
                     processData:true,
                     success:function(data_location){
@@ -621,7 +623,8 @@ $(document).ready(function(){
                     dataType: 'JSON',
                     data: {
                         'menu':menu,
-                        'user_id':param[5]
+                        'user_id':param[5],
+                        _token: '{{csrf_token()}}',
                     },
                     processData:true,
                     success: function(data){
@@ -658,7 +661,8 @@ $(document).on('change','#project_code',function(){
         type:"POST",
         dataType:"JSON",
         data:{
-            "project_code":$('#project_code').val(), 
+            "project_code":$('#project_code').val(),
+            _token: '{{csrf_token()}}',
         },
         processData:true,
         success:function(data){
@@ -682,6 +686,7 @@ $(document).on('change','#project_code',function(){
                     dataType:"JSON",
                     data:{
                         "region_id":data[i].id,
+                        _token: '{{csrf_token()}}',
                     },
                     processData:true,
                     success:function(data_location){
@@ -801,7 +806,8 @@ $(document).ready(function(){
                 type:"POST",
                 data:{
                     'user_id':{{ $role->id }},
-                    'location':location
+                    'location':location,
+                    _token: '{{csrf_token()}}',
                 },
                 dataType:"JSON",
                 processData:true,

@@ -32,9 +32,11 @@ use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 Route::get('/', [LoginController::class,'index'])->middleware('guest')->name('login');
 Route::post('/login', [LoginController::class, 'authentication']);
 Route::post('/logout', [LoginController::class, 'signout'])->name('logout');
+Route::post('/forgotPassword',[UserController::class,'forgotPassword']);
+Route::get('/forgetChangePassword/{id}',[UserController::class,'SessionForgetToPasswordchangePassword']);
 
-Route::get('dashboard_v1', [DashboardController::class,'dashboard_v1'])->middleware('auth');
-Route::get('linkstorage', function () {
+Route::get('/dashboard_v1', [DashboardController::class,'dashboard_v1'])->middleware('auth');
+Route::get('/linkstorage', function () {
     Artisan::call('storage:link');
 });
 
@@ -160,11 +162,10 @@ Route::get('/getUserAccessAuthority',[UserController::class,'getUserAccessAuthor
 Route::post('/getUserAuthorityLocationToSelectedByRegion',[UserController::class,'getUserAuthorityLocationToSelectedByRegion'])->middleware('auth');
 Route::post('/dailyAppraisalPerWeek',[DashboardController::class,'dailyAppraisalPerWeek'])->middleware('auth');
 Route::post('/getDataScorePerLocation',[ReportController::class,'get_data_score_per_location'])->middleware('auth');
-Route::post('/getDataScoreMonthlyComponent',[ReportController::class,'getDataScoreMonthlyComponent'])->middleware('auth');
+Route::post('/getDataScoreMonthlyPerLocation',[ReportController::class,'getDataScoreMonthlyPerLocation'])->middleware('auth');
 Route::get('/downloadPDFReportScorePerLocation/{project_code}/{location_id}/{month}/{year}',[ReportController::class,'downloadPDFReportScorePerLocation'])->middleware('auth');
 Route::post('/getDataEvaluationProjectMonthlyPerYear',[DashboardController::class,'getDataEvaluationProjectMonthlyPerYear'])->middleware('auth');
 Route::post('/getDataSummaryMonthlyPerLocation',[DashboardController::class,'getDataSummaryMonthlyPerLocation'])->middleware('auth');
-
 Route::post('/getFilterLocation',[DashboardController::class,'getFilterLocation'])->middleware('auth');
 // Route::post('project/getRegionSetupProject',[ProjectController::class,'get_region_setup_project'])->middleware('auth');
 // Route::post('project/getLocationSetupProject',[ProjectController::class,'get_location_setup_project'])->middleware('auth');

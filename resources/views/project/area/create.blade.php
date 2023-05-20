@@ -237,6 +237,7 @@ $(document).ready(function(){
                     data:{
                         location_id:$('#location_name').val(),
                         area:arr_area,
+                        _token: '{{csrf_token()}}'
                     },
                     processData:true,
                     success: function(data){

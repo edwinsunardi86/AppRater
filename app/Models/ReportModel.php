@@ -43,8 +43,8 @@ class ReportModel extends Model
         return $query;
     }
 
-    static function getDataScoreMonthlyComponent($project_code,$location_id,$month,$year){
-        $query = DB::table('report_summary_monthly_component')
+    static function getDataScoreMonthlyPerLocation($project_code,$location_id,$month,$year){
+        $query = DB::table('report_summary_monthly_per_location')
         ->where('project_code','=',$project_code)
         ->where('location_id',$location_id)
         ->where('year',$year)
@@ -55,8 +55,8 @@ class ReportModel extends Model
         return $query->get();
     }
 
-    static function getDataScoreMonthlyComponentGroupService($project_code,$location_id,$month,$year){
-        $query = DB::table('report_summary_monthly_component')
+    static function getDataScoreMonthlyPerLocationGroupService($project_code,$location_id,$month,$year){
+        $query = DB::table('report_summary_monthly_per_location')
         ->where('project_code','=',$project_code)
         ->where('location_id',$location_id)
         ->where('year',$year)
@@ -75,7 +75,7 @@ class ReportModel extends Model
         ->join('setup_region','setup_location.region_id','=','setup_region.id')
         ->join('setup_project','setup_project.project_code','=','setup_region.project_code')
         ->join('m_client','m_client.id','=','setup_project.client_id')
-        ->select(DB::Raw('AVG(score) AS score'),'m_client.client_name','project_name');
+        ->select(DB::Raw('AVG(score) AS score'),'m_client.client_name','project_name','location_name');
         if($project_code != ""){
             $query_avg_score = $query_avg_score->where('setup_project.project_code',$project_code);
         }

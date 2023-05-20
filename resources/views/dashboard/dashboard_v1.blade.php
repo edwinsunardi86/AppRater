@@ -677,8 +677,8 @@ $(document).on('change','#year_project,#month_project,#location_name,#region_nam
                     
                     var service_name = ['service_name'];
                     var groupByService = groupBy(data,'service_name',service_name,'service_name');
-                    var month = ['MONTH'];
-                    var groupByMonth = groupBy(data,'MONTH',month,'MONTH');
+                    var month = ['month'];
+                    var groupByMonth = groupBy(data,'month',month,'month');
                     // var series = [];
                     
                     $.each(groupByService,function(i,item){
@@ -686,10 +686,10 @@ $(document).on('change','#year_project,#month_project,#location_name,#region_nam
                         $.each(arr_month,function(a,item){
                             var value_month = [];
                             $.each(groupByMonth,function(b,item){
-                                value_month.push(groupByMonth[b].MONTH);
+                                value_month.push(groupByMonth[b].month);
                             });
                             if(value_month.includes(arr_month[a])){
-                                var filterGroupServiceData = data.filter((data_group)=>data_group.service_name == groupByService[i].service_name && data_group.MONTH.includes(arr_month[a])==true);
+                                var filterGroupServiceData = data.filter((data_group)=>data_group.service_name == groupByService[i].service_name && data_group.month.includes(arr_month[a])==true);
                                 arr_score.push(parseFloat(filterGroupServiceData[0].score));
                             }else{
                                 arr_score.push(0);
@@ -702,11 +702,11 @@ $(document).on('change','#year_project,#month_project,#location_name,#region_nam
                     var scoreMonthAllService = [];
                     var value_month = [];
                     $.each(groupByMonth,function(b,item){
-                            value_month.push(groupByMonth[b].MONTH);
+                            value_month.push(groupByMonth[b].month);
                     });
                     $.each(arr_month,function(z,item){
                         if(value_month.includes(arr_month[z])){
-                                var filterMonthly = data.filter((dataMonth)=>dataMonth.MONTH == arr_month[z]);
+                                var filterMonthly = data.filter((dataMonth)=>dataMonth.month == arr_month[z]);
                                 var scoreMonthPerService = 0;
                                 $.each(filterMonthly,function(c,item){
                                     scoreMonthPerService += parseFloat(filterMonthly[c].score)

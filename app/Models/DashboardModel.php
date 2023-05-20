@@ -9,7 +9,7 @@ class DashboardModel extends Model
 {
     use HasFactory;
 
-    static function getDataEvaluationProjectMonthlyPerYear($project_code,$region_id,$location_id,$year){
+    static function getDataEvaluationProjectmonthlyPerYear($project_code,$region_id,$location_id,$year){
         $query = DB::table('evaluation')
         ->join('setup_sub_area','setup_sub_area.id','=','evaluation.sub_area_id')
         ->join('setup_area','setup_area.id','=','setup_sub_area.area_id')
@@ -18,7 +18,7 @@ class DashboardModel extends Model
         ->join('setup_project','setup_project.project_code','=','setup_region.project_code')
         ->join('m_client','m_client.id','=','setup_project.client_id')
         ->join('m_service','m_service.service_code','=','setup_area.service_code')
-        ->select('setup_project.project_code','setup_project.project_name','service_name',DB::Raw('AVG(score) AS score'),DB::Raw('DATE_FORMAT(appraisal_date,"%b") AS MONTH'),'m_client.client_name',DB::Raw('setup_location.id AS location_id'),'location_name','m_service.service_code')
+        ->select('setup_project.project_code','setup_project.project_name','service_name',DB::Raw('AVG(score) AS score'),DB::Raw('DATE_FORMAT(appraisal_date,"%b") AS month'),'m_client.client_name',DB::Raw('setup_location.id AS location_id'),'location_name','m_service.service_code')
         ->where(['setup_project.project_code'=>$project_code]);
         if($region_id != ""){
             $query = $query->where('setup_region.id','=',$region_id);
@@ -39,8 +39,8 @@ class DashboardModel extends Model
         return $query;
     }
 
-    static function getDataSummaryMonthlyPerLocation($project_code, $region_id, $location_id, $year){
-        $sql = "SELECT location_id, location_name, IFNULL(AVG(CASE WHEN MONTH = 'Jan' THEN score END),0) AS Jan, IFNULL(AVG(CASE WHEN MONTH = 'Feb' THEN score END),0) AS Feb, IFNULL(AVG(CASE WHEN MONTH = 'Mar' THEN score END),0) AS Mar, IFNULL(AVG(CASE WHEN MONTH = 'Apr' THEN score END),0) AS Apr, IFNULL(AVG(CASE WHEN MONTH = 'May' THEN score END),0) AS May, IFNULL(AVG(CASE WHEN MONTH = 'Jun' THEN score END),0) AS Jun, IFNULL(AVG(CASE WHEN MONTH = 'Jul' THEN score END),0) AS Jul, IFNULL(AVG(CASE WHEN MONTH = 'Aug' THEN score END),0) AS Aug, IFNULL(AVG(CASE WHEN MONTH = 'Sep' THEN score END),0) AS Sep, IFNULL(AVG(CASE WHEN MONTH = 'Oct' THEN score END),0) AS Oct, IFNULL(AVG(CASE WHEN MONTH = 'Nov' THEN score END),0) AS Nov, IFNULL(AVG(CASE WHEN MONTH = 'Dec' THEN score END),0) AS 'Dec' FROM report_summary_per_location";
+    static function getDataSummarymonthlyPerLocation($project_code, $region_id, $location_id, $year){
+        $sql = "SELECT location_id, location_name, IFNULL(AVG(CASE WHEN month = 'Jan' THEN score END),0) AS Jan, IFNULL(AVG(CASE WHEN month = 'Feb' THEN score END),0) AS Feb, IFNULL(AVG(CASE WHEN month = 'Mar' THEN score END),0) AS Mar, IFNULL(AVG(CASE WHEN month = 'Apr' THEN score END),0) AS Apr, IFNULL(AVG(CASE WHEN month = 'May' THEN score END),0) AS May, IFNULL(AVG(CASE WHEN month = 'Jun' THEN score END),0) AS Jun, IFNULL(AVG(CASE WHEN month = 'Jul' THEN score END),0) AS Jul, IFNULL(AVG(CASE WHEN month = 'Aug' THEN score END),0) AS Aug, IFNULL(AVG(CASE WHEN month = 'Sep' THEN score END),0) AS Sep, IFNULL(AVG(CASE WHEN month = 'Oct' THEN score END),0) AS Oct, IFNULL(AVG(CASE WHEN month = 'Nov' THEN score END),0) AS Nov, IFNULL(AVG(CASE WHEN month = 'Dec' THEN score END),0) AS 'Dec' FROM report_summary_per_location";
         if($project_code !=""){
             $sql = $sql." WHERE project_code = '".$project_code."'";
         }

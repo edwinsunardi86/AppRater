@@ -13,7 +13,7 @@
 	</style>
 	<div>
 		<center>
-			<h5>Report Score Monthly Location</h4>
+			<h3><p style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">{{ $location_name }}</p></h3>
 		</center>
 		<table style="width:100%">
 			<tr>
@@ -39,7 +39,7 @@
 						</div>
 						<div style="height:70%; background-color:#c2c2c2;"><center><p style="font-size:40px;font-family: Arial, Helvetica, sans-serif;">{{ $rating }}</p></center></div>
 						<div style="height:15%; background-color:#85a16c;color:#000;">
-							<center style="font-size:10px;font-family: Arial, Helvetica, sans-serif;">{{ $avg_satisfaction->score }} %</center>
+							<center style="font-size:10px;font-family: Arial, Helvetica, sans-serif;">{{ floatval($avg_satisfaction->score) }} %</center>
 						</div>
 					</div>
 				</td>
@@ -62,7 +62,7 @@
                     @foreach($service as $row_service)
                     <tr style="background-color:red">
                         <td colspan="2">{{ $row_service->service_name }}</td>
-                        <td>{{ $row_service->score }}</td>
+                        <td>{{ floatval($row_service->score) }} %</td>
                         <td>
                             @if($row_service->score >= 74 && $row_service->score <= 88)
                                 KB
@@ -80,7 +80,7 @@
                             <tr>
                                 <td>{{ $i }}</td>
                                 <td>{{ $row_sub_area->sub_area_name }}</td>
-                                <td>{{ $row_sub_area->score }}</td>
+                                <td>{{ floatval($row_sub_area->score) }} %</td>
                                 <td>
                                 @if($row_sub_area->score >= 74 && $row_sub_area->score <= 88)
                                     KB
@@ -116,7 +116,7 @@
 				<td style="width:30%">
 					<table  style="width:100%">
 						<tr><td colspan="3">{{  $avg_satisfaction->client_name }}</td></tr>
-						<tr><td colspan="3"><div style="height:25%;"><img style="width:100%" src="{{ $signature_client }}"/></div></td></tr>
+						<tr><td colspan="3"><img style="width:100%; height:25%" src="{{ $signature_client }}"/></td></tr>
 						<tr><td style="text-align:left; width:15%">Nama</td><td style="width:0px">:</td><td style="text-align:left">{{ Auth::user()->fullname }}</td></tr>
 						<tr><td style="text-align:left">Tanggal</td><td>:</td><td style="text-align:left">{{ $date_sign_client }}</td></tr>
 					</table>

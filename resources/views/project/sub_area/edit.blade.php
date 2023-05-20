@@ -387,38 +387,5 @@ $(document).ready(function(){
         }
     });
 });
-
-
-
-// $.get('/area/getDataAreaSelected',function(data,status){
-//     $('#area_name').append($('<option>',{
-//             value: "",
-//             text: "Choice Area",
-//         }));
-//     $.each(data,function(i,item){
-//         if(data[i].id == {{ $sub_area->area_id }}){
-//             $('#area_name').append($('<option>',{
-//                 value: data[i].id,
-//                 text: data[i].area_name,
-//             }).prop('selected',true));
-//         }else{
-//             $('#area_name').append($('<option>',{
-//                 value: data[i].id,
-//                 text: data[i].area_name,
-//             }));
-//         }
-        
-//         $('#area_name').change(function(){
-//             if($('#area_name').find(':selected').val() == ""){
-//                 $('#area_description').val("");
-//             }else{
-//                 var id = $('#area_name').find(':selected').val();
-//                 $.get('/area/getDataDescriptionById/'+id,function(data_desc,status){
-//                     $('#area_description').val(data_desc.area_description);
-//                 });
-//             }
-//         });
-//     });
-// });
 </script>
 @endsection

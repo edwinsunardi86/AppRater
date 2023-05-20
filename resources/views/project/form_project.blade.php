@@ -148,6 +148,7 @@ $(document).ready(function(){
             formData.append('project_name',$('#project_name').val());
             formData.append('date_contract',$('#dateContract').val());
             formData.append('region_name',region);
+            formData.append('_token',$('meta[name=csrf-token]').attr('content'));
             $.ajax({
                 headers:
                 {

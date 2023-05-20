@@ -210,6 +210,7 @@ $(document).on('click','.pilih_client',function(){
         dataType:"JSON",
         data:{
             "client_id":$('#client_id').val(),
+            _token: '{{csrf_token()}}'
         },
         processData:true,
         success:function(data){
@@ -239,6 +240,7 @@ $(document).on('change','#project_code',function(){
         dataType:"JSON",
         data:{
             "project_code":$('#project_code').val(),
+            _token: '{{csrf_token()}}'
         },
         processData:true,
         success:function(data){
@@ -268,6 +270,7 @@ $(document).on('change','#region_name',function(){
         dataType:"JSON",
         data:{
             region_id:$('#region_name').val(),
+            _token: '{{csrf_token()}}'
         },
         processData:true,
         success: function(data){
@@ -298,6 +301,7 @@ $(document).on('change','#location_name',function(){
         data:{
             'project_code':$('#project_code').val(),
             'location_id':$('#location_name').val(),
+            _token: '{{csrf_token()}}'
         },
         processData:true,
         success: function(data){
@@ -328,7 +332,8 @@ $(document).on('change','#year_project,#month_project',function(){
             'project_code':$('#project_code').val(),
             'location_id':$('#location_name').val(),
             'month':$('#month_project').val(),
-            'year':$('#year_project').val()
+            'year':$('#year_project').val(),
+            _token: '{{csrf_token()}}'
         },
         success:function(data){
             $('.tr_score').remove();
@@ -410,7 +415,8 @@ $(document).ready(function(){
                         'location_id':location_id,
                         'month': month_project,
                         'year': year_project,
-                        'project_code':project_code
+                        'project_code':project_code,
+                        _token: '{{csrf_token()}}'
                     },
                     processData:true,
                     success:function(data){

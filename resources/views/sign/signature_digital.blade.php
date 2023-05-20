@@ -113,7 +113,8 @@ $(document).ready(function(){
             type:'POST',
             dataType:'JSON',
             data:{
-                'signature':signature
+                'signature':signature,
+                _token: '{{csrf_token()}}',
             },
             processData:true,
             success:function(data){

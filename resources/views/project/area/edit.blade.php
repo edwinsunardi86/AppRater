@@ -318,31 +318,5 @@ $(document).on('change','#region_name',function(){
         }
     });
 });
-
-// $.get('/location/getDataLocationToSelected',function(data,status){
-//     $('#location_name').append($('<option>',{
-//         value:"",
-//         text:"Choice Location"
-//     }));
-
-//     $.each(data,function(i,item){
-//         $('#location_name').append($('<option>',{
-//             value:data[i].id,
-//             text:data[i].location_name
-//         }));
-//         if($('#location_id').val() == data[i].id){
-//             $('#location_name option[value='+data[i].id+']').attr('selected','selected');
-//         }
-//         $('#location_name').change(function(){
-//             if($('#location_name').val() == ""){
-//                 $('#address').val("");
-//                 $('#description').val("");
-//             }else{
-//                 $('#address').val(data[i].address);
-//                 $('#location_description').val(data[i].location_description);
-//             }
-//         });
-//     });
-// });
 </script>
 @endsection

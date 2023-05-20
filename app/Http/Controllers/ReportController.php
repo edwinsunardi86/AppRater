@@ -60,8 +60,8 @@ class ReportController extends Controller
     }
 
     function approvalSignReportScoreMonthly(Request $request){
-        $data = ReportModel::getDataScoreMonthlyComponent($request->project_code,$request->location_id,$request->month,$request->year);
-        $avgSatisfactionPerService = ReportModel::getDataScoreMonthlyComponentGroupService($request->project_code,$request->location_id,$request->month,$request->year);
+        $data = ReportModel::getDataScoreMonthlyPerLocation($request->project_code,$request->location_id,$request->month,$request->year);
+        $avgSatisfactionPerService = ReportModel::getDataScoreMonthlyPerLocationGroupService($request->project_code,$request->location_id,$request->month,$request->year);
         $avg_satisfaction = ReportModel::average_satisfaction($request->project_code,$request->month,$request->year,$request->location_id);
         if($avg_satisfaction->score >= 74){
             $rating = 'KB';
@@ -74,6 +74,7 @@ class ReportController extends Controller
         }
         $pdf = PDF::loadView('pdf.documentScoreSatisfaction',[
             'project_name'      => $avg_satisfaction->project_name,
+            'location_name'     => $avg_satisfaction->location_name,
             'service'           => $avgSatisfactionPerService,
             'signature_client'  => $request->signature,
             'date_sign_client'  => date("j-F-Y"),
@@ -86,6 +87,7 @@ class ReportController extends Controller
         );
         $filename = "ReportScoreMonthly".$request->month."-".$request->year;
         $pdf->save(public_path().'/'.$filename);
+        $pdf->setOption(['dpi' => 150, 'defaultFont' => 'sans-serif']);
         $pdf = public_path($filename);
         return response()->download($pdf);
     }
@@ -179,15 +181,15 @@ class ReportController extends Controller
     function reportScoreMonthlyPerLocation(){
         $get_m_service = DB::table('m_service')->orderBy('service_code','desc');
         return view('report.reportScoreMonthlyPerLocation',[
-            'title' => 'Report Score Monthly Per Location',
+            'title' => 'Score Monthly Per Location',
             'active_gm' => 'Report',
             'active_m'=>'report/reportScoreMonthlyPerLocation',
             'service'=>$get_m_service->get()
         ]);
     }
 
-    function getDataScoreMonthlyComponent(Request $request){
-        $data = ReportModel::getDataScoreMonthlyComponent($request->project_code,$request->location_id,$request->month,$request->year);
+    function getDataScoreMonthlyPerLocation(Request $request){
+        $data = ReportModel::getDataScoreMonthlyPerLocation($request->project_code,$request->location_id,$request->month,$request->year);
         return response()->json($data);
     }
 }

@@ -89,10 +89,10 @@
           <!-- /.col -->
         </div>
       </form>
-      {{-- <p class="mb-1">
-        <a href="forgot-password.html">I forgot my password</a>
+      <p class="mb-1">
+        <a href="#" data-toggle="modal" data-target="#modal-emailForgetPassword">I forgot my password</a>
       </p>
-      <p class="mb-0">
+      {{-- <p class="mb-0">
         <a href="register.html" class="text-center">Register a new membership</a>
       </p> --}}
     </div>
@@ -101,14 +101,43 @@
     </div>
     </div>
     <!-- /.login-card-body -->
-    <div class="bg-primary py-2"> 
+    <div class="bg-primary py-2">
       <div class="row px-2"> <small class="ml-4 ml-sm-5">Copyright &copy; 2023. All rights reserved by IT PT.SOS Indonesia</small>
           {{-- <div class="social-contact ml-4 ml-sm-auto"> <span class="fas fa-solid fa-facebook mr-4 text-sm"></span> <span class="fas fa-solid fa-google-plus mr-4 text-sm"></span> <span class="fa fa-linkedin mr-4 text-sm"></span> <span class="fa fa-twitter mr-4 mr-sm-5 text-sm"></span> </div> --}}
       </div>
     </div>
   </div>
-  
 </div>
+
+<div class="modal fade" id="modal-emailForgetPassword">
+  <div class="modal-dialog">
+    <div class="modal-content modal-md">
+      <form id="form_send_change_password" class="form-horizontal">
+      <div class="modal-header">
+        <h4 class="modal-title">Forgot Password</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group row">
+          <label for="inputEmail"  class="col-sm-2 col-form-label">Email</label>
+          <div class="col-sm-8">
+            <input type="text" class="form-control" name="email_forgot" placeholder="edwin@example.co.id" required>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Save changes</button>
+      </div>
+    </form>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
 <!-- /.login-box -->
 
 <!-- jQuery -->
@@ -120,83 +149,35 @@
 <script src="/plugins/sweetalert2/sweetalert2.min.js"></script>
 <!-- AdminLTE App -->
 <script src="/dist/js/adminlte.min.js"></script>
-{{-- <script>
-  $(function(){
-    $('#formLogin').validate({
-      rules: {
-      email: {
-        required: true,
-        email: true,
-      },
-      password: {
-        required: true,
-        minlength: 5
-      },
-      terms: {
-        required: true
-      },
+<script>
+$("#form_send_change_password").submit(function(e){
+  e.preventDefault();
+  $.ajax({
+    headers:{
+      'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
     },
-    messages: {
-      email: {
-        required: "Please enter a email address",
-        email: "Please enter a valid email address"
-      },
-      password: {
-        required: "Please provide a password",
-        minlength: "Your password must be at least 5 characters long"
-      },
-      terms: "Please accept our terms"
+    url:"/forgotPassword",
+    dataType:"JSON",
+    type:"POST",
+    data:{
+      "email":$('input[name="email_forgot"]').val()
     },
-    errorElement: 'span',
-    errorPlacement: function (error, element) {
-      error.addClass('invalid-feedback');
-      element.closest('.input-group').append(error);
-    },
-    highlight: function (element, errorClass, validClass) {
-      $(element).addClass('is-invalid');
-    },
-    unhighlight: function (element, errorClass, validClass) {
-      $(element).removeClass('is-invalid');
-    }
-    });
-  });
-  
-  $(document).ready(function(){
-    // alert($('#remember').is(':checked'));
-    $('#formLogin').submit(function(e){
-      e.preventDefault();
-      var formData = new FormData();
-      formData.append('email', $('#email').val());
-      formData.append('password', $('#password').val());
-      formData.append('remember', $('#remember').is(':checked'));
-      $.ajax({
-        headers: {
-        'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
-        },
-        url:"/login",
-        type : "POST",
-        data : formData,
-        dataType: "json",
-        processData: false,
-        contentType: false,
-        success:function(data){
-          Swal.fire({
-          title: "<b>Perhatian!</b>",
-          text: data.message,
-          icon: data.icon,
-          confirmButtonText : "OK"
-        });
-        if(data.message == 'Login Sukses'){
-          window.location.href = data.redirect;
-        }
-        },
-        error: function(xhr,error, errorThrown) {  
-            alert(xhr.status);
-               
-        }
+    processData:true,
+    success:function(data){
+      Swal.fire({
+        title:"<b>Perhatian!</b>",
+        text:data.message,
+        icon:data.icon,
+        confirmButtonText:"OK"
       });
-    });
+
+      setTimeout(function(){ 
+        window.location.href=data.redirect; }, 
+        2000
+      );
+    }
   });
-</script> --}}
+});
+</script>
 </body>
 </html>

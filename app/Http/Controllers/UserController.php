@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables as DataTables;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
 {
@@ -295,5 +296,46 @@ class UserController extends Controller
         }
         // var_dump($db);
         return response()->json($db);
+    }
+
+    public function forgotPassword(Request $request){
+        $check_valid_email = DB::table('users')->where('email',$request->email)->get();
+        if(filter_var($request->email, FILTER_VALIDATE_EMAIL)) {
+            if($check_valid_email->count() > 0){
+                $random_str = $this->generateRandomString(50);
+                $post = array('remember_token'=>$random_str);
+                DB::table('users')->where('email',$request->email)->update($post);
+                $details = ['title'=>"Forgot Password", 'encrypt'=>$random_str];
+                Mail::to($request->email)->send(new  \App\Mail\FormatEmail($details));
+                $message = "Check your email";
+                $icon = "success";
+            }else{
+                $message = "Email not listed in App";
+                $icon = "error";
+            }
+        }else{
+            $message = "Email not valid";
+            $icon = "error";
+        }
+        $confirmation = ['message' => $message,'icon' => $icon, 'redirect' => '/'];
+        return response()->json($confirmation);
+    }   
+
+    function generateRandomString($length = 50) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
+    }
+
+    function SessionForgetToPasswordchangePassword($id){
+        return view('setting.user.forget_password_to_change_password',[
+            'active_gm'=> 'User',
+            'active_m'=> '/change_password',
+            'title'=> 'Change Password',
+        ]);
     }
 }
