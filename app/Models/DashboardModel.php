@@ -10,8 +10,9 @@ class DashboardModel extends Model
     use HasFactory;
 
     static function getDataEvaluationProjectmonthlyPerYear($project_code,$region_id,$location_id,$year){
-        $query = DB::table('evaluation')
-        ->join('setup_sub_area','setup_sub_area.id','=','evaluation.sub_area_id')
+        $query = DB::table('score_evaluation')
+        ->join('header_evaluation','header_evaluation.id_header','=','score_evaluation.id_header')
+        ->join('setup_sub_area','setup_sub_area.id','=','score_evaluation.sub_area_id')
         ->join('setup_area','setup_area.id','=','setup_sub_area.area_id')
         ->join('setup_location','setup_area.location_id','=','setup_location.id')
         ->join('setup_region','setup_location.region_id','=','setup_region.id')

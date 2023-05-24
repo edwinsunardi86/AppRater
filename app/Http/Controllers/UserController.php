@@ -333,9 +333,25 @@ class UserController extends Controller
 
     function SessionForgetToPasswordchangePassword($id){
         return view('setting.user.forget_password_to_change_password',[
-            'active_gm'=> 'User',
-            'active_m'=> '/change_password',
-            'title'=> 'Change Password',
+            'active_gm' => 'User',
+            'active_m'  => '/change_password',
+            'title'     => 'Change Password',
+            'token'     =>  $id
         ]);
+    }
+
+    function changePasswordByToken(Request $request){
+        $checkValidToken = DB::table('users')->where('remember_token',$request->token)->first();
+        if($checkValidToken){
+            $update = DB::table('users')->where('remember_token',$request->token)->update(['password'=>bcrypt($request->password)]);
+            if($update){
+                $confirmation = ['message' => 'Update your password success','icon' => 'success', 'redirect' => '/'];
+            }else{
+                $confirmation = ['message' => 'Update your password failed','icon' => 'error', 'redirect' => '/'];
+            }
+        }else{
+            $confirmation = ['message' => 'Update your password failed','icon' => 'error', 'redirect' => '/'];
+        }
+        return response()->json($confirmation);
     }
 }

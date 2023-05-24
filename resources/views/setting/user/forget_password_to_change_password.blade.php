@@ -58,6 +58,7 @@
                                 <div class="form-group row">
                                     <label for="inputPassword" class="col-sm-3 col-form-label">Password</label>
                                     <div class="col-sm-3">
+                                        <input type="hidden" id="token" value="{{ $token }}">
                                         <input type="password" class="form-control form-control-sm" name="password" id="password"> 
                                     </div>
                                 </div>
@@ -130,6 +131,59 @@ $('.select2').select2()
 $('[data-mask]').inputmask();
 $(function () {
   bsCustomFileInput.init();
+});
+
+$(document).ready(function(){
+    $('#form_password').validate({
+        rules: {
+            password: {
+                required: true,
+                minlength: 5
+            },
+            password_confirm: {
+                required: true,
+                minlength: 5,
+                equalTo: "#password"
+            }
+        },
+        errorElement: 'span',
+        errorPlacement: function (error, element) {
+            error.addClass('invalid-feedback');
+            element.closest('.form-group').append(error);
+        },
+        highlight: function (element, errorClass, validClass) {
+            $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element, errorClass, validClass) {
+            $(element).removeClass('is-invalid');
+        }, 
+        submitHandler: function() { 
+            $.ajax({
+                headers:
+                {
+                    'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
+                },
+                url:"/users/changePasswordByToken",
+                type:"POST",
+                data:{
+                    'password':$('#password').val(),
+                    'token':$('#token').val()
+                },
+                dataType:"JSON",
+                processData:true,
+                success:function(data){
+                    Swal.fire({
+                        title:data.title,
+                        html:data.message,
+                        icon:data.icon
+                    });
+                    setTimeout(() => {
+                        window.location.href=data.redirect;
+                    }, 1500);                                                                                                                                                                                                                   
+                }
+            });
+        }
+    });
 });
 </script>
 </body>

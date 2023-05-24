@@ -91,6 +91,19 @@
                                 </div>
                             </div>
                             @endforeach
+                            <div class="card card-info card-outline">
+                                <div class="card-header">
+                                    <h3 class="card-title">Recommendation and critics</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group row">
+                                        <label for="locationName" class="col-sm-2 col-form-label">Recommendation and critics</label>
+                                        <div class="col-sm-4">
+                                            <textarea name="recommend" id="recommend" class="form-control" cols="30" rows="10"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="rating-sub-area"></div>
                             <button type="submit" class="btn btn-lg btn-primary">Submit</button>
                         </div>
@@ -373,6 +386,7 @@ $(document).ready(function(){
                 formData.append('region_id',$('#region_name').val());
                 formData.append('location_id',$('#location_name').val());
                 formData.append('_token',$('meta[name=csrf-token]').attr('content'));
+                formData.append('recommend',$('#recommend').val());
                 var sub_area_id = [];
                     
                 for(var i = 1;i<=$('input[name="count_sub_area"]').length;i++){

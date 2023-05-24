@@ -72,6 +72,7 @@ class ReportController extends Controller
         }elseif($avg_satisfaction->score == 100){
             $rating = 'SB';
         }
+        
         $pdf = PDF::loadView('pdf.documentScoreSatisfaction',[
             'project_name'      => $avg_satisfaction->project_name,
             'location_name'     => $avg_satisfaction->location_name,
@@ -82,7 +83,8 @@ class ReportController extends Controller
             'year'              => $request->year,
             'data'              => $data,
             'rating'            => $rating,
-            'avg_satisfaction'  => $avg_satisfaction
+            'avg_satisfaction'  => $avg_satisfaction,
+            'critic_recommend'  => $avg_satisfaction->critic_recommend
             ]
         );
         $filename = "ReportScoreMonthly".$request->month."-".$request->year;
@@ -148,7 +150,6 @@ class ReportController extends Controller
             'sign_client'           =>  $approval[0]->sign_client,
             'date_client'           =>  $date_client
         ]);
-        //return $pdf->download('invoice.pdf');
         return $pdf->stream();
     }
 
@@ -189,7 +190,9 @@ class ReportController extends Controller
     }
 
     function getDataScoreMonthlyPerLocation(Request $request){
-        $data = ReportModel::getDataScoreMonthlyPerLocation($request->project_code,$request->location_id,$request->month,$request->year);
+        $data_score = ReportModel::getDataScoreMonthlyPerLocation($request->project_code,$request->location_id,$request->month,$request->year);
+        $avg_satisfaction = ReportModel::average_satisfaction($request->project_code,$request->month,$request->year,$request->location_id);
+        $data = array('data_score'=>$data_score,'avg'=>$avg_satisfaction);
         return response()->json($data);
     }
 }

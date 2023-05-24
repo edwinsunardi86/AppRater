@@ -68,14 +68,16 @@ class ReportModel extends Model
     }
 
     static function average_satisfaction($project_code,$month,$year,$location_id){
-        $query_avg_score = DB::table('evaluation')
-        ->join('setup_sub_area','setup_sub_area.id','=','evaluation.sub_area_id')
+        $query_avg_score = DB::table('score_evaluation')
+        ->join('header_evaluation','header_evaluation.id_header','=','score_evaluation.id_header') 
+        ->join('setup_sub_area','setup_sub_area.id','=','score_evaluation.sub_area_id')
         ->join('setup_area','setup_area.id','=','setup_sub_area.area_id')
         ->join('setup_location','setup_area.location_id','=','setup_location.id')
         ->join('setup_region','setup_location.region_id','=','setup_region.id')
         ->join('setup_project','setup_project.project_code','=','setup_region.project_code')
         ->join('m_client','m_client.id','=','setup_project.client_id')
-        ->select(DB::Raw('AVG(score) AS score'),'m_client.client_name','project_name','location_name');
+        ->join('evaluation_critic_recommend','evaluation_critic_recommend.id_header','=','header_evaluation.id_header')
+        ->select(DB::Raw('AVG(score) AS score'),'m_client.client_name','project_name','location_name','evaluation_critic_recommend.critic_recommend');
         if($project_code != ""){
             $query_avg_score = $query_avg_score->where('setup_project.project_code',$project_code);
         }

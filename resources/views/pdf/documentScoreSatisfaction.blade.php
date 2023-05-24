@@ -100,6 +100,9 @@
 				</tbody>
 			</table>
 		</div>
+		<div class="row">
+			Recommendation/Critics : <p><strong>{{ $critic_recommend; }}</strong></p>
+		</div>
     </div>
     <div style="width:100%">
 		<table style="width:100%">

@@ -167,6 +167,7 @@ Route::get('/downloadPDFReportScorePerLocation/{project_code}/{location_id}/{mon
 Route::post('/getDataEvaluationProjectMonthlyPerYear',[DashboardController::class,'getDataEvaluationProjectMonthlyPerYear'])->middleware('auth');
 Route::post('/getDataSummaryMonthlyPerLocation',[DashboardController::class,'getDataSummaryMonthlyPerLocation'])->middleware('auth');
 Route::post('/getFilterLocation',[DashboardController::class,'getFilterLocation'])->middleware('auth');
+Route::post('/users/changePasswordByToken',[UserController::class,'changePasswordByToken']);
 // Route::post('project/getRegionSetupProject',[ProjectController::class,'get_region_setup_project'])->middleware('auth');
 // Route::post('project/getLocationSetupProject',[ProjectController::class,'get_location_setup_project'])->middleware('auth');
 // Route::post('project/getAreaSetupProject',[ProjectController::class,'get_area_setup_project'])->middleware('auth');

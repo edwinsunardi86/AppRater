@@ -92,6 +92,18 @@
                                         @endforeach
                                     </tbody>
                                 </table>
+                                <div class="form-group row">
+                                    <label for="recommend_critics" class="col-sm-2 col-form-label">Score</label>
+                                    <div class="col-sm-8">
+                                        <input type="number" name="avg" id="avg" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="recommend_critics" class="col-sm-2 col-form-label">Recommend / Critics</label>
+                                    <div class="col-sm-8">
+                                        <textarea class="form-control" name="recommend_critics" id="recommend_critics"></textarea>
+                                    </div>
+                                </div>
                                 <div class="row p-10 col-sm-4">
                                     <canvas id="signature-pad" class="signature-pad">
                                         Your browser does not support the HTML canvas tag.
@@ -510,10 +522,10 @@ $(document).on('change','#year_project,#month_project',function(){
                 var data_service = $(this).attr('data-service');
                 var average_per_service = 0;
                 var b = 0;
-                $.each(data,function(a,item){
-                    if(data_service == data[a].service_code){
-                        average_per_service = parseFloat(average_per_service) + parseFloat(data[a].score);
-                        $('<tr class="tr_score"><td>'+data[a].sub_area_name+'</td><td>'+parseFloat(data[a].score)+'</td><td>'+summary(parseFloat(data[a].score))+'</td></tr>').insertAfter($('.table-score tr.'+data[a].service_code));
+                $.each(data.data_score,function(a,item){
+                    if(data_service == data.data_score[a].service_code){
+                        average_per_service = parseFloat(average_per_service) + parseFloat(data.data_score[a].score);
+                        $('<tr class="tr_score"><td>'+data.data_score[a].sub_area_name+'</td><td>'+parseFloat(data.data_score[a].score)+'</td><td>'+summary(parseFloat(data.data_score[a].score))+'</td></tr>').insertAfter($('.table-score tr.'+data.data_score[a].service_code));
                         b+=1;
                     }
                 });
@@ -534,6 +546,8 @@ $(document).on('change','#year_project,#month_project',function(){
 
                 // $("#percentage_"+service_code).html(avg_per_service);
             });
+            $('#recommend_critics').val(data.avg.critic_recommend);
+            $('#avg').val(data.avg.score);
         }
     });
 });
