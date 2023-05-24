@@ -5,7 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use PhpOffice\PhpSpreadsheet\IOFactory as IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use Yajra\DataTables\DataTables as DataTables;
+use Illuminate\Support\Facades\Storage;
+
 class ProjectController extends Controller
 {
     function list_project(){
@@ -134,6 +138,27 @@ class ProjectController extends Controller
             }
         }
         return response()->json($confirmation);
+    }
+
+    function uploadProject(){
+        return view('project.uploadProject',[
+            'title' => 'Upload Project',
+            'active_gm' => 'Setup Project',
+            'active_m'=>'project/upload_project'
+        ]);
+    }
+
+    function uploadNewProject(Request $request){
+        $file = $request->file('uploadFile');
+        $name = pathinfo($file->getClientOriginalName(),PATHINFO_FILENAME);
+        $ext = pathinfo($file->getClientOriginalName(),PATHINFO_EXTENSION);
+        $nameFileUpload = $name."_".date("Ymd hms").".".$ext;
+        // echo $nameFileUpload; die();
+        $file->storeAs('public/upload/file_project/',$nameFileUpload);
+        // $reader = IOFactory::createReaderForFile('storage/upload/file_project/'.$nameFileUpload);
+        // $spreadsheet = $reader->load('storage/upload/file_project/'.$nameFileUpload);
+        // $getval = $spreadsheet->getActiveSheet()->getCell('B10');
+        // // echo $getval(); die();
     }
     // function get_region_setup_project(Request $request){
     //     $get_region = DB::table('setup_project_detail')->join('m_sub_area','m_sub_area.id','=','setup_project_detail.sub_area_id')->join('m_area','m_area.id','=','m_sub_area.area_id')->join('m_location','m_location.id','=','m_area.location_id')->join('m_region','m_region.id','=','m_location.region_id')->join('setup_project','setup_project.project_code','=','setup_project_detail.project_code')->select('m_region.id','m_region.region_name')->where('setup_project.client_id',$request->client_id)->groupBy('m_region.id','m_region.region_name')->get();

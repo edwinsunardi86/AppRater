@@ -124,6 +124,8 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'project'],functi
     Route::post('/updateProject',[ProjectController::class,'update_project']);
     Route::post('/deleteProject',[ProjectController::class,'delete_project']);
     Route::get('/getDataTableProject',[ProjectController::class,'getDataTableProject'])->name('data_project:dt');
+    Route::get('/upload_project',[ProjectController::class,'uploadProject']);
+    Route::post('/uploadNewProject',[ProjectController::class,'uploadNewProject']);
 });
 
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'evaluation'],function(){
@@ -168,8 +170,4 @@ Route::post('/getDataEvaluationProjectMonthlyPerYear',[DashboardController::clas
 Route::post('/getDataSummaryMonthlyPerLocation',[DashboardController::class,'getDataSummaryMonthlyPerLocation'])->middleware('auth');
 Route::post('/getFilterLocation',[DashboardController::class,'getFilterLocation'])->middleware('auth');
 Route::post('/users/changePasswordByToken',[UserController::class,'changePasswordByToken']);
-// Route::post('project/getRegionSetupProject',[ProjectController::class,'get_region_setup_project'])->middleware('auth');
-// Route::post('project/getLocationSetupProject',[ProjectController::class,'get_location_setup_project'])->middleware('auth');
-// Route::post('project/getAreaSetupProject',[ProjectController::class,'get_area_setup_project'])->middleware('auth');
-// Route::post('project/getAreaSubAreaSetupProject',[ProjectController::class,'get_area_sub_area_setup_project'])->middleware('auth');
 
