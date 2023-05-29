@@ -219,6 +219,7 @@ $(function(){
         formData.append('fullname', $('#fullname').val());
         formData.append('role',$('#role').val());
         formData.append('client_id',$('#client_id').val());
+        formData.append('_token',$('meta[name=csrf-token]').attr('content'));
         $.ajax({
             headers:
             {

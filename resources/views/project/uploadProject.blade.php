@@ -95,6 +95,7 @@ $(document).ready(function(){
             }
 
             formData.append('uploadFile',$('#uploadFile')[0].files[0]);
+            formData.append('_token',$('meta[name=csrf-token]').attr('content'));
             $.ajax({
                 headers:{
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

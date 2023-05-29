@@ -155,35 +155,27 @@ class ProjectController extends Controller
         $nameFileUpload = $name."_".date("Ymd hms").".".$ext;
         // echo $nameFileUpload; die();
         $file->storeAs('public/upload/file_project/',$nameFileUpload);
-        // $reader = IOFactory::createReaderForFile('storage/upload/file_project/'.$nameFileUpload);
-        // $spreadsheet = $reader->load('storage/upload/file_project/'.$nameFileUpload);
-        // $getval = $spreadsheet->getActiveSheet()->getCell('B10');
-        // // echo $getval(); die();
+        $reader = IOFactory::createReaderForFile('storage/upload/file_project/'.$nameFileUpload);
+        $spreadsheet = $reader->load('storage/upload/file_project/'.$nameFileUpload);
+        // $getval = $spreadsheet->getActiveSheet()->getCell('B10')->getValue();
+        // echo $getval(); die();
+        $highestRow = $spreadsheet->getActiveSheet()->getHighestRow();
+        $arr_data = [];
+        $i = 1;
+        for($row = 2;$row <= $highestRow; $row++){
+            $project_code = $spreadsheet->getActiveSheet()->getCell('A'.$row)->getValue();
+            $region_name = $spreadsheet->getActiveSheet()->getCell('B'.$row)->getValue();
+            $location_name = $spreadsheet->getActiveSheet()->getCell('C'.$row)->getValue();
+            $area_name = $spreadsheet->getActiveSheet()->getCell('D'.$row)->getValue();
+            $sub_area = $spreadsheet->getActiveSheet()->getCell('E'.$row)->getValue();
+            $service_name = $spreadsheet->getActiveSheet()->getCell('F'.$row)->getValue();
+            // array_push($arr_data,['project_code'=>$project_code,'region_name'=>$region_name,'location_name'=>$location_name,'area_name'=>$area_name,'sub_area_name'=>$sub_area,'service_name'=>$service_name]);
+            $post = array('project_code'=>$project_code,'region_name'=>$region_name,'location_name'=>$location_name,'area_name'=>$area_name,'sub_area_name'=>$sub_area,'service_name'=>$service_name);
+            DB::table('new_project_temp')->insert($post);
+        }
+        // var_dump($arr_data);
+        // DB::table('new_project_temp')->insert($arr_data);
+        $confirmation = ['message' => 'upload new project success', 'icon' => 'success', 'redirect'=>'/project'];
+        return response()->json($confirmation);
     }
-    // function get_region_setup_project(Request $request){
-    //     $get_region = DB::table('setup_project_detail')->join('m_sub_area','m_sub_area.id','=','setup_project_detail.sub_area_id')->join('m_area','m_area.id','=','m_sub_area.area_id')->join('m_location','m_location.id','=','m_area.location_id')->join('m_region','m_region.id','=','m_location.region_id')->join('setup_project','setup_project.project_code','=','setup_project_detail.project_code')->select('m_region.id','m_region.region_name')->where('setup_project.client_id',$request->client_id)->groupBy('m_region.id','m_region.region_name')->get();
-    //     return response()->json($get_region);
-    // }
-
-    // function get_location_setup_project(Request $request){
-    //     $get_location = DB::table('setup_project_detail')->join('m_sub_area','m_sub_area.id','=','setup_project_detail.sub_area_id')->join('m_area','m_area.id','=','m_sub_area.area_id')->join('m_location','m_location.id','=','m_area.location_id')->join('m_region','m_region.id','=','m_location.region_id')->join('setup_project','setup_project.project_code','=','setup_project_detail.project_code')->select('m_region.region_name',DB::Raw('m_location.id AS location_id'),'m_location.location_name')->where('setup_project.project_code',$request->project_code)->groupBy('m_location.id','m_location.location_name');
-    //     $get_location = $request->region_id !="" ? $get_location->where('m_location.region_id',$request->region_id):$get_location;
-    //     $get_location = $request->project_code !="" ? $get_location->where('setup_project.project_code',$request->project_code):$get_location;
-    //     return response()->json($get_location->get());
-    // }
-
-
-    // function get_area_setup_project(Request $request){
-    //     $get_area = DB::table('setup_project_detail')->join('m_sub_area','m_sub_area.id','=','setup_project_detail.sub_area_id')->join('m_area','m_area.id','=','m_sub_area.area_id')->join('m_location','m_location.id','=','m_area.location_id')->select(DB::Raw('m_area.id AS area_id'),'area_name');
-    //     $get_area = $request->location_id !="" ? $get_area->where('m_location',$request->location_id):$get_area;
-    //     return response()->json($get_area->get());
-
-    // }
-
-    // function get_area_sub_area_setup_project(Request $request){
-    //     $get_area_sub_area_setup_project = DB::table('setup_project_detail')->join('m_sub_area','m_sub_area.id','setup_project_detail.sub_area_id')->join('m_area','m_area.id','=','m_sub_area.area_id')->join('m_location','m_location.id','=','m_area.location_id')->select('m_area.area_name','m_sub_area.sub_area_name',DB::Raw('m_sub_area.id AS sub_area_id'))->select(DB::raw('m_sub_area.id AS sub_area_id,sub_area_name,m_area.id AS area_id,area_name,m_area.service_code'));
-    //     $get_area_sub_area_setup_project = $request->location_id !="" ? $get_area_sub_area_setup_project->where('m_location.id',$request->location_id):$get_area_sub_area_setup_project;
-    //     $get_area_sub_area_setup_project = $request->project_code !="" ? $get_area_sub_area_setup_project->where('setup_project_detail. project_code',$request->project_code):$get_area_sub_area_setup_project;
-    //     return response()->json($get_area_sub_area_setup_project->get());
-    // }
 }
