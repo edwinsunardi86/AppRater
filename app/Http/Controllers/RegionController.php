@@ -52,7 +52,7 @@ class RegionController extends Controller
     }
 
     public function detail_region($id){
-        $get_region = DB::table('setup_region')->join('setup_project','setup_project.project_code','=','setup_region.project_code')->join('m_client','m_client.id','=','setup_project.client_id')->select('region_name','client_name',DB::Raw('m_client.id  AS client_id'),'setup_region.project_code','project_name','setup_region.description')->where('setup_region.id',$id)->first();
+        $get_region = DB::table('setup_region')->join('setup_project','setup_project.project_code','=','setup_region.project_code')->join('m_client','m_client.id','=','setup_project.client_id')->select('setup_region.id','region_name','client_name',DB::Raw('m_client.id  AS client_id'),'setup_region.project_code','project_name','setup_region.description')->where('setup_region.id',$id)->first();
         return view('project.region.detail',[
             'region' => $get_region,
             'title' => 'Setup Region',

@@ -37,7 +37,7 @@
                                           </div>
                                     </div>
                                     <div class="col-md-12">
-                                        <button type="submit" class="btn btn-primary" id="review" data-action-review = "0">Preview</button>
+                                        {{-- <button type="submit" class="btn btn-primary" id="review" data-action-review = "0">Preview</button> --}}
                                         <button type="submit" class="btn btn-primary" id="save" data-action-save = "1">Submit</button>
                                     </div>
                                 </form> 
@@ -107,7 +107,11 @@ $(document).ready(function(){
                 type:"POST",
                 dataType:"JSON",
                 success:function(data){
-                    
+                    Swal.fire({
+                        title:data.title,
+                        html:data.message,
+                        icon:data.icon
+                    });
                 }
             });
         }

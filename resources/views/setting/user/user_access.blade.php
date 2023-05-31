@@ -618,7 +618,7 @@ $(document).ready(function(){
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name=csrf-token]').attr('content')
                     },
-                    url:'/users/set_user_access_previlage/',
+                    url:'/users/set_user_access_previlage',
                     type: 'POST',
                     dataType: 'JSON',
                     data: {

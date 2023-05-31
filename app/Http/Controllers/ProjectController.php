@@ -149,6 +149,8 @@ class ProjectController extends Controller
     }
 
     function uploadNewProject(Request $request){
+        set_time_limit(1800);
+        DB::table("new_project_temp")->truncate();
         $file = $request->file('uploadFile');
         $name = pathinfo($file->getClientOriginalName(),PATHINFO_FILENAME);
         $ext = pathinfo($file->getClientOriginalName(),PATHINFO_EXTENSION);
@@ -160,8 +162,7 @@ class ProjectController extends Controller
         // $getval = $spreadsheet->getActiveSheet()->getCell('B10')->getValue();
         // echo $getval(); die();
         $highestRow = $spreadsheet->getActiveSheet()->getHighestRow();
-        $arr_data = [];
-        $i = 1;
+
         for($row = 2;$row <= $highestRow; $row++){
             $project_code = $spreadsheet->getActiveSheet()->getCell('A'.$row)->getValue();
             $region_name = $spreadsheet->getActiveSheet()->getCell('B'.$row)->getValue();
