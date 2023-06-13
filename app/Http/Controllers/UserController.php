@@ -61,7 +61,7 @@ class UserController extends Controller
             'username' => $request->username,
             'email' => $request->email,
             'fullname' => $request->fullname,
-            'password' => bcrypt('sos123'),
+            'password' => bcrypt('12345'),
             'role' => $request->role,
             'client_id' => $request->client_id
         ];

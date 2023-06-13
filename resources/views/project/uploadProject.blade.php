@@ -106,6 +106,16 @@ $(document).ready(function(){
                 contentType:false,
                 type:"POST",
                 dataType:"JSON",
+                beforeSend:function(){
+                    Swal.fire({
+                        title:"Progress Upload",
+                        html:"<div class='lds-spinner'><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>",
+                        icon:"Loading",
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        showConfirmButton: false,
+                    });
+                },
                 success:function(data){
                     Swal.fire({
                         title:data.title,

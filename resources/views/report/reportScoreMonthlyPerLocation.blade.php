@@ -491,13 +491,13 @@ $(document).on('change','#location_name',function(){
 $(document).on('change','#year_project,#month_project',function(){
     function summary(score){
     let summary;
-    if(score > 95){
+    if(score == 100){
         summary = "SB";
-    }else if(score <= 95){
+    }else if(score >= 95){
         summary = "CB";
-    }else if(score <= 89){
+    }else if(score >= 89){
         summary = "B";
-    }else if(score <=74){
+    }else if(score >=74){
         summary = "KB";
     }
     return summary;

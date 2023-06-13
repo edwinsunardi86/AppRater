@@ -76,7 +76,7 @@ class ReportModel extends Model
         ->join('setup_region','setup_location.region_id','=','setup_region.id')
         ->join('setup_project','setup_project.project_code','=','setup_region.project_code')
         ->join('m_client','m_client.id','=','setup_project.client_id')
-        ->join('evaluation_critic_recommend','evaluation_critic_recommend.id_header','=','header_evaluation.id_header')
+        ->leftJoin('evaluation_critic_recommend','evaluation_critic_recommend.id_header','=','header_evaluation.id_header')
         ->select(DB::Raw('AVG(score) AS score'),'m_client.client_name','project_name','location_name','evaluation_critic_recommend.critic_recommend');
         if($project_code != ""){
             $query_avg_score = $query_avg_score->where('setup_project.project_code',$project_code);
