@@ -296,7 +296,7 @@ $(document).on('change','#location_name',function(){
                                 "</label>"+
                             "</div>"+
                             "<div class=\"icheck-primary d-inline m-1\">"+
-                                "<input class=\"score\" type=\"radio\" id=\"ratingb"+a+"\" name=\"score"+a+"[]\" value=\"95\">"+
+                                "<input class=\"score\" type=\"radio\" id=\"ratingb"+a+"\" name=\"score"+a+"[]\" value=\"96\">"+
                                 "<label for=\"ratingb"+a+"\">B"+
                                 "</label>"+
                             "</div>"+

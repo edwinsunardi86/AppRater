@@ -64,13 +64,13 @@
                         <td colspan="2">{{ $row_service->service_name }}</td>
                         <td>{{ floatval($row_service->score) }} %</td>
                         <td>
-                            @if($row_service->score >= 74 && $row_service->score <= 88)
+                            @if($row_service->score >= 0 && $row_service->score <= 74)
                                 KB
-                            @elseif($row_service->score >= 89 && $row_service->score <= 94)
-                                B
-                            @elseif($row_service->score >= 95 && $row_service->score <= 99)
+                            @elseif($row_service->score >= 75 && $row_service->score <= 89)
                                 CB
-                            @elseif($row_service->score == 100)
+                            @elseif($row_service->score >= 90 && $row_service->score <= 96)
+                                B
+                            @elseif($row_service->score >= 97)
                                 SB
                             @endif
                         </td>
@@ -82,15 +82,15 @@
                                 <td>{{ $row_sub_area->sub_area_name }}</td>
                                 <td>{{ floatval($row_sub_area->score) }} %</td>
                                 <td>
-                                @if($row_sub_area->score >= 74 && $row_sub_area->score <= 88)
-                                    KB
-                                @elseif($row_sub_area->score >= 89 && $row_sub_area->score <= 94)
-                                    B
-                                @elseif($row_sub_area->score >= 95 && $row_sub_area->score <= 99)
-                                    CB
-                                @elseif($row_sub_area->score == 100)
-                                    SB
-                                @endif
+									@if($row_sub_area->score >= 0 && $row_sub_area->score <=74)
+										KB
+									@elseif($row_sub_area->score >= 75 && $row_sub_area->score <= 89)
+										CB
+									@elseif($row_sub_area->score >= 90 && $row_sub_area->score <= 96)
+										B
+									@elseif($row_sub_area->score >= 97)
+										SB
+									@endif
                                 </td>
                             </tr>
                             @endif

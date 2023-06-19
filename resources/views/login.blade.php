@@ -40,7 +40,7 @@
   <div class="bg-image"></div>
 <div class="login-box">
   <div class="login-logo">
-    <a href="../../index2.html" style="color:deeppink"><b>Apps</b>  Appraisal Service SOS</a>
+    <a href="#" style="color:deeppink"><b>Aplikasi</b> Penilaian Bulanan SLA</a>
   </div>
   <!-- /.login-logo -->
   <div class="card">

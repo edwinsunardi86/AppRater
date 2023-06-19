@@ -63,13 +63,13 @@ class ReportController extends Controller
         $data = ReportModel::getDataScoreMonthlyPerLocation($request->project_code,$request->location_id,$request->month,$request->year);
         $avgSatisfactionPerService = ReportModel::getDataScoreMonthlyPerLocationGroupService($request->project_code,$request->location_id,$request->month,$request->year);
         $avg_satisfaction = ReportModel::average_satisfaction($request->project_code,$request->month,$request->year,$request->location_id);
-        if($avg_satisfaction->score >= 74){
+        if(ceil($avg_satisfaction->score) >= 0){
             $rating = 'KB';
-        }elseif($avg_satisfaction->score >= 89){
+        }elseif(ceil($avg_satisfaction->score) >= 75){
             $rating = 'B';
-        }elseif($avg_satisfaction->score >= 95){
+        }elseif(ceil($avg_satisfaction->score) >= 90){
             $rating = 'CB';
-        }elseif($avg_satisfaction->score == 100){
+        }elseif(ceil($avg_satisfaction->score) >= 96){
             $rating = 'SB';
         }
         
@@ -122,13 +122,13 @@ class ReportController extends Controller
         // $approval->clie
         // var_dump($approval); die();
         // echo $approval[0]->sign_client; die();
-        if($query_avg_score->score >= 74){
+        if(ceil($query_avg_score->score) >= 0){
             $rating = 'KB';
-        }elseif($query_avg_score->score >= 89 ){
-            $rating = 'B';
-        }elseif($query_avg_score->score >= 95){
+        }elseif(ceil($query_avg_score->score) >= 75){
             $rating = 'CB';
-        }elseif($query_avg_score->score == 100){
+        }elseif(ceil($query_avg_score->score) >= 90){
+            $rating = 'KB';
+        }elseif(ceil($query_avg_score->score) >= 96){
             $rating = 'SB';
         }
 

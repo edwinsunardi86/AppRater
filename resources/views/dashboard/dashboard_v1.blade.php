@@ -559,13 +559,13 @@ $(document).on('change','#year_project,#month_project,#location_name,#region_nam
             $.each(data,function(i,item){
                 var substr_weekappraisal = String(data[i].week_appraisal).substring(4,6);
                 var substr_yearappraisal = String(data[i].week_appraisal).substring(0,4);
-                if(data[i].score == 100){
+                if(Math.ceil(data[i].score) >= 97){
                     var kategori = "SB";
-                }else if(data[i].score >= 95){
-                    var kategori = "CB";
-                }else if(data[i].score >= 89){
+                }else if(Math.ceil(data[i].score) >= 90){
                     var kategori = "B";
-                }else{
+                }else if(Math.ceil(data[i].score) >= 75){
+                    var kategori = "CB";
+                }else if(Math.ceil(data[i].score) >= 0){
                     var kategori = "KB";
                 }
                 var cardbox = "<div class=\"card card-primary card-outline mr-2\">"+
