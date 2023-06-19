@@ -20,6 +20,7 @@ class EvaluationController extends Controller
 
     function store_evaluation(Request $request){
         $arr_sub_area_id = explode(",",$request->sub_area_id);
+        $arr_recommend = explode(",",$request->recommend);
         $arr_score = explode(",",$request->score);
         $exp_date_evaluation = explode("/",$request->date_evaluation);
         $format_date_sql = $exp_date_evaluation[2]."-".$exp_date_evaluation[0]."-".$exp_date_evaluation[1];
@@ -42,27 +43,28 @@ class EvaluationController extends Controller
             if(!$insert_header){
                 echo 'insert table header_evaluation failed'; die();
             }
-            $post_critic_recommend = array(
-                'id_header'         =>  $idHeader,
-                'critic_recommend'  =>  $request->recommend
-            );
-            $insert_evaluation_critic_recommend = DB::table('evaluation_critic_recommend')->insert($post_critic_recommend);
-            if(!$insert_evaluation_critic_recommend){
-                echo 'insert table evaluation_critic_recommend failed'; die();
-            }
+            // $post_critic_recommend = array(
+            //     'id_header'         =>  $idHeader,
+            //     'critic_recommend'  =>  $request->recommend
+            // );
+            // $insert_evaluation_critic_recommend = DB::table('evaluation_critic_recommend')->insert($post_critic_recommend);
+            // if(!$insert_evaluation_critic_recommend){
+            //     echo 'insert table evaluation_critic_recommend failed'; die();
+            // }
             for($i=0;$i<count($arr_sub_area_id);$i++){
                 $post = array(
-                    'id_header'    => $idHeader,
-                    'sub_area_id'  => $arr_sub_area_id[$i],
-                    'score'        => $arr_score[$i],
-                    'created_by'   => Auth::id()   
+                    'id_header'         => $idHeader,
+                    'sub_area_id'       => $arr_sub_area_id[$i],
+                    'critic_recommend'  => $arr_recommend[$i],
+                    'score'             => $arr_score[$i],
+                    'created_by'        => Auth::id()
                 );
                 $insert_score_evaluation = DB::table('score_evaluation')->insert($post);
                 if(!$insert_score_evaluation){
                     echo 'insert table header_evaluation failed'; die();
                 }
             }
-            if($insert_header && $insert_evaluation_critic_recommend && $insert_score_evaluation){
+            if($insert_header && $insert_score_evaluation){
                 $confirmation = ['message' => 'Rating successfully added', 'icon' => 'success', 'redirect' => '/evaluation/form_evaluation']; 
             }else{
                 $confirmation = ['message' => 'Rating failed added', 'icon' => 'error', 'redirect' => '/evaluation/form_evaluation']; 

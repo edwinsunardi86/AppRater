@@ -12,6 +12,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileUserController;
+use App\Http\Controllers\SetScoreController;
 use App\Http\Controllers\SignController;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
@@ -50,6 +51,11 @@ Route::group(['middleware' => ['auth','authorization'],'prefix'=>'users'], funct
     Route::get('/access/{id}',[UserController::class,'usersAccess']);
     Route::post('/set_user_access_previlage',[UserController::class,'setUserAccessPrevilage']);
     Route::post('/setUserAccessAuthority',[UserController::class,'setUserAccessAuthority']);
+});
+
+Route::group(['middleware' => ['auth','authorization'],'prefix'=>'score'],function(){
+    Route::get('/',[SetScoreController::class,'index']);
+    Route::get('/getListScore',[SetScoreController::class,'getListScore']);
 });
 
 Route::get('/change_password',[ProfileUserController::class,'viewChangePassword'])->middleware('auth');

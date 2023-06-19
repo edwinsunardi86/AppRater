@@ -37,7 +37,6 @@
                                     <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#modal-xl">Cari</button>
                                 </div>
                             </div>
-
                             <div class="form-group row">
                                 <label for="inputClientDescription" class="col-sm-2 col-form-label">Client Description</label>
                                 <div class="col-sm-4">
@@ -76,34 +75,24 @@
                             @foreach($service as $row)
                             <div class="card card-info card-outline">
                                 <div class="card-header">
-                                    <h3 class="card-title">{{ $row->service_name }}</h3>
+                                    <div class="row"><p class="card-title">{{ $row->service_name }}</p></div>
+                                    <div class="row">
+                                        <p class="card-title">Score :</p>
+                                    </div>
+                                    <div class="row"><p class="text-muted">Sangat Baik (SB) : 100% | Baik (B) : 96% | Cukup Baik (CB) : 89% | Kurang Baik (KB) : 74%</p></div>
                                 </div>
                                 <div class="card-body">
                                     <table class="table tb_sub_area table-striped table-bordered {{ $row->service_code }}" id="{{ $row->service_code }}">
                                     <thead>
-                                        <th style="width:10%">No.</th>
                                         <th style="width:30%">Area</th>
                                         <th style="width:30%">Sub Area</th>
-                                        <th style="width:30%">Score</th>
+                                        <th style="width:40%">Score</th>
                                     </thead>
                                     <tbody></tbody>
                                     </table>
                                 </div>
                             </div>
                             @endforeach
-                            <div class="card card-info card-outline">
-                                <div class="card-header">
-                                    <h3 class="card-title">Recommendation and critics</h3>
-                                </div>
-                                <div class="card-body">
-                                    <div class="form-group row">
-                                        <label for="locationName" class="col-sm-2 col-form-label">Recommendation and critics</label>
-                                        <div class="col-sm-4">
-                                            <textarea name="recommend" id="recommend" class="form-control" cols="30" rows="10"></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                             <div class="rating-sub-area"></div>
                             <button type="submit" class="btn btn-lg btn-primary">Submit</button>
                         </div>
@@ -287,7 +276,7 @@ $(document).on('change','#location_name',function(){
             $('.tb_sub_area > tbody').empty();
             $.each(data,function(i,item){
                 if($('.'+data[i].service_code).attr('id') == data[i].service_code){
-                    var content = "<tr><td>"+a+"</td><td>"+data[i].area_name+"<input type=\"hidden\" name=\"area_id[]\" id=\"area_id"+a+"\" value="+data[i].area_id+"></td><td>"+data[i].sub_area_name+"<input type=\"hidden\" name=\"sub_area_id[]\" id=\"sub_area_id"+a+"\" value="+data[i].sub_area_id+"></td><td>"+
+                    var content = "<tr><td>"+data[i].area_name+"<input type=\"hidden\" name=\"area_id[]\" id=\"area_id"+a+"\" value="+data[i].area_id+"></td><td>"+data[i].sub_area_name+"<input type=\"hidden\" name=\"sub_area_id[]\" id=\"sub_area_id"+a+"\" value="+data[i].sub_area_id+"></td><td>"+
                     "<div class=\"col-sm-12\">"+
                         "<div class=\"form-group row clearfix\">"+
                             "<div class=\"icheck-primary d-inline m-1\">"+
@@ -310,9 +299,19 @@ $(document).on('change','#location_name',function(){
                                 "<label for=\"ratingkb"+a+"\">KB"+
                                 "</label>"+
                             "</div>"+
+                            "<div class=\"form-group\">"+
+                                "<label for=\"locationName\" class=\"col-sm-12 col-form-label\">Recommendation and critics</label>"+
+                                "<div class=\"col-sm-12\">"+
+                                    "<textarea id=\"recommend"+a+"\" name=\"recommend"+a+"[]\" class=\"form-control\" cols=\"50\" rows=\"3\"></textarea>"+
+                                "</div>"+
+                            "</div>"+
                         "</div>"+
                     "</div>"+
-                    "</td></tr>";
+                    "</td>"
+                    "<td>"+
+                    
+                    "</td>"+
+                    "</tr>";
                     $('.'+data[i].service_code+" > tbody").append(content);
                 }
                 a++;
@@ -386,17 +385,19 @@ $(document).ready(function(){
                 formData.append('region_id',$('#region_name').val());
                 formData.append('location_id',$('#location_name').val());
                 formData.append('_token',$('meta[name=csrf-token]').attr('content'));
-                formData.append('recommend',$('#recommend').val());
                 var sub_area_id = [];
+                var recommend = [];
                     
                 for(var i = 1;i<=$('input[name="count_sub_area"]').length;i++){
                     score.push($('input[name="score'+i+']').val());
                 }
                 for(var i = 1;i<=$('input[name="sub_area_id[]"]').length;i++){
                     sub_area_id.push($('#sub_area_id'+i).val());
+                    recommend.push($('#recommend'+i).val());
                 }
                 formData.append('score',score);
                 formData.append('sub_area_id',sub_area_id);
+                formData.append('recommend',recommend);
 
                 $.ajax({
                     headers:{
@@ -507,7 +508,7 @@ $(document).ready(function(){
                     $('.tb_sub_area > tbody').empty();
                     $.each(filter_area_sub_area,function(i,item){
                         if($('.'+filter_area_sub_area[i].service_code).attr('id') == filter_area_sub_area[i].service_code){
-                            var content = "<tr><td>"+a+"</td><td>"+filter_area_sub_area[i].area_name+"<input type=\"hidden\" name=\"area_id[]\" id=\"area_id"+a+"\" value="+filter_area_sub_area[i].area_id+"></td><td>"+filter_area_sub_area[i].sub_area_name+"<input type=\"hidden\" name=\"sub_area_id[]\" id=\"sub_area_id"+a+"\" value="+filter_area_sub_area[i].sub_area_id+"></td><td>"+
+                            var content = "<tr><td>"+filter_area_sub_area[i].area_name+"<input type=\"hidden\" name=\"area_id[]\" id=\"area_id"+a+"\" value="+filter_area_sub_area[i].area_id+"></td><td>"+filter_area_sub_area[i].sub_area_name+"<input type=\"hidden\" name=\"sub_area_id[]\" id=\"sub_area_id"+a+"\" value="+filter_area_sub_area[i].sub_area_id+"></td><td>"+
                             "<div class=\"col-sm-12\">"+
                                 "<div class=\"form-group row clearfix\">"+
                                     "<div class=\"icheck-primary d-inline m-1\">"+
@@ -516,7 +517,7 @@ $(document).ready(function(){
                                         "</label>"+
                                     "</div>"+
                                     "<div class=\"icheck-primary d-inline m-1\">"+
-                                        "<input class=\"score\" type=\"radio\" id=\"ratingb"+a+"\" name=\"score"+a+"[]\" value=\"95\">"+
+                                        "<input class=\"score\" type=\"radio\" id=\"ratingb"+a+"\" name=\"score"+a+"[]\" value=\"96\">"+
                                         "<label for=\"ratingb"+a+"\">B"+
                                         "</label>"+
                                     "</div>"+
@@ -529,6 +530,12 @@ $(document).ready(function(){
                                         "<input class=\"score\" type=\"radio\" id=\"ratingkb"+a+"\" name=\"score"+a+"[]\" value=\"74\">"+
                                         "<label for=\"ratingkb"+a+"\">KB"+
                                         "</label>"+
+                                    "</div>"+
+                                "</div>"+
+                                "<div class=\"form-group\">"+
+                                    "<label for=\"locationName\" class=\"col-sm-12 col-form-label\">Recommendation and critics</label>"+
+                                    "<div class=\"col-sm-12\">"+
+                                        "<textarea id=\"recommend"+a+"\" name=\"recommend"+a+"[]\" class=\"form-control\" cols=\"30\" rows=\"3\"></textarea>"+
                                     "</div>"+
                                 "</div>"+
                             "</div>"+
