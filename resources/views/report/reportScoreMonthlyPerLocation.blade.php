@@ -525,7 +525,7 @@ $(document).on('change','#year_project,#month_project',function(){
                 $.each(data.data_score,function(a,item){
                     if(data_service == data.data_score[a].service_code){
                         average_per_service = parseFloat(average_per_service) + parseFloat(data.data_score[a].score);
-                        $('<tr class="tr_score"><td>'+data.data_score[a].sub_area_name+'</td><td>'+parseFloat(data.data_score[a].score)+'</td><td>'+summary(parseFloat(data.data_score[a].score))+'</td></tr>').insertAfter($('.table-score tr.'+data.data_score[a].service_code));
+                        $('<tr class="tr_score"><td>'+data.data_score[a].sub_area_name+'</td><td>'+parseFloat(data.data_score[a].score)+'</td><td>'+data.data_score[a].initial+'</td></tr>').insertAfter($('.table-score tr.'+data.data_score[a].service_code));
                         b+=1;
                     }
                 });

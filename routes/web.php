@@ -14,6 +14,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileUserController;
 use App\Http\Controllers\SetScoreController;
 use App\Http\Controllers\SignController;
+use App\Models\SetScoreModel;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 /*
@@ -55,7 +56,9 @@ Route::group(['middleware' => ['auth','authorization'],'prefix'=>'users'], funct
 
 Route::group(['middleware' => ['auth','authorization'],'prefix'=>'score'],function(){
     Route::get('/',[SetScoreController::class,'index']);
-    Route::get('/getListScore',[SetScoreController::class,'getListScore']);
+    Route::get('/getListScore',[SetScoreController::class,'getListScore'])->name('getListScore:dt');
+    Route::get('/createScore',[SetScoreController::class,'createScore']);
+    Route::post('/setScore',[SetScoreController::class,'setScore']);
 });
 
 Route::get('/change_password',[ProfileUserController::class,'viewChangePassword'])->middleware('auth');
@@ -139,6 +142,7 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'evaluation'],fun
     Route::get('/edit_evaluation',[EvaluationController::class,'edit_evaluation']);
     Route::post('/storeEvaluation',[EvaluationController::class,'store_evaluation']);
     Route::post('/getYearEvaluationProjectPerLocation',[EvaluationController::class,'get_year_evaluation_project_per_location']);
+    Route::post('/setScoreCurrentActiveScoreInEvaluation',[EvaluationController::class,'setScoreCurrentActiveScoreInEvaluation']);
 });
 
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'evaluation'],function(){

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use App\Models\SetScoreModel;
 
 class EvaluationController extends Controller
 {
@@ -86,8 +87,12 @@ class EvaluationController extends Controller
                 $sql = $sql."AND b.location_id = '".$location_id."'";
             }
             $sql = $sql." group by year(appraisal_date)";
-            
             $get_year = DB::select($sql);
             return response()->json($get_year);
+    }
+
+    function setScoreCurrentActiveScoreInEvaluation(Request $request){
+        $query_builder = SetScoreModel::getCurrentActiveByProject($request->project_code);
+        return response()->json($query_builder);
     }
 }

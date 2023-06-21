@@ -79,7 +79,7 @@
                                     <div class="row">
                                         <p class="card-title">Score :</p>
                                     </div>
-                                    <div class="row"><p class="text-muted desc_category"></p></div>
+                                    <div class="row"><p class="text-muted">Sangat Baik (SB) : 100% | Baik (B) : 96% | Cukup Baik (CB) : 89% | Kurang Baik (KB) : 74%</p></div>
                                 </div>
                                 <div class="card-body">
                                     <table class="table tb_sub_area table-striped table-bordered {{ $row->service_code }}" id="{{ $row->service_code }}">
@@ -198,35 +198,6 @@ $(document).on('click','.pilih_client',function(){
 });
 
 $(document).on('change','#project_code',function(){
-    arr_choice = [];
-    //Get Setting Score
-    $.ajax({
-        headers:{
-            'X-CSRF-TOKEN' : $('meta[name=csrf-token]').attr('content'), 
-        },
-        url : '/evaluation/setScoreCurrentActiveScoreInEvaluation',
-        type:"POST",
-        dataType:"JSON",
-        async:false,
-         data:{
-            'project_code' : $('#project_code').val()
-        },
-        processData:true,
-        success:function(data_choice){
-            $.each(data_choice,function(i,item){
-                arr_choice.push({'category':data_choice[i].category,'initial': data_choice[i].initial,'score': data_choice[i].score});
-            });
-            console.log(arr_choice);
-        }
-    });
-    var category_desc = "";
-    $.each(arr_choice,function(i,item){
-        category_desc += arr_choice[i].category+" ("+arr_choice[i].initial+") : "+arr_choice[i].score+"% ";
-        if(arr_choice.length > (i+1)){
-            category_desc += "| ";
-        }
-    });
-    $('.desc_category').html(category_desc);
     $.ajax({
         headers:{
             'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
@@ -286,16 +257,13 @@ $(document).on('change','#region_name',function(){
     });
 });
 
-var arr_choice = [];
 $(document).on('change','#location_name',function(){
-    var content = "";
     $.ajax({
         headers:{
             'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
         },
         url:"/sub_area/getDataSubAreaSelected",
         type:"POST",
-        async:true,
         dataType:"JSON",
         data:{
             location_id:$('#location_name').val(),
@@ -310,26 +278,40 @@ $(document).on('change','#location_name',function(){
                 if($('.'+data[i].service_code).attr('id') == data[i].service_code){
                     var content = "<tr><td>"+data[i].area_name+"<input type=\"hidden\" name=\"area_id[]\" id=\"area_id"+a+"\" value="+data[i].area_id+"></td><td>"+data[i].sub_area_name+"<input type=\"hidden\" name=\"sub_area_id[]\" id=\"sub_area_id"+a+"\" value="+data[i].sub_area_id+"></td><td>"+
                     "<div class=\"col-sm-12\">"+
-                        "<div class=\"form-group row clearfix\">";
-                            $.each(arr_choice,function(i,item){
-                                content+="<div class=\"icheck-primary d-inline m-1\">"+
-                                    "<div class=\"icheck-primary d-inline m-1\">"+
-                                        "<input class=\"score\" type=\"radio\" id=\"rating_"+i+"_"+a+"\" name=\"score"+a+"[]\" value="+arr_choice[i].score+">"+
-                                            "<label for=\"rating_"+i+"_"+a+"\">"+arr_choice[i].initial+
-                                            "</label>"+
-                                        "</div>"+
-                                    "</div>";
-                            });
-                            content += "</div>"+
-                                "<div class=\"form-group\">"+
-                                    "<label for=\"locationName\" class=\"col-sm-12 col-form-label\">Recommendation and critics</label>"+
-                                    "<div class=\"col-sm-12\">"+
-                                        "<textarea id=\"recommend"+a+"\" name=\"recommend"+a+"[]\" class=\"form-control\" cols=\"30\" rows=\"3\"></textarea>"+
-                                    "</div>"+
+                        "<div class=\"form-group row clearfix\">"+
+                            "<div class=\"icheck-primary d-inline m-1\">"+
+                                "<input class=\"score\" type=\"radio\" id=\"ratingsb"+a+"\" name=\"score"+a+"[]\" value=\"100\">"+
+                                "<label for=\"ratingsb"+a+"\">SB"+
+                                "</label>"+
+                            "</div>"+
+                            "<div class=\"icheck-primary d-inline m-1\">"+
+                                "<input class=\"score\" type=\"radio\" id=\"ratingb"+a+"\" name=\"score"+a+"[]\" value=\"96\">"+
+                                "<label for=\"ratingb"+a+"\">B"+
+                                "</label>"+
+                            "</div>"+
+                            "<div class=\"icheck-primary d-inline m-1\">"+
+                                "<input class=\"score\" type=\"radio\" id=\"ratingcb"+a+"\" name=\"score"+a+"[]\" value=\"89\">"+
+                                "<label for=\"ratingcb"+a+"\">CB"+
+                                "</label>"+
+                            "</div>"+
+                            "<div class=\"icheck-primary d-inline m-1\">"+
+                                "<input class=\"score\" type=\"radio\" id=\"ratingkb"+a+"\" name=\"score"+a+"[]\" value=\"74\">"+
+                                "<label for=\"ratingkb"+a+"\">KB"+
+                                "</label>"+
+                            "</div>"+
+                            "<div class=\"form-group\">"+
+                                "<label for=\"locationName\" class=\"col-sm-12 col-form-label\">Recommendation and critics</label>"+
+                                "<div class=\"col-sm-12\">"+
+                                    "<textarea id=\"recommend"+a+"\" name=\"recommend"+a+"[]\" class=\"form-control\" cols=\"50\" rows=\"3\"></textarea>"+
                                 "</div>"+
                             "</div>"+
-                            "</td></tr>";
-
+                        "</div>"+
+                    "</div>"+
+                    "</td>"
+                    "<td>"+
+                    
+                    "</td>"+
+                    "</tr>";
                     $('.'+data[i].service_code+" > tbody").append(content);
                 }
                 a++;
@@ -489,33 +471,6 @@ $(document).ready(function(){
         
         
         $(document).on('change','#project_code',function(){
-            $.ajax({
-                headers:{
-                    'X-CSRF-TOKEN' : $('meta[name=csrf-token]').attr('content'), 
-                },
-                url : '/evaluation/setScoreCurrentActiveScoreInEvaluation',
-                type:"POST",
-                dataType:"JSON",
-                async:true,
-                data:{
-                    'project_code' : $('#project_code').val()
-                },
-                processData:true,
-                success:function(data_choice){
-                    $.each(data_choice,function(i,item){
-                        arr_choice.push({'initial': data_choice[i].initial,'score': data_choice[i].score});
-                    });
-                }
-            });
-
-            var category_desc = "";
-            $.each(arr_choice,function(i,item){
-                category_desc += arr_choice[i].category+" ("+arr_choice[i].initial+") : "+arr_choice[i].score+"% ";
-                if(arr_choice.length > (i+1)){
-                    category_desc += "| ";
-                }
-            });
-            $('.desc_category').html(category_desc);
             var region_name = ['region_name'];
             var filter_region = data.filter(project => project.project_code == $('#project_code').val());
             var region  = groupBy(filter_region,'region_id',region_name,'region_name');
@@ -546,7 +501,6 @@ $(document).ready(function(){
                         text:location[i].location_name
                     }));
                 });
-                var arr_choice = [];
                 $(document).on('change','#location_name',function(){
                     var area = ['area'];
                     var filter_area_sub_area = data.filter(location => location.location_id == $('#location_name').val());
@@ -554,27 +508,38 @@ $(document).ready(function(){
                     $('.tb_sub_area > tbody').empty();
                     $.each(filter_area_sub_area,function(i,item){
                         if($('.'+filter_area_sub_area[i].service_code).attr('id') == filter_area_sub_area[i].service_code){
-                            var content = "<tr><td>"+data[i].area_name+"<input type=\"hidden\" name=\"area_id[]\" id=\"area_id"+a+"\" value="+data[i].area_id+"></td><td>"+data[i].sub_area_name+"<input type=\"hidden\" name=\"sub_area_id[]\" id=\"sub_area_id"+a+"\" value="+data[i].sub_area_id+"></td><td>"+
+                            var content = "<tr><td>"+filter_area_sub_area[i].area_name+"<input type=\"hidden\" name=\"area_id[]\" id=\"area_id"+a+"\" value="+filter_area_sub_area[i].area_id+"></td><td>"+filter_area_sub_area[i].sub_area_name+"<input type=\"hidden\" name=\"sub_area_id[]\" id=\"sub_area_id"+a+"\" value="+filter_area_sub_area[i].sub_area_id+"></td><td>"+
                             "<div class=\"col-sm-12\">"+
-                                "<div class=\"form-group row clearfix\">";
-                                    $.each(arr_choice,function(z,item){
-                                        content+="<div class=\"icheck-primary d-inline m-1\">"+
-                                            "<div class=\"icheck-primary d-inline m-1\">"+
-                                                "<input class=\"score\" type=\"radio\" id=\"rating_"+z+"_"+a+"\" name=\"score"+a+"[]\" value="+arr_choice[z].score+">"+
-                                                    "<label for=\"rating_"+z+"_"+a+"\">"+arr_choice[z].initial+
-                                                    "</label>"+
-                                                "</div>"+
-                                            "</div>";
-                                    });
-                                    content += "</div>"+
-                                        "<div class=\"form-group\">"+
-                                            "<label for=\"locationName\" class=\"col-sm-12 col-form-label\">Recommendation and critics</label>"+
-                                            "<div class=\"col-sm-12\">"+
-                                                "<textarea id=\"recommend"+a+"\" name=\"recommend"+a+"[]\" class=\"form-control\" cols=\"30\" rows=\"3\"></textarea>"+
-                                            "</div>"+
-                                        "</div>"+
+                                "<div class=\"form-group row clearfix\">"+
+                                    "<div class=\"icheck-primary d-inline m-1\">"+
+                                        "<input class=\"score\" type=\"radio\" id=\"ratingsb"+a+"\" name=\"score"+a+"[]\" value=\"100\">"+
+                                        "<label for=\"ratingsb"+a+"\">SB"+
+                                        "</label>"+
                                     "</div>"+
-                                "</td></tr>";
+                                    "<div class=\"icheck-primary d-inline m-1\">"+
+                                        "<input class=\"score\" type=\"radio\" id=\"ratingb"+a+"\" name=\"score"+a+"[]\" value=\"96\">"+
+                                        "<label for=\"ratingb"+a+"\">B"+
+                                        "</label>"+
+                                    "</div>"+
+                                    "<div class=\"icheck-primary d-inline m-1\">"+
+                                        "<input class=\"score\" type=\"radio\" id=\"ratingcb"+a+"\" name=\"score"+a+"[]\" value=\"89\">"+
+                                        "<label for=\"ratingcb"+a+"\">CB"+
+                                        "</label>"+
+                                    "</div>"+
+                                    "<div class=\"icheck-primary d-inline m-1\">"+
+                                        "<input class=\"score\" type=\"radio\" id=\"ratingkb"+a+"\" name=\"score"+a+"[]\" value=\"74\">"+
+                                        "<label for=\"ratingkb"+a+"\">KB"+
+                                        "</label>"+
+                                    "</div>"+
+                                "</div>"+
+                                "<div class=\"form-group\">"+
+                                    "<label for=\"locationName\" class=\"col-sm-12 col-form-label\">Recommendation and critics</label>"+
+                                    "<div class=\"col-sm-12\">"+
+                                        "<textarea id=\"recommend"+a+"\" name=\"recommend"+a+"[]\" class=\"form-control\" cols=\"30\" rows=\"3\"></textarea>"+
+                                    "</div>"+
+                                "</div>"+
+                            "</div>"+
+                            "</td></tr>";
                             $('.'+filter_area_sub_area[i].service_code+" > tbody").append(content);
                         }
                         a++;

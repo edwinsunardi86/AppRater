@@ -50,7 +50,7 @@ class ReportModel extends Model
         ->where('year',$year)
         ->where('month',$month)
         ->select('sub_area_id','sub_area_name','service_code','service_name',DB::Raw("
-        AVG(score) AS score"))
+        AVG(score) AS score"),'initial')
         ->groupBy('sub_area_id');
         return $query->get();
     }

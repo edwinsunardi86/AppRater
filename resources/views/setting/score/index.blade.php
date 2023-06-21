@@ -22,12 +22,15 @@
                 <div class="col-12">
                     <div class="card card-primary">
                         <div class="card-header">
-                            <h3 class="card-title">Form User</h3>
+                            <h3 class="card-title">Score List</h3>
                         </div>
                         <div class="card-body">
-                            <table class="table table-striped table-bordered">
+                            <a class="btn btn-md btn-primary" href="score/createScore">ADD</a>
+                            <table id="dt_score" class="table table-striped table-bordered">
                                 <thead>
+                                    <th>No. </th>
                                     <th>Project Code</th>
+                                    <th>Project Name</th>
                                     <th>Period_date</th>
                                     <th>Is Current Active</th>
                                     <th>Score</th>
@@ -41,4 +44,33 @@
         </div>
     </section>
 </div>
+<script>
+$(document).ready(function(){
+    var i = 1;
+    var tb_score = $('#dt_score').DataTable({
+        processing:true,
+        serverSide:true,
+        destroy:true,
+        ajax: '{!! route("getListScore:dt") !!}',
+        columns:[
+            { data:i, name: i, render: function (data, type, row, meta) {
+                return meta.row + meta.settings._iDisplayStart + 1;
+            }},
+            { data: 'project_code', name: 'project_code' },
+            { data: 'project_name', name: 'project_name' },
+            { data: 'period_date', name: 'period_date' },
+            { data: 'is_current_active', render: function(data, type, row, meta){
+                if(data == 0){
+                    var status = 'inactive'
+                }else{
+                    var status = 'active'
+                }
+                return status;
+            }},
+            { data: 'kategori_nilai', name: 'kategory_nilai'},
+            { data: 'action', name: 'action'}
+        ],
+    });
+})
+</script>
 @endsection
