@@ -95,13 +95,7 @@
                                 <div class="form-group row">
                                     <label for="recommend_critics" class="col-sm-2 col-form-label">Score</label>
                                     <div class="col-sm-8">
-                                        <input type="number" name="avg" id="avg" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="recommend_critics" class="col-sm-2 col-form-label">Recommend / Critics</label>
-                                    <div class="col-sm-8">
-                                        <textarea class="form-control" name="recommend_critics" id="recommend_critics"></textarea>
+                                        <input type="number" name="avg" id="avg" class="form-control" disabled>
                                     </div>
                                 </div>
                                 <div class="row p-10 col-sm-4">
@@ -111,9 +105,6 @@
                                 </div>
                                 <div class="row p-3 inline col-sm-4">
                                     <div class="col col-sm justify-content-md-center pt-3">
-                                        <center>
-                                            
-                                        </center>
                                         <!-- tombol undo  -->
                                         <center><button type="button" class="btn btn-dark" id="undo">
                                             <span class="fas fa-undo"></span>
@@ -128,20 +119,8 @@
                                         Clear
                                         </button></center>
                                     </div>
-                                    {{-- <div class="col col-sm justify-content-md-center pt-3">
-                                        <!-- tombol submit  -->
-                                      <center><button type="submit" class="btn btn-primary" id="submit">
-                                        <span class="fas fa-submit"></span>
-                                        Submit
-                                        </button></center>
-                                    </div> --}}
                                 </div>
                                 <div class="form-group row">
-                                    {{-- <div class="col-sm-2">
-                                        @if(Auth::user()->role == 3)
-                                            <button type="button" class="btn btn-block btn-outline-primary btn-sm" id="modal_approval" data-toggle='modal' data-target="#modal_sign">Sign</button>
-                                        @endif
-                                    </div> --}}
                                     <div class="col-sm-2">
                                         <button type="submit" class="btn btn-block btn-outline-warning btn-sm">Download</button>
                                     </div>
@@ -490,18 +469,29 @@ $(document).on('change','#location_name',function(){
 
 $(document).on('change','#year_project,#month_project',function(){
     function summary(score){
-    let summary;
-    if(Math.ceil(score) >= 97){
-        summary = "SB";
-    }else if(Math.ceil(score) >= 90){
-        summary = "B";
-    }else if(Math.ceil(score) >= 75){
-        summary = "CB";
-    }else if(Math.ceil(score) >= 0){
-        summary = "KB";
+        var category;
+        $.ajax({
+            headers:{
+                'X_CSRF-TOKEN': $('meta[name=csrf_token]').attr('content'),
+            },
+            url:'/report/getCategory',
+            type:"POST",
+            dataType:"JSON",
+            async:false,
+            data:{
+                project_code:   $('#project_code').val(),
+                bulan:          $('#month_project').val(),
+                tahun:          $('#year_project').val(),
+                score:          score,
+                _token:'{{csrf_token()}}'
+            },
+            success:function(data){
+                category = data.initial
+            }
+        });
+        return category;
     }
-    return summary;
-}
+
     $.ajax({
         headers:{
             'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
@@ -535,7 +525,7 @@ $(document).on('change','#year_project,#month_project',function(){
                 // alert(service_code);
                 if(data_service == service_code){
                     var avg_per_service = average_per_service / b;
-                    $('#percentage_'+service_code).html(avg_per_service);
+                    $('#percentage_'+service_code).html(avg_per_service.toFixed(2));
                     $('#summary_'+service_code).html(summary(avg_per_service));
                     // alert(avg_per_service);
                 }
@@ -546,8 +536,8 @@ $(document).on('change','#year_project,#month_project',function(){
 
                 // $("#percentage_"+service_code).html(avg_per_service);
             });
-            $('#recommend_critics').val(data.avg.critic_recommend);
-            $('#avg').val(data.avg.score);
+            var avg_score = data.avg.score
+            $('#avg').val(parseFloat(avg_score).toFixed(2));
         }
     });
 });

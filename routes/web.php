@@ -156,6 +156,8 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'report'],functio
     Route::post('/approvalByClient',[ReportController::class,'approvalByClient']);
     Route::get('/reportScoreMonthlyPerLocation',[ReportController::class,'reportScoreMonthlyPerLocation']);
     Route::post('/approvalSignReportScoreMonthly',[ReportController::class,'approvalSignReportScoreMonthly']);
+    Route::post('/getCategory',[ReportController::class,'getCategory']);
+    Route::post('/getCategory_var2',[ReportController::class,'getCategory_var2']);
 });
 
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'sign'],function(){

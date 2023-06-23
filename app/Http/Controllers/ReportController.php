@@ -63,17 +63,16 @@ class ReportController extends Controller
         $data = ReportModel::getDataScoreMonthlyPerLocation($request->project_code,$request->location_id,$request->month,$request->year);
         $avgSatisfactionPerService = ReportModel::getDataScoreMonthlyPerLocationGroupService($request->project_code,$request->location_id,$request->month,$request->year);
         $avg_satisfaction = ReportModel::average_satisfaction($request->project_code,$request->month,$request->year,$request->location_id);
-        if(ceil($avg_satisfaction->score) >= 0){
-            $rating = 'KB';
-        }elseif(ceil($avg_satisfaction->score) >= 75){
-            $rating = 'B';
-        }elseif(ceil($avg_satisfaction->score) >= 90){
-            $rating = 'CB';
-        }elseif(ceil($avg_satisfaction->score) >= 96){
-            $rating = 'SB';
+        $rating = ReportModel::getScoreM($request->project_code,$request->month,$request->year,$avg_satisfaction->score);
+        $getListCategoryPerPeriod = ReportModel::getListCategoryPerPeriodDate($request->project_code,$request->month,$request->year);
+        $arr_category = array();
+        foreach($getListCategoryPerPeriod as $row){
+            array_push($arr_category,array('score'=>$row->score,'category'=>$row->initial));
         }
-        
         $pdf = PDF::loadView('pdf.documentScoreSatisfaction',[
+            'project_code'      => $request->project_code,
+            'month'             => $request->month,
+            'year'              => $request->year,
             'project_name'      => $avg_satisfaction->project_name,
             'location_name'     => $avg_satisfaction->location_name,
             'service'           => $avgSatisfactionPerService,
@@ -82,9 +81,9 @@ class ReportController extends Controller
             'month'             => $request->month,
             'year'              => $request->year,
             'data'              => $data,
-            'rating'            => $rating,
+            'rating'            => $rating->initial,
             'avg_satisfaction'  => $avg_satisfaction,
-            'critic_recommend'  => $avg_satisfaction->critic_recommend
+            'arr_category'      =>  $arr_category
             ]
         );
         $filename = "ReportScoreMonthly".$request->month."-".$request->year;
@@ -122,35 +121,36 @@ class ReportController extends Controller
         // $approval->clie
         // var_dump($approval); die();
         // echo $approval[0]->sign_client; die();
-        if(ceil($query_avg_score->score) >= 0){
-            $rating = 'KB';
-        }elseif(ceil($query_avg_score->score) >= 75){
-            $rating = 'CB';
-        }elseif(ceil($query_avg_score->score) >= 90){
-            $rating = 'KB';
-        }elseif(ceil($query_avg_score->score) >= 96){
-            $rating = 'SB';
-        }
+        // if(ceil($query_avg_score->score) >= 0){
+        //     $rating = 'KB';
+        // }elseif(ceil($query_avg_score->score) >= 75){
+        //     $rating = 'CB';
+        // }elseif(ceil($query_avg_score->score) >= 90){
+        //     $rating = 'KB';
+        // }elseif(ceil($query_avg_score->score) >= 96){
+        //     $rating = 'SB';
+        // }
+        $rating = ReportModel::getScoreM($project_code,$month,$year,$query_avg_score->score);
 
         $datetime_client = date_create($approval[0]->sign_date_client);
         $date_client = date_format($datetime_client,'d F Y');
-        $pdf = PDF::loadView('pdf.documentScoreSatisfaction',[
-            'query'                 =>  $data,
-            'year'                  =>  $year,
-            'month'                 =>  $month,
-            'first_date'            =>  $first_date,
-            'last_date'             =>  $last_date,
-            'first_week'            =>  $first_week,
-            'last_week'             =>  $last_week,
-            'work_days'             =>  $work_days,
-            'avg_score_location'    =>  $query_avg_score,
-            'rating'                =>  $rating,
-            'user_client'           =>  $approval[0]->nama_user_client,
-            'user_pic'              =>  $approval[0]->nama_user_pic,
-            'sign_client'           =>  $approval[0]->sign_client,
-            'date_client'           =>  $date_client
-        ]);
-        return $pdf->stream();
+        // $pdf = PDF::loadView('pdf.documentScoreSatisfaction',[
+        //     'query'                 =>  $data,
+        //     'year'                  =>  $year,
+        //     'month'                 =>  $month,
+        //     'first_date'            =>  $first_date,
+        //     'last_date'             =>  $last_date,
+        //     'first_week'            =>  $first_week,
+        //     'last_week'             =>  $last_week,
+        //     'work_days'             =>  $work_days,
+        //     'avg_score_location'    =>  $query_avg_score,
+        //     'rating'                =>  $rating->initial,
+        //     'user_client'           =>  $approval[0]->nama_user_client,
+        //     'user_pic'              =>  $approval[0]->nama_user_pic,
+        //     'sign_client'           =>  $approval[0]->sign_client,
+        //     'date_client'           =>  $date_client
+        // ]);
+        // return $pdf->stream();
     }
 
     function approvalByClient(Request $request){
@@ -194,5 +194,15 @@ class ReportController extends Controller
         $avg_satisfaction = ReportModel::average_satisfaction($request->project_code,$request->month,$request->year,$request->location_id);
         $data = array('data_score'=>$data_score,'avg'=>$avg_satisfaction);
         return response()->json($data);
+    }
+
+    function getCategory(Request $request){
+        $getCategory = ReportModel::getScoreM($request->project_code,$request->bulan,$request->tahun,$request->score);
+        return response()->json($getCategory);
+    }
+
+    function getCategory_var2(Request $request){
+        $getCategory = ReportModel::getScoreM_var2($request->project_code,$request->bulan,$request->tahun,$request->score);
+        return response()->json($getCategory);
     }
 }

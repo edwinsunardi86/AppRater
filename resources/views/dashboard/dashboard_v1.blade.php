@@ -537,7 +537,30 @@ $(document).on('change','#location_name,#project_code,#region_name',function(){
     
 });
 
-$(document).on('change','#year_project,#month_project,#location_name,#region_name',function(){
+$(document).on('change','#year_project,#month_project',function(){
+    function summary(score){
+        var category;
+        $.ajax({
+            headers:{
+                'X_CSRF-TOKEN': $('meta[name=csrf_token]').attr('content'),
+            },
+            url:'/report/getCategory_var2',
+            type:"POST",
+            dataType:"JSON",
+            async:false,
+            data:{
+                project_code:   $('#project_code').val(),
+                bulan:          $('#month_project').val(),
+                tahun:          $('#year_project').val(),
+                score:          score,
+                _token:'{{csrf_token()}}'
+            },
+            success:function(data){
+                category = data.initial
+            }
+        });
+        return category;
+    }
     $.ajax({
         headers:{
             'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
@@ -559,15 +582,20 @@ $(document).on('change','#year_project,#month_project,#location_name,#region_nam
             $.each(data,function(i,item){
                 var substr_weekappraisal = String(data[i].week_appraisal).substring(4,6);
                 var substr_yearappraisal = String(data[i].week_appraisal).substring(0,4);
-                if(Math.ceil(data[i].score) >= 97){
-                    var kategori = "SB";
-                }else if(Math.ceil(data[i].score) >= 90){
-                    var kategori = "B";
-                }else if(Math.ceil(data[i].score) >= 75){
-                    var kategori = "CB";
-                }else if(Math.ceil(data[i].score) >= 0){
-                    var kategori = "KB";
+                // if(Math.ceil(data[i].score) >= 97){
+                //     var kategori = "SB";
+                // }else if(Math.ceil(data[i].score) >= 90){
+                //     var kategori = "B";
+                // }else if(Math.ceil(data[i].score) >= 75){
+                //     var kategori = "CB";
+                // }else if(Math.ceil(data[i].score) >= 0){
+                //     var kategori = "KB";
+                // }
+                var kategori = summary(Math.ceil(data[i].score));
+                if(typeof kategori === 'undefined'){
+                    kategori = "";
                 }
+                alert(kategori);
                 var cardbox = "<div class=\"card card-primary card-outline mr-2\">"+
                         "<div class=\"card-body\">"+
                             "<div class=\"text-center mb-n4\">"+
@@ -765,11 +793,10 @@ $(document).on('change','#project_code,#region_name,#location_name',function(){
                         var a = 0;
                         $.each(mapSummaryLocation,function(a,item){
                             arrSummaryPerLocation.push({location_id:mapSummaryLocation[a].location_id,Jan:mapSummaryLocation[a].Jan,Feb:mapSummaryLocation[a].Feb,Mar:mapSummaryLocation[a].Mar,Apr:mapSummaryLocation[a].Apr,May:mapSummaryLocation[a].May,Jun:mapSummaryLocation[a].Jun,Jul:mapSummaryLocation[a].Jul,Aug:mapSummaryLocation[a].Aug,Sep:mapSummaryLocation[a].Sep,Oct:mapSummaryLocation[a].Oct,Nov:mapSummaryLocation[a].Nov,Dec:mapSummaryLocation[a].Dec});
-
                         });
                          console.log(arrSummaryPerLocation.some(item=>item.location_id == getLocation[i].location_id));
                         if(arrSummaryPerLocation.some(item=>item.location_id == getLocation[i].location_id)===true){
-                            table="<tr><td>"+getLocation[i].location_name+"</td><td>"+parseFloat(arrSummaryPerLocation[a].Jan)+"</td><td>"+parseFloat(arrSummaryPerLocation[a].Feb)+"</td><td>"+parseFloat(arrSummaryPerLocation[a].Mar)+"</td><td>"+parseFloat(arrSummaryPerLocation[a].Apr)+"</td><td>"+parseFloat(arrSummaryPerLocation[a].May)+"</td><td>"+parseFloat(arrSummaryPerLocation[a].Jun)+"</td><td>"+parseFloat(arrSummaryPerLocation[a].Jul)+"</td><td>"+parseFloat(arrSummaryPerLocation[a].Aug)+"</td><td>"+parseFloat(arrSummaryPerLocation[a].Sep)+"</td><td>"+parseFloat(arrSummaryPerLocation[a].Oct)+"</td><td>"+parseFloat(arrSummaryPerLocation[a].Nov)+"</td><td>"+parseFloat(arrSummaryPerLocation[a].Dec)+"</td></tr>";
+                            table="<tr><td>"+getLocation[i].location_name+"</td><td>"+parseFloat(arrSummaryPerLocation[a].Jan).toFixed(2)+"</td><td>"+parseFloat(arrSummaryPerLocation[a].Feb).toFixed(2)+"</td><td>"+parseFloat(arrSummaryPerLocation[a].Mar).toFixed(2)+"</td><td>"+parseFloat(arrSummaryPerLocation[a].Apr).toFixed(2)+"</td><td>"+parseFloat(arrSummaryPerLocation[a].May).toFixed(2)+"</td><td>"+parseFloat(arrSummaryPerLocation[a].Jun).toFixed(2)+"</td><td>"+parseFloat(arrSummaryPerLocation[a].Jul).toFixed(2)+"</td><td>"+parseFloat(arrSummaryPerLocation[a].Aug).toFixed(2)+"</td><td>"+parseFloat(arrSummaryPerLocation[a].Sep).toFixed(2)+"</td><td>"+parseFloat(arrSummaryPerLocation[a].Oct).toFixed(2)+"</td><td>"+parseFloat(arrSummaryPerLocation[a].Nov).toFixed(2)+"</td><td>"+parseFloat(arrSummaryPerLocation[a].Dec).toFixed(2)+"</td></tr>";
                             a++;
                         }else{
                             table="<tr><td>"+getLocation[i].location_name+"</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>";

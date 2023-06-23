@@ -76,8 +76,7 @@ class ReportModel extends Model
         ->join('setup_region','setup_location.region_id','=','setup_region.id')
         ->join('setup_project','setup_project.project_code','=','setup_region.project_code')
         ->join('m_client','m_client.id','=','setup_project.client_id')
-        ->leftJoin('evaluation_critic_recommend','evaluation_critic_recommend.id_header','=','header_evaluation.id_header')
-        ->select(DB::Raw('AVG(score) AS score'),'m_client.client_name','project_name','location_name','evaluation_critic_recommend.critic_recommend');
+        ->select(DB::Raw('AVG(score) AS score'),'m_client.client_name','project_name','location_name','critic_recommend');
         if($project_code != ""){
             $query_avg_score = $query_avg_score->where('setup_project.project_code',$project_code);
         }
@@ -92,5 +91,29 @@ class ReportModel extends Model
 
         $query_avg_score = $query_avg_score->first();
         return $query_avg_score;
+    }
+
+    static function getScoreM($project_code,$bulan,$tahun,$score){
+        $query = DB::table('header_set_score')
+        ->join('detail_set_score_per_project','header_set_score.id_header','=','detail_set_score_per_project.id_header')
+        ->where('project_code',$project_code)
+        ->whereRaw("period_date IN(SELECT MAX(period_date) FROM header_set_score WHERE DATE_FORMAT(period_date,'%b') = \"$bulan\" AND DATE_FORMAT(period_date,'%Y') = \"$tahun\" AND CEIL(score) >= \"$score\" GROUP BY project_code,DATE_FORMAT(period_date,'%m'))GROUP BY score ASC1")->first();
+        return $query;
+    }
+
+    static function getScoreM_var2($project_code,$bulan,$tahun,$score){
+        $query = DB::table('header_set_score')
+        ->join('detail_set_score_per_project','header_set_score.id_header','=','detail_set_score_per_project.id_header')
+        ->where('project_code',$project_code)
+        ->whereRaw("period_date IN(SELECT MAX(period_date) FROM header_set_score WHERE DATE_FORMAT(period_date,'%m') = \"$bulan\" AND DATE_FORMAT(period_date,'%Y') = \"$tahun\" AND CEIL(score) >= \"$score\" GROUP BY project_code,DATE_FORMAT(period_date,'%m'))GROUP BY score ASC")->first();
+        return $query;
+    }
+
+    static function getListCategoryPerPeriodDate($project_code,$bulan,$tahun){
+        $query = DB::table('header_set_score')
+        ->join('detail_set_score_per_project','header_set_score.id_header','=','detail_set_score_per_project.id_header')
+        ->where('project_code',$project_code)
+        ->whereRaw("period_date IN(SELECT MAX(period_date) FROM header_set_score WHERE DATE_FORMAT(period_date,'%b') = \"$bulan\" AND DATE_FORMAT(period_date,'%Y') = \"$tahun\" GROUP BY project_code,DATE_FORMAT(period_date,'%m'))GROUP BY score ASC")->get();
+        return $query;
     }
 }

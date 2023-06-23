@@ -1,3 +1,18 @@
+@php
+use App\Models\ReportModel;
+function getInitial($score,$list_category){
+	foreach($list_category as $row){
+		if($row['score'] == $score){
+			echo $row['category'];
+		}
+	}
+}
+
+function getInitialByModel($project_code,$month,$year,$score){
+	$rating = ReportModel::getScoreM($project_code,$month,$year,$score);
+	return $rating->initial;
+}
+@endphp
 <!DOCTYPE html>
 <html>
 <head>
@@ -63,17 +78,7 @@
                     <tr style="background-color:red">
                         <td colspan="2">{{ $row_service->service_name }}</td>
                         <td>{{ floatval($row_service->score) }} %</td>
-                        <td>
-                            @if($row_service->score >= 0 && $row_service->score <= 74)
-                                KB
-                            @elseif($row_service->score >= 75 && $row_service->score <= 89)
-                                CB
-                            @elseif($row_service->score >= 90 && $row_service->score <= 96)
-                                B
-                            @elseif($row_service->score >= 97)
-                                SB
-                            @endif
-                        </td>
+                        <td>{{ getInitialByModel($project_code,$month,$year,$row_service->score) }}</td>
                     </tr>
                         @foreach($data as $row_sub_area)
                             @if($row_sub_area->service_code == $row_service->service_code)
@@ -82,26 +87,15 @@
                                 <td>{{ $row_sub_area->sub_area_name }}</td>
                                 <td>{{ floatval($row_sub_area->score) }} %</td>
                                 <td>
-									@if($row_sub_area->score >= 0 && $row_sub_area->score <=74)
-										KB
-									@elseif($row_sub_area->score >= 75 && $row_sub_area->score <= 89)
-										CB
-									@elseif($row_sub_area->score >= 90 && $row_sub_area->score <= 96)
-										B
-									@elseif($row_sub_area->score >= 97)
-										SB
-									@endif
+									{{ getInitial($row_sub_area->score,$arr_category) }}
                                 </td>
                             </tr>
+							@php $i++ @endphp
                             @endif
-                        @php $i++ @endphp
                         @endforeach
                     @endforeach
 				</tbody>
 			</table>
-		</div>
-		<div class="row">
-			Recommendation/Critics : <p><strong>{{ $critic_recommend; }}</strong></p>
 		</div>
     </div>
     <div style="width:100%">
