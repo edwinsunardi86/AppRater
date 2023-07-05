@@ -204,6 +204,13 @@ $('#dateFormat').datetimepicker({
         format: 'L'
 });
 
+$('#startDateFormat').datetimepicker({
+        format: 'L'
+});
+$('#finishDateFormat').datetimepicker({
+        format: 'L'
+});
+
 $('#dateContract').daterangepicker({
   locale: {
     format:'YYYY/MM/DD'

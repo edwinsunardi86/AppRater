@@ -14,6 +14,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileUserController;
 use App\Http\Controllers\SetScoreController;
 use App\Http\Controllers\SignController;
+use App\Http\Controllers\TemplateAreaController;
 use App\Models\SetScoreModel;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
@@ -147,6 +148,11 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'evaluation'],fun
 
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'evaluation'],function(){
     Route::get('/',[EvaluationController::class,'index']);
+});
+
+Route::group(['middleware'=>['auth','authorization'],'prefix'=>'template_area'],function(){
+    Route::get('/',[TemplateAreaController::class,'index']);
+    Route::get('/create',[TemplateAreaController::class,'create']);
 });
 
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'report'],function(){
