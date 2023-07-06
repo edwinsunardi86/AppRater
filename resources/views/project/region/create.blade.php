@@ -164,8 +164,8 @@ $(document).on('click','.pilih_client',function(){
             $('.tb_sub_area > tbody').empty();
             $('select#project_code option').remove();
             $('select#project_code').append($('<option>',{
-                    text:"Choice Project",
-                    value:""
+                    text: "Choice Project",
+                    value: ""
                 }));
             $.each(data,function(i,item){
                 $('select#project_code').append($('<option>',{

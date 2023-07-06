@@ -153,6 +153,7 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'evaluation'],fun
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'template_area'],function(){
     Route::get('/',[TemplateAreaController::class,'index']);
     Route::get('/create',[TemplateAreaController::class,'create']);
+    Route::post('/storeDataTemplateArea',[TemplateAreaController::class,'storeDataTemplateArea']);
 });
 
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'report'],function(){

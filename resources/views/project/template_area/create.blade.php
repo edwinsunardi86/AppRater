@@ -28,7 +28,7 @@
                             <h3 class="card-title">Template Area</h3>
                         </div>
                         <div class="card-body">
-                            <form method="post" id="form_template" class="form-horizontal">
+                            <form method="post" id="form_template" class="form-horizontal" onsubmit="return false">
                                 <div class="form-group row">
                                     <label for="inputClientName" class="col-sm-2 col-form-label">Client Name</label>
                                     <div class="col-sm-4">
@@ -37,12 +37,6 @@
                                     </div>
                                     <div class="col-sm-2">
                                         <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#modal-xl">Cari</button>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="inputClientDescription" class="col-sm-2 col-form-label">Client Description</label>
-                                    <div class="col-sm-4">
-                                        <textarea class="form-control" name="client_description" id="client_description" rows="5" readonly></textarea>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -55,14 +49,14 @@
                                 <div class="form-group row">
                                     <label for="StartDate" class="col-sm-2 col-form-label">Start Date</label>
                                     <div class="col-sm-2 input-group date" id="startDateFormat" data-target-input="nearest">
-                                        <input type="text" class="form-control datetimepicker-input" id="Start Date" name="Start Date" data-target="#startDateFormat"/>
+                                        <input type="text" class="form-control datetimepicker-input" id="start_date" name="start_date" data-target="#startDateFormat"/>
                                         <div class="input-group-append" data-target="#startDateFormat" data-toggle="datetimepicker">
                                             <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                         </div>
                                     </div>
-                                    <label for="StartDate" class="col-sm-2 col-form-label">Finish Date</label>
+                                    <label for="StartDate" class="col-sm-1 col-form-label">Finish Date</label>
                                     <div class="col-sm-2 input-group date" id="finishDateFormat" data-target-input="nearest">
-                                        <input type="text" class="form-control datetimepicker-input" id="Finish Date" name="Finish Date" data-target="#finishDateFormat"/>
+                                        <input type="text" class="form-control datetimepicker-input" id="finish_date" name="finish_date" data-target="#finishDateFormat"/>
                                         <div class="input-group-append" data-target="#finishDateFormat" data-toggle="datetimepicker">
                                             <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                         </div>
@@ -86,10 +80,10 @@
                                     <div class="form-group row">
                                         <label for="AreaName1" class="col-sm-2 col-form-label">Area Name 1</label>
                                         <div class="col-sm-2">
-                                            <input type="text" name="AreaName[]" id="AreaName1" class="form-control form-control-sm"/>
+                                            <input type="text" name="AreaName[]" id="AreaName1" data-input-area="1" class="form-control form-control-sm"/>
                                         </div>
                                     </div>
-                                    <button type="button" class="btn bg-purple btn-sm mb-2" id="add_sub_area1" data-iterate_sub_area="1">Add Sub Area</button>
+                                    <button type="button" class="btn bg-purple btn-sm mb-2" id="add_sub_area1" data-iterate-area="1">Add Sub Area</button>
                                     <div class="row">
                                         <table class="table table-striped table-bordered" id="area1Table_sub_area" data-iterate-table_sub_area="1" style="width:50%">
                                             <thead>
@@ -97,12 +91,13 @@
                                                 <th>Action</th>
                                             </thead>
                                             <tr>
-                                                <td><input type="text" class="form-control form-control-sm" name="Area1subAreaName1[]" id="Area1subAreaName1"></td>
+                                                <td><input type="text" class="form-control form-control-sm" name="area1subAreaName[]" id="area1subAreaName1"></td>
                                                 <td></td>
                                             </tr>
                                         </table>
                                     </div>
                                 </div>
+                                <button type="submit" class="btn btn-primary btn-md">Submit</button>
                             </form>
                         </div>
                     </div>
@@ -295,7 +290,7 @@ $(document).on('change','#region_name',function(){
 counter_sub_area = 2;
 $(document).on('click','#add_sub_area1',function(){
         var newRow = $("<tr>");
-        var cols = "<td><input type=\"text\" class=\"form-control form-control-sm\" name=\"area1subAreaName"+counter_sub_area+"[]\" id=\"area1subAreaName"+counter_sub_area+"\"></td>"+
+        var cols = "<td><input type=\"text\" class=\"form-control form-control-sm\" name=\"area1subAreaName[]\" id=\"area1subAreaName"+counter_sub_area+"\"></td>"+
         "<td><button type=\"button\" class=\"btn btn-danger btn-sm\" id=\"deleteArea1RowSubArea"+counter_sub_area+"\">Hapus</button></td>";
         newRow.append(cols);
         $("#area1Table_sub_area").append(newRow);
@@ -307,17 +302,18 @@ $(document).on('click','#add_sub_area1',function(){
 
 counter_area = 2;
 $(document).on('click','.btn_add_area',function(){
+    
     var add_area = $('.add_area');
     var area = "<div id=\"div_area"+counter_area+"\"><hr/><div class=\"form-group row\">"+
                 "<label for=\"AreaName1\" class=\"col-sm-2 col-form-label\">Area Name "+counter_area+"</label>"+
                 "<div class=\"col-sm-2\">"+
-                    "<input type=\"text\" name=\"AreaName[]\" id=\"AreaName"+counter_area+"\" class=\"form-control form-control-sm\"/>"+
+                    "<input type=\"text\" name=\"AreaName[]\" id=\"AreaName"+counter_area+"\" class=\"form-control form-control-sm\" data-input-area="+counter_area+" />"+
                 "</div>"+
                 "<div class=\"col-sm-2\">"+
                 "<button type=\"button\" class=\"btn btn-danger btn-sm\" id=\"deleteArea"+counter_area+"\" data-iterate="+counter_area+">Hapus</button>"+
                 "</div>"+
             "</div>"+
-            "<button type=\"button\" class=\"btn bg-purple btn-sm mb-2\" id=\"add_sub_area"+counter_area+"\" data-iterate-sub_area="+counter_area+">Add Sub Area</button>"+
+            "<button type=\"button\" class=\"btn bg-purple btn-sm mb-2\" id=\"add_sub_area"+counter_area+"\" data-iterate-area=\""+counter_area+"\">Add Sub Area</button>"+
         "<div class=\"row\">"+
         "<table class=\"table table-striped table-bordered table_sub_area\" id=\"area"+counter_area+"Table_sub_area\" data-iterate-table_sub_area="+counter_area+" style=\"width:50%\">"+
             "<thead>"+
@@ -326,7 +322,7 @@ $(document).on('click','.btn_add_area',function(){
             "</thead>"+
             "<tbody>"+
                 "<tr>"+
-                    "<td><input type=\"text\" class=\"form-control form-control-sm\" name=\"area"+counter_area+"subAreaName1[]\" id=\"area"+counter_area+"subAreaName1\"></td>"+
+                    "<td><input type=\"text\" class=\"form-control form-control-sm\" name=\"area"+counter_area+"subAreaName[]\" id=\"area"+counter_area+"subAreaName1\"></td>"+
                     "<td></td>"+
                 "</tr>"+
             "</tbody>"+
@@ -336,22 +332,127 @@ $(document).on('click','.btn_add_area',function(){
     $(document).on('click','#deleteArea'+counter_area,function(){
         var dataIterateArea = $(this).attr('data-iterate');
         $('#div_area'+dataIterateArea).remove();
+        counter_area--;
     })
+    counter_area++;
     add_area.append(area);
     pass_counter_area = counter_area;
-    $(document).on('click','#add_sub_area'+counter_area,function(){
-        var dataIterate = $(this).attr("data-iterate-sub_area");
+    $(document).on('click','#add_sub_area'+(counter_area-1),function(){
+        var dataIterate = $(this).attr("data-iterate-area");
         var newRow = $("<tr>");
-        var cols = "<td><input type=\"text\" class=\"form-control form-control-sm\" name=\"area"+pass_counter_area+"subAreaName"+dataIterate+"[]\" id=\"area"+pass_counter_area+"subAreaName"+dataIterate+"\"></td>"+
+        var cols = "<td><input type=\"text\" class=\"form-control form-control-sm\" name=\"area"+pass_counter_area+"subAreaName[]\" id=\"area"+pass_counter_area+"subAreaName"+dataIterate+"\"></td>"+
         "<td><button type=\"button\" class=\"btn btn-danger btn-sm\" id=\"deleteArea"+pass_counter_area+"RowSubArea"+dataIterate+"\">Hapus</button></td>";
         newRow.append(cols);
-        var pass_counter_area2 = pass_counter_area; 
+        var pass_counter_area2 = pass_counter_area;
         $("#area"+dataIterate+"Table_sub_area").append(newRow);
         $("#area"+dataIterate+"Table_sub_area").on("click","#deleteArea"+pass_counter_area2+"RowSubArea"+dataIterate,function(){
             $(this).closest("tr").remove();
         });
     });
-    counter_area++;
 });
+$(document).ready(function(){
+    $('#form_template').validate({
+        rules: {
+            client_name:{
+                required:true,
+            },
+            project_code:{
+                required:true
+            },
+            start_date:{
+                required:true
+            },
+            finish_date:{
+                required:true
+            },
+            region_name:{
+                required:true
+            },
+            location_name:{
+                required:true
+            }
+        },
+        messages:{
+            client_name:{
+                required:"Please input client name"
+            },
+            project_code:{
+                required:"Please input project code"
+            },
+            start_date:{
+                required:"Please input start date"
+            },
+            finish_date:{
+                required:"Please input finish_date"
+            },
+            region_name:{
+                required:"Please input region_name"
+            },
+            location_name:{
+                required:"Please input location name"
+            },
+        },
+        errorElement: 'span',
+            errorPlacement: function (error, element) {
+            error.addClass('invalid-feedback');
+            element.closest('.form-group').append(error);
+        },
+        highlight: function (element, errorClass, validClass) {
+            $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element, errorClass, validClass) {
+            $(element).removeClass('is-invalid');
+        },
+        submitHandler: function() {
+            var last_counter_area = counter_area-1;
+            var dataPushArea = [];
+            
+            $('input[name="AreaName[]"]').each(function(i,item){
+                const arrDataArea = [];
+                var dataArea = $(this).attr('data-input-area');
+                var areaName = $(this).val();
+                arrDataArea.push({ 'areaName' : areaName });
+                // arrDataArea.set('areaName', areaName);
+                var dataPushSubArea = new Array();
+                
+                $("input[name=\"area"+dataArea+"subAreaName[]\"]").each(function(a,item){
+                    var subAreaName = $(this).val();
+                    // arrDataArea = subAreaName;
+                    dataPushSubArea.push({'sub_area_name' : subAreaName});
+                    // arrDataArea.set('data',dataPushSubArea);
+                    
+                    // const data
+                });
+                arrDataArea.push({'data':dataPushSubArea});
+                dataPushArea.push(arrDataArea)
+            });
+            // console.log(dataPushArea);
+            // var formData = new FormData();
+            // formData.append('arr_data',dataPushArea);
+            $.ajax({
+                headers:{
+                    'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+                },
+                url:'/template_area/storeDataTemplateArea',
+                type:"POST",
+                dataType:"JSON",
+                async:false,
+                processData:true,
+                data:{
+                    'location_id':$('#location_name').val(),
+                    'start_date':$('#start_date').val(),
+                    'finish_date':$('#finish_date').val(),
+                    'arr_data':dataPushArea,
+                    _token: '{{csrf_token()}}'
+                },
+                success:function(data){
+
+                }
+            });
+        }
+        
+    });
+});
+
 </script>
 @endsection
