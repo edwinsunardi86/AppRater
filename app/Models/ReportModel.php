@@ -97,7 +97,7 @@ class ReportModel extends Model
         $query = DB::table('header_set_score')
         ->join('detail_set_score_per_project','header_set_score.id_header','=','detail_set_score_per_project.id_header')
         ->where('project_code',$project_code)
-        ->whereRaw("period_date IN(SELECT MAX(period_date) FROM header_set_score WHERE DATE_FORMAT(period_date,'%b') = \"$bulan\" AND DATE_FORMAT(period_date,'%Y') = \"$tahun\" AND CEIL(score) >= \"$score\" GROUP BY project_code,DATE_FORMAT(period_date,'%m'))GROUP BY score")->first();
+        ->whereRaw("period_date IN(SELECT MAX(period_date) FROM header_set_score WHERE DATE_FORMAT(period_date,'%b') >= \"$bulan\" AND DATE_FORMAT(period_date,'%Y') = \"$tahun\" AND CEIL(score) >= \"$score\" GROUP BY project_code,DATE_FORMAT(period_date,'%m'))GROUP BY score")->first();
         return $query;
     }
 
@@ -105,7 +105,7 @@ class ReportModel extends Model
         $query = DB::table('header_set_score')
         ->join('detail_set_score_per_project','header_set_score.id_header','=','detail_set_score_per_project.id_header')
         ->where('project_code',$project_code)
-        ->whereRaw("period_date IN(SELECT MAX(period_date) FROM header_set_score WHERE DATE_FORMAT(period_date,'%m') = \"$bulan\" AND DATE_FORMAT(period_date,'%Y') = \"$tahun\" AND CEIL(score) >= \"$score\" GROUP BY project_code,DATE_FORMAT(period_date,'%m'))GROUP BY score")->first();
+        ->whereRaw("period_date IN(SELECT MAX(period_date) FROM header_set_score WHERE DATE_FORMAT(period_date,'%m') >= \"$bulan\" AND DATE_FORMAT(period_date,'%Y') = \"$tahun\" AND CEIL(score) >= \"$score\" GROUP BY project_code,DATE_FORMAT(period_date,'%m'))GROUP BY score")->first();
         return $query;
     }
 
@@ -113,7 +113,7 @@ class ReportModel extends Model
         $query = DB::table('header_set_score')
         ->join('detail_set_score_per_project','header_set_score.id_header','=','detail_set_score_per_project.id_header')
         ->where('project_code',$project_code)
-        ->whereRaw("period_date IN(SELECT MAX(period_date) FROM header_set_score WHERE DATE_FORMAT(period_date,'%b') = \"$bulan\" AND DATE_FORMAT(period_date,'%Y') = \"$tahun\" GROUP BY project_code,DATE_FORMAT(period_date,'%m'))GROUP BY score ASC")->get();
+        ->whereRaw("period_date IN(SELECT MAX(period_date) FROM header_set_score WHERE DATE_FORMAT(period_date,'%b') >= \"$bulan\" AND DATE_FORMAT(period_date,'%Y') = \"$tahun\" GROUP BY project_code,DATE_FORMAT(period_date,'%m'))GROUP BY score")->get();
         return $query;
     }
 }

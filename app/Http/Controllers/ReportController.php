@@ -106,7 +106,7 @@ class ReportController extends Controller
         $sql_work_day = "SELECT (DATEDIFF('$find_last_date','$year-$month-01'))-((WEEK('$find_last_date')-WEEK('$year-$month-01'))*2) - (CASE WHEN WEEKDAY('$find_last_date') = 6 THEN 1 ELSE 0 END) - (CASE WHEN WEEKDAY('$find_last_date') = 5 THEN 1 ELSE 0 END) AS work_day";
         $work_days = DB::select($sql_work_day);
 
-        $query_avg_score = DB::table('evaluation')
+        $query_avg_score = DB::table('score_evaluation')
         ->join('setup_sub_area','setup_sub_area.id','=','evaluation.sub_area_id')
         ->join('setup_area','setup_area.id','=','setup_sub_area.area_id')
         ->join('setup_location','setup_area.location_id','=','setup_location.id')
@@ -116,7 +116,7 @@ class ReportController extends Controller
         ->select(DB::Raw('AVG(score) AS score'),'m_client.client_name')
         ->where('setup_project.project_code',$project_code)
         ->first();
-
+        //var_dump($query_avg_score);
         $approval = ReportModel::getDataPICnCLientPerPeriodProject($project_code,$location_id,$month,$year);
         // $approval->clie
         // var_dump($approval); die();
@@ -131,26 +131,28 @@ class ReportController extends Controller
         //     $rating = 'SB';
         // }
         $rating = ReportModel::getScoreM($project_code,$month,$year,$query_avg_score->score);
+        // var_dump($rating);
 
         $datetime_client = date_create($approval[0]->sign_date_client);
         $date_client = date_format($datetime_client,'d F Y');
-        // $pdf = PDF::loadView('pdf.documentScoreSatisfaction',[
-        //     'query'                 =>  $data,
-        //     'year'                  =>  $year,
-        //     'month'                 =>  $month,
-        //     'first_date'            =>  $first_date,
-        //     'last_date'             =>  $last_date,
-        //     'first_week'            =>  $first_week,
-        //     'last_week'             =>  $last_week,
-        //     'work_days'             =>  $work_days,
-        //     'avg_score_location'    =>  $query_avg_score,
-        //     'rating'                =>  $rating->initial,
-        //     'user_client'           =>  $approval[0]->nama_user_client,
-        //     'user_pic'              =>  $approval[0]->nama_user_pic,
-        //     'sign_client'           =>  $approval[0]->sign_client,
-        //     'date_client'           =>  $date_client
-        // ]);
-        // return $pdf->stream();
+        $pdf = PDF::loadView('pdf.documentScoreSatisfaction',[
+            'query'                 =>  $data,
+            'year'                  =>  $year,
+            'month'                 =>  $month,
+            'first_date'            =>  $first_date,
+            'last_date'             =>  $last_date,
+            'first_week'            =>  $first_week,
+            'last_week'             =>  $last_week,
+            'work_days'             =>  $work_days,
+            'avg_score_location'    =>  $query_avg_score,
+            'rating'                =>  $rating->initial,
+            'user_client'           =>  $approval[0]->nama_user_client,
+            'user_pic'              =>  $approval[0]->nama_user_pic,
+            'sign_client'           =>  $approval[0]->sign_client,
+            'date_client'           =>  $date_client
+        ]);
+        ob_end_clean();
+        return $pdf->stream();
     }
 
     function approvalByClient(Request $request){
