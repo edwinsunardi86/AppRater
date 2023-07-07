@@ -22,7 +22,8 @@ class TemplateAreaController extends Controller
     }
 
     function storeDataTemplateArea(Request $request){
-        // var_dump($request->arr_data[0][1]['data']);
+        // var_dump($request->arr_data[0][1]['data'][0]); die();
+        //echo count($request->arr_data[0][1]['data']); die();
         // var_dump($request->arr_data[0][0]);
         // echo $request->arr_data[0][0]['areaName'];
         // echo count($request->arr_data);
@@ -38,14 +39,13 @@ class TemplateAreaController extends Controller
         );
         // check periode tanggal bila ada data location id yang sama dengan input
         $checkConflictPeriod = TemplateAreaModel::getConflictPeriodPerlocationId($request->location_id,$start_date);
-        echo $checkConflictPeriod->count(); die();
         if($checkConflictPeriod->count() > 0){
-            $confirmation = ['message' => 'There is your period conflict', 'icon' => 'success', 'redirect' => '/template_area/create'];
-            echo 'dup';
+            $confirmation = ['message' => 'There is your period conflict', 'icon' => 'error', 'is_valid' => '0'];
         }else{
-            $max_id = TemplateAreaModel::getMaxHeaderTemplate();
+            $max_header = TemplateAreaModel::getMaxIdHeaderTemplate();
+            $max_header = $max_header->max_id == null ? 1 : $max_header->max_id+1;
             $post_header = array(
-                'id'            => $max_id->max_id == null ? 1 : $max_id->max_id+1,
+                'id'            => $max_header,
                 'location_id'   => $request->location_id,
                 'start_date'    => $start_date,
                 'finish_date'   => $finish_date,
@@ -53,13 +53,27 @@ class TemplateAreaController extends Controller
             );
 
             TemplateAreaModel::insert_header_template($post_header);
-            $i = 0;
             for($i = 0 ; $i < count($request->arr_data); $i++){
-                echo $request->arr_data[$i][0]['areaName'];
+                $max_id_area = TemplateAreaModel::getMaxIdTemplateArea();
+                $max_id_area = $max_id_area->max_id == null ? 1 : $max_id_area->max_id+1;
+                $post_area = array(
+                    'id_header' => $max_header,
+                    'id'        => $max_id_area,
+                    'area_name' => $request->arr_data[$i][0]['areaName']
+                );
+                TemplateAreaModel::insert_template_area($post_area);
+                $getSubAreaName = $request->arr_data[$i][1]['data'];
+                var_dump($getSubAreaName);
+                foreach($getSubAreaName as $row){
+                    $post_sub_area = array(
+                        'id_area'=>$max_id_area,
+                        'sub_area_name'=>$row['sub_area_name']
+                    );
+                    TemplateAreaModel::insert_template_sub_area($post_sub_area);
+                }               
             }
+            $confirmation = ['message' => 'Insert Template Area Success', 'icon' => 'success', 'is_valid' => '0','redirect' => '/template_area/create'];
         }
-
-       
-        
+        return response()->json($confirmation);
     }
 }

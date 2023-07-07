@@ -21,8 +21,22 @@ class TemplateAreaModel extends Model
         return $query;
     }
 
-    static function getMaxHeaderTemplate(){
+    static function getMaxIdHeaderTemplate(){
         $query = DB::table('header_template')->select(DB::raw('MAX(id) AS max_id'))->first();
         return $query;
+    }
+
+    static function insert_template_area($post){
+        $query = DB::table('template_area')->insert($post);
+        return $query;
+    }
+
+    static function getMaxIdTemplateArea(){
+        $query = DB::table('template_area')->select(DB::raw('MAX(id) AS max_id'))->first();
+        return $query;
+    }
+
+    static function insert_template_sub_area($post){
+        $query = DB::table('template_sub_area')->insert($post);
     }
 }

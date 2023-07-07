@@ -301,8 +301,8 @@ $(document).on('click','#add_sub_area1',function(){
     });
 
 counter_area = 2;
+counter_sub_area=2;
 $(document).on('click','.btn_add_area',function(){
-    
     var add_area = $('.add_area');
     var area = "<div id=\"div_area"+counter_area+"\"><hr/><div class=\"form-group row\">"+
                 "<label for=\"AreaName1\" class=\"col-sm-2 col-form-label\">Area Name "+counter_area+"</label>"+
@@ -328,19 +328,19 @@ $(document).on('click','.btn_add_area',function(){
             "</tbody>"+
         "</table>"+
     "</div></div>";
-    
     $(document).on('click','#deleteArea'+counter_area,function(){
         var dataIterateArea = $(this).attr('data-iterate');
         $('#div_area'+dataIterateArea).remove();
         counter_area--;
     })
-    counter_area++;
+    
     add_area.append(area);
-    pass_counter_area = counter_area;
-    $(document).on('click','#add_sub_area'+(counter_area-1),function(){
+    var pass_counter_area;
+    counter_sub_area = 2;
+    $(document).on('click','#add_sub_area'+counter_area,function(){
         var dataIterate = $(this).attr("data-iterate-area");
         var newRow = $("<tr>");
-        var cols = "<td><input type=\"text\" class=\"form-control form-control-sm\" name=\"area"+pass_counter_area+"subAreaName[]\" id=\"area"+pass_counter_area+"subAreaName"+dataIterate+"\"></td>"+
+        var cols = "<td><input type=\"text\" class=\"form-control form-control-sm\" name=\"area"+pass_counter_area+"subAreaName[]\" id=\"area"+pass_counter_area+"subAreaName"+counter_sub_area+"\"></td>"+
         "<td><button type=\"button\" class=\"btn btn-danger btn-sm\" id=\"deleteArea"+pass_counter_area+"RowSubArea"+dataIterate+"\">Hapus</button></td>";
         newRow.append(cols);
         var pass_counter_area2 = pass_counter_area;
@@ -348,7 +348,10 @@ $(document).on('click','.btn_add_area',function(){
         $("#area"+dataIterate+"Table_sub_area").on("click","#deleteArea"+pass_counter_area2+"RowSubArea"+dataIterate,function(){
             $(this).closest("tr").remove();
         });
+        counter_sub_area++;
     });
+    pass_counter_area = counter_area;
+    counter_area=counter_area+1;
 });
 $(document).ready(function(){
     $('#form_template').validate({
@@ -446,7 +449,17 @@ $(document).ready(function(){
                     _token: '{{csrf_token()}}'
                 },
                 success:function(data){
-
+                    Swal.fire({
+                        title:data.title,
+                        html:data.message,
+                        icon:data.icon
+                    });
+                    if(data.is_valid == 1){
+                        setTimeout(() => {
+                            window.location.href=data.redirect;
+                        }, 1500);
+                    }
+                    
                 }
             });
         }

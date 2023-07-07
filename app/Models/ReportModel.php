@@ -47,8 +47,8 @@ class ReportModel extends Model
         $query = DB::table('report_summary_monthly_per_location')
         ->where('project_code','=',$project_code)
         ->where('location_id',$location_id)
-        ->where('year',$year)
-        ->where('month',$month)
+        ->whereRaw("DATE_FORMAT(appraisal_date,\"%Y\") = $year")
+        ->whereRaw("DATE_FORMAT(appraisal_date,\"%b\") = \"$month\"")
         ->select('sub_area_id','sub_area_name','service_code','service_name',DB::Raw("
         AVG(score) AS score"),'initial')
         ->groupBy('sub_area_id');
@@ -59,8 +59,8 @@ class ReportModel extends Model
         $query = DB::table('report_summary_monthly_per_location')
         ->where('project_code','=',$project_code)
         ->where('location_id',$location_id)
-        ->where('year',$year)
-        ->where('month',$month)
+        ->whereRaw("DATE_FORMAT(appraisal_date,\"%Y\") = \"$year\"")
+        ->whereRaw("DATE_FORMAT(appraisal_date,\"%b\") = \"$month\"")
         ->select('service_code','service_name',DB::Raw("
         AVG(score) AS score"))
         ->groupBy('service_code');

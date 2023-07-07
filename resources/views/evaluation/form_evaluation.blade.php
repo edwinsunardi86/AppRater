@@ -140,7 +140,8 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
-<script>
+<script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+<script> 
 @if(Auth::user()->role==1)
 $(document).ready(function(){
     var i = 1;
@@ -287,18 +288,21 @@ $(document).on('change','#region_name',function(){
 });
 
 var arr_choice = [];
-$(document).on('change','#location_name',function(){
+$(document).on('change','#location_name',getSubArea);
+
+function getSubArea(){
     var content = "";
     $.ajax({
         headers:{
             'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
         },
-        url:"/sub_area/getDataSubAreaSelected",
+        url:"/evaluation/getDataTemplateSubArea",
         type:"POST",
         async:true,
         dataType:"JSON",
         data:{
             location_id:$('#location_name').val(),
+            date_evaluation:$('#date_evaluation').val(),
             _token: '{{csrf_token()}}'
         },
         processData:true,
@@ -308,7 +312,7 @@ $(document).on('change','#location_name',function(){
             $('.tb_sub_area > tbody').empty();
             $.each(data,function(i,item){
                 if($('.'+data[i].service_code).attr('id') == data[i].service_code){
-                    var content = "<tr><td>"+data[i].area_name+"<input type=\"hidden\" name=\"area_id[]\" id=\"area_id"+a+"\" value="+data[i].area_id+"></td><td>"+data[i].sub_area_name+"<input type=\"hidden\" name=\"sub_area_id[]\" id=\"sub_area_id"+a+"\" value="+data[i].sub_area_id+"></td><td>"+
+                    var content = "<tr><td>"+data[i].area_name+"<input type=\"hidden\" name=\"area_id[]\" id=\"area_id"+a+"\" value="+data[i].id_area+"></td><td>"+data[i].sub_area_name+"<input type=\"hidden\" name=\"sub_area_id[]\" id=\"sub_area_id"+a+"\" value="+data[i].id_sub_area+"></td><td>"+
                     "<div class=\"col-sm-12\">"+
                         "<div class=\"form-group row clearfix\">";
                             $.each(arr_choice,function(i,item){
@@ -338,7 +342,13 @@ $(document).on('change','#location_name',function(){
             $('.rating-sub-area').append(rating_count);
         }
     });
+}
+
+$('#dateFormat').datetimepicker({
+        format: 'L',
 });
+
+$('#dateFormat').on('change.datetimepicker',getSubArea);
 @endif
 $(document).ready(function(){
     $('#form_evaluation').validate({

@@ -192,7 +192,14 @@
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
+<script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
 <script>
+$('#startDateFormat').datetimepicker({
+        format: 'L'
+});
+$('#finishDateFormat').datetimepicker({
+        format: 'L'
+});
 $(document).ready(function(){
 $( "li.item-a" )
   .closest( "ul" )

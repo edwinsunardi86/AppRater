@@ -309,7 +309,7 @@ $(document).on('change','#location_name',function(){
             $('#year_project').append($('<option>',{
                     value:"",
                     text:"Choice year project"
-                }));
+            }));
             $.each(data,function(i,item){
                 $('#year_project').append($('<option>',{
                     value:data[i].year_project,

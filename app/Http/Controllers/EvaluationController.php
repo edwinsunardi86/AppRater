@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\EvaluationModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\SetScoreModel;
+use App\Models\TemplateAreaModel;
 
 class EvaluationController extends Controller
 {
@@ -94,5 +96,12 @@ class EvaluationController extends Controller
     function setScoreCurrentActiveScoreInEvaluation(Request $request){
         $query_builder = SetScoreModel::getCurrentActiveByProject($request->project_code);
         return response()->json($query_builder);
+    }
+
+    function getDataTemplateSubArea(Request $request){
+        $exp_date_evaluation = explode("/",$request->date_evaluation);
+        $date = $exp_date_evaluation[2]."-".$exp_date_evaluation[0]."-".$exp_date_evaluation[1];
+        $getArea = EvaluationModel::getDataTemplateSubAreaPerPeriod($request->location_id,$date);
+        return response()->json($getArea);
     }
 }

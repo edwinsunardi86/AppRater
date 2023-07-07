@@ -148,6 +148,7 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'evaluation'],fun
 
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'evaluation'],function(){
     Route::get('/',[EvaluationController::class,'index']);
+    Route::post('/getDataTemplateSubArea',[EvaluationController::class,'getDataTemplateSubArea']);
 });
 
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'template_area'],function(){

@@ -188,7 +188,7 @@ $(document).ready(function(){
 
 <script src="/plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js"></script>
 <!-- Tempusdominus Bootstrap 4 -->
-<script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+{{-- <script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script> --}}
 <script src="/plugins/require/require.js"></script>
 <script>
 var Toast = Swal.mixin({
@@ -199,17 +199,6 @@ var Toast = Swal.mixin({
 });
 $('.select2').select2()
 $('[data-mask]').inputmask();
-//Date picker
-$('#dateFormat').datetimepicker({
-        format: 'L'
-});
-
-$('#startDateFormat').datetimepicker({
-        format: 'L'
-});
-$('#finishDateFormat').datetimepicker({
-        format: 'L'
-});
 
 $('#dateContract').daterangepicker({
   locale: {
