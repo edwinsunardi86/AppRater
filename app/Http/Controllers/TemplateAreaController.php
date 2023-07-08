@@ -59,11 +59,12 @@ class TemplateAreaController extends Controller
                 $post_area = array(
                     'id_header' => $max_header,
                     'id'        => $max_id_area,
-                    'area_name' => $request->arr_data[$i][0]['areaName']
+                    'area_name' => $request->arr_data[$i][0]['areaName'],
+                    'service_code' => $request->arr_data[$i][0]['serviceCode']
                 );
                 TemplateAreaModel::insert_template_area($post_area);
                 $getSubAreaName = $request->arr_data[$i][1]['data'];
-                var_dump($getSubAreaName);
+                // var_dump($getSubAreaName);
                 foreach($getSubAreaName as $row){
                     $post_sub_area = array(
                         'id_area'=>$max_id_area,
@@ -72,7 +73,7 @@ class TemplateAreaController extends Controller
                     TemplateAreaModel::insert_template_sub_area($post_sub_area);
                 }               
             }
-            $confirmation = ['message' => 'Insert Template Area Success', 'icon' => 'success', 'is_valid' => '0','redirect' => '/template_area/create'];
+            $confirmation = ['message' => 'Insert Template Area Success', 'icon' => 'success', 'is_valid' => '1','redirect' => '/template_area/create'];
         }
         return response()->json($confirmation);
     }

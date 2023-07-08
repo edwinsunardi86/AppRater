@@ -83,6 +83,12 @@
                                             <input type="text" name="AreaName[]" id="AreaName1" data-input-area="1" class="form-control form-control-sm"/>
                                         </div>
                                     </div>
+                                    <div class="form-group row">
+                                        <label for="AreaName1" class="col-sm-2 col-form-label">Service Name</label>
+                                        <div class="col-sm-2">
+                                            <select name="service_code[]" id="service_code1" class="form-control form-control-sm"></select>
+                                        </div>
+                                    </div>
                                     <button type="button" class="btn bg-purple btn-sm mb-2" id="add_sub_area1" data-iterate-area="1">Add Sub Area</button>
                                     <div class="row">
                                         <table class="table table-striped table-bordered" id="area1Table_sub_area" data-iterate-table_sub_area="1" style="width:50%">
@@ -143,8 +149,16 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
+<script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
 <script>
+
 $(document).ready(function(){
+    $('#startDateFormat').datetimepicker({
+        format: 'L',
+    });
+    $('#finishDateFormat').datetimepicker({
+        format: 'L',
+    });
     var i = 1;
     var tb_client = $('#table_client').DataTable({
         processing:true,
@@ -299,60 +313,86 @@ $(document).on('click','#add_sub_area1',function(){
         });
         counter_sub_area++;
     });
-
-counter_area = 2;
-counter_sub_area=2;
-$(document).on('click','.btn_add_area',function(){
-    var add_area = $('.add_area');
-    var area = "<div id=\"div_area"+counter_area+"\"><hr/><div class=\"form-group row\">"+
-                "<label for=\"AreaName1\" class=\"col-sm-2 col-form-label\">Area Name "+counter_area+"</label>"+
-                "<div class=\"col-sm-2\">"+
-                    "<input type=\"text\" name=\"AreaName[]\" id=\"AreaName"+counter_area+"\" class=\"form-control form-control-sm\" data-input-area="+counter_area+" />"+
-                "</div>"+
-                "<div class=\"col-sm-2\">"+
-                "<button type=\"button\" class=\"btn btn-danger btn-sm\" id=\"deleteArea"+counter_area+"\" data-iterate="+counter_area+">Hapus</button>"+
-                "</div>"+
-            "</div>"+
-            "<button type=\"button\" class=\"btn bg-purple btn-sm mb-2\" id=\"add_sub_area"+counter_area+"\" data-iterate-area=\""+counter_area+"\">Add Sub Area</button>"+
-        "<div class=\"row\">"+
-        "<table class=\"table table-striped table-bordered table_sub_area\" id=\"area"+counter_area+"Table_sub_area\" data-iterate-table_sub_area="+counter_area+" style=\"width:50%\">"+
-            "<thead>"+
-                "<th>Sub Area Name</th>"+
-                "<th>Action</th>"+
-            "</thead>"+
-            "<tbody>"+
-                "<tr>"+
-                    "<td><input type=\"text\" class=\"form-control form-control-sm\" name=\"area"+counter_area+"subAreaName[]\" id=\"area"+counter_area+"subAreaName1\"></td>"+
-                    "<td></td>"+
-                "</tr>"+
-            "</tbody>"+
-        "</table>"+
-    "</div></div>";
-    $(document).on('click','#deleteArea'+counter_area,function(){
-        var dataIterateArea = $(this).attr('data-iterate');
-        $('#div_area'+dataIterateArea).remove();
-        counter_area--;
-    })
-    
-    add_area.append(area);
-    var pass_counter_area;
-    counter_sub_area = 2;
-    $(document).on('click','#add_sub_area'+counter_area,function(){
-        var dataIterate = $(this).attr("data-iterate-area");
-        var newRow = $("<tr>");
-        var cols = "<td><input type=\"text\" class=\"form-control form-control-sm\" name=\"area"+pass_counter_area+"subAreaName[]\" id=\"area"+pass_counter_area+"subAreaName"+counter_sub_area+"\"></td>"+
-        "<td><button type=\"button\" class=\"btn btn-danger btn-sm\" id=\"deleteArea"+pass_counter_area+"RowSubArea"+dataIterate+"\">Hapus</button></td>";
-        newRow.append(cols);
-        var pass_counter_area2 = pass_counter_area;
-        $("#area"+dataIterate+"Table_sub_area").append(newRow);
-        $("#area"+dataIterate+"Table_sub_area").on("click","#deleteArea"+pass_counter_area2+"RowSubArea"+dataIterate,function(){
-            $(this).closest("tr").remove();
-        });
-        counter_sub_area++;
-    });
-    pass_counter_area = counter_area;
-    counter_area=counter_area+1;
+    var opt_service = "";
+    $.ajax({
+        headers:{
+                'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+        },
+        url:"/area/getDataService",
+        type:"GET",
+        dataType:"JSON",
+        processData:true,
+        success: function(data_service){
+            $.each(data_service,function(i,item){
+                    opt_service +="<option value="+data_service[i].service_code+">"+data_service[i].service_name+"</option>";
+            });
+            $('select#service_code1').append(opt_service);
+        },
+        complete: function(){
+            
+            counter_area = 2;
+            counter_sub_area=2;
+            $(document).on('click','.btn_add_area',function(){
+                var add_area = $('.add_area');
+                var area = "<div id=\"div_area"+counter_area+"\"><hr/><div class=\"form-group row\">"+
+                            "<label for=\"AreaName1\" class=\"col-sm-2 col-form-label\">Area Name "+counter_area+"</label>"+
+                            "<div class=\"col-sm-2\">"+
+                                "<input type=\"text\" name=\"AreaName[]\" id=\"AreaName"+counter_area+"\" class=\"form-control form-control-sm\" data-input-area="+counter_area+" />"+
+                            "</div>"+
+                            "<div class=\"col-sm-2\">"+
+                            "<button type=\"button\" class=\"btn btn-danger btn-sm\" id=\"deleteArea"+counter_area+"\" data-iterate="+counter_area+">Hapus</button>"+
+                            "</div>"+
+                        "</div>"+
+                        "<div class=\"form-group row\">"+
+                            "<label for=\"AreaName1\" class=\"col-sm-2 col-form-label\">Service Name</label>"+
+                            "<div class=\"col-sm-2\">"+
+                                "<select name\=\"service_code[]\" id=\"service_code"+counter_area+"\" class=\"form-control form-control-sm\"></select>"+
+                            "</div>"+
+                        "</div>"+
+                        "<button type=\"button\" class=\"btn bg-purple btn-sm mb-2\" id=\"add_sub_area"+counter_area+"\" data-iterate-area=\""+counter_area+"\">Add Sub Area</button>"+
+                    "<div class=\"row\">"+
+                    "<table class=\"table table-striped table-bordered table_sub_area\" id=\"area"+counter_area+"Table_sub_area\" data-iterate-table_sub_area="+counter_area+" style=\"width:50%\">"+
+                        "<thead>"+
+                            "<th>Sub Area Name</th>"+
+                            "<th>Action</th>"+
+                        "</thead>"+
+                        "<tbody>"+
+                            "<tr>"+
+                                "<td><input type=\"text\" class=\"form-control form-control-sm\" name=\"area"+counter_area+"subAreaName[]\" id=\"area"+counter_area+"subAreaName1\"></td>"+
+                                "<td></td>"+
+                            "</tr>"+
+                        "</tbody>"+
+                    "</table>"+
+                "</div></div>";
+                $(document).on('click','#deleteArea'+counter_area,function(){
+                    var dataIterateArea = $(this).attr('data-iterate');
+                    $('#div_area'+dataIterateArea).remove();
+                    counter_area--;
+                })
+                
+                add_area.append(area);
+                var pass_counter_area;
+                counter_sub_area = 2;
+                $(document).on('click','#add_sub_area'+counter_area,function(){
+                    var dataIterate = $(this).attr("data-iterate-area");
+                    var newRow = $("<tr>");
+                    var cols = "<td><input type=\"text\" class=\"form-control form-control-sm\" name=\"area"+pass_counter_area+"subAreaName[]\" id=\"area"+pass_counter_area+"subAreaName"+counter_sub_area+"\"></td>"+
+                    "<td><button type=\"button\" class=\"btn btn-danger btn-sm\" id=\"deleteArea"+pass_counter_area+"RowSubArea"+dataIterate+"\">Hapus</button></td>";
+                    newRow.append(cols);
+                    var pass_counter_area2 = pass_counter_area;
+                    $("#area"+dataIterate+"Table_sub_area").append(newRow);
+                    $("#area"+dataIterate+"Table_sub_area").on("click","#deleteArea"+pass_counter_area2+"RowSubArea"+dataIterate,function(){
+                        $(this).closest("tr").remove();
+                    });
+                    counter_sub_area++;
+                });
+                $('select#service_code'+counter_area).append(opt_service);
+                pass_counter_area = counter_area;
+                counter_area=counter_area+1;
+            });
+        }        
 });
+    
 $(document).ready(function(){
     $('#form_template').validate({
         rules: {
@@ -414,7 +454,8 @@ $(document).ready(function(){
                 const arrDataArea = [];
                 var dataArea = $(this).attr('data-input-area');
                 var areaName = $(this).val();
-                arrDataArea.push({ 'areaName' : areaName });
+                var serviceCode = $('#service_code'+dataArea).val();
+                arrDataArea.push({ 'areaName' : areaName,'serviceCode': serviceCode });
                 // arrDataArea.set('areaName', areaName);
                 var dataPushSubArea = new Array();
                 

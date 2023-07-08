@@ -140,8 +140,12 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
+
 <script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
-<script> 
+<script>
+$('#dateFormat').datetimepicker({
+        format: 'L',
+}); 
 @if(Auth::user()->role==1)
 $(document).ready(function(){
     var i = 1;
@@ -344,9 +348,7 @@ function getSubArea(){
     });
 }
 
-$('#dateFormat').datetimepicker({
-        format: 'L',
-});
+
 
 $('#dateFormat').on('change.datetimepicker',getSubArea);
 @endif
@@ -519,6 +521,7 @@ $(document).ready(function(){
             });
 
             var category_desc = "";
+            var arr_choice = [];
             $.each(arr_choice,function(i,item){
                 category_desc += arr_choice[i].category+" ("+arr_choice[i].initial+") : "+arr_choice[i].score+"% ";
                 if(arr_choice.length > (i+1)){

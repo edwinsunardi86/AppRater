@@ -199,12 +199,12 @@ class ReportController extends Controller
     }
 
     function getCategory(Request $request){
-        $getCategory = ReportModel::getScoreM($request->project_code,$request->bulan,$request->tahun,$request->score);
+        $getCategory = ReportModel::getScoreM($request->project_code,$request->month,$request->year,$request->score);
         return response()->json($getCategory);
     }
 
     function getCategory_var2(Request $request){
-        $getCategory = ReportModel::getScoreM_var2($request->project_code,$request->bulan,$request->tahun,$request->score);
+        $getCategory = ReportModel::getScoreM_var2($request->project_code,$request->month,$request->year,$request->score);
         return response()->json($getCategory);
     }
 }
