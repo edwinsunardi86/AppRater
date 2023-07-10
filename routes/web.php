@@ -142,7 +142,6 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'evaluation'],fun
     Route::get('/form_evaluation',[EvaluationController::class,'form_evaluation']);
     Route::get('/edit_evaluation',[EvaluationController::class,'edit_evaluation']);
     Route::post('/storeEvaluation',[EvaluationController::class,'store_evaluation']);
-    Route::post('/getYearEvaluationProjectPerLocation',[EvaluationController::class,'get_year_evaluation_project_per_location']);
     Route::post('/setScoreCurrentActiveScoreInEvaluation',[EvaluationController::class,'setScoreCurrentActiveScoreInEvaluation']);
 });
 
@@ -189,5 +188,6 @@ Route::get('/downloadPDFReportScorePerLocation/{project_code}/{location_id}/{mon
 Route::post('/getDataEvaluationProjectMonthlyPerYear',[DashboardController::class,'getDataEvaluationProjectMonthlyPerYear'])->middleware('auth');
 Route::post('/getDataSummaryMonthlyPerLocation',[DashboardController::class,'getDataSummaryMonthlyPerLocation'])->middleware('auth');
 Route::post('/getFilterLocation',[DashboardController::class,'getFilterLocation'])->middleware('auth');
-Route::post('/users/changePasswordByToken',[UserController::class,'changePasswordByToken']);
+Route::post('/users/changePasswordByToken',[UserController::class,'changePasswordByToken'])->middleware('auth');
+Route::post('/evaluation/getYearEvaluationProjectPerLocation',[EvaluationController::class,'get_year_evaluation_project_per_location'])->middleware('auth');
 

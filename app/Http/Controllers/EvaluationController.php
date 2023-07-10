@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\SetScoreModel;
-use App\Models\TemplateAreaModel;
+use Illuminate\Support\Facades\Mail;
 
 class EvaluationController extends Controller
 {
@@ -45,35 +45,35 @@ class EvaluationController extends Controller
             $insert_header = DB::table('header_evaluation')->insert($post_header);
             if(!$insert_header){
                 echo 'insert table header_evaluation failed'; die();
-            }
-            // $post_critic_recommend = array(
-            //     'id_header'         =>  $idHeader,
-            //     'critic_recommend'  =>  $request->recommend
-            // );
-            // $insert_evaluation_critic_recommend = DB::table('evaluation_critic_recommend')->insert($post_critic_recommend);
-            // if(!$insert_evaluation_critic_recommend){
-            //     echo 'insert table evaluation_critic_recommend failed'; die();
-            // }
-            for($i=0;$i<count($arr_sub_area_id);$i++){
-                $post = array(
-                    'id_header'         => $idHeader,
-                    'sub_area_id'       => $arr_sub_area_id[$i],
-                    'critic_recommend'  => $arr_recommend[$i],
-                    'score'             => $arr_score[$i],
-                    'created_by'        => Auth::id()
-                );
-                $insert_score_evaluation = DB::table('score_evaluation')->insert($post);
-                if(!$insert_score_evaluation){
-                    echo 'insert table header_evaluation failed'; die();
+            }else{
+                for($i=0;$i<count($arr_sub_area_id);$i++){
+                    $post = array(
+                        'id_header'         => $idHeader,
+                        'sub_area_id'       => $arr_sub_area_id[$i],
+                        'critic_recommend'  => $arr_recommend[$i],
+                        'score'             => $arr_score[$i],
+                        'created_by'        => Auth::id()
+                    );
+                    $insert_score_evaluation = DB::table('score_evaluation')->insert($post);
+                    if(!$insert_score_evaluation){
+                        echo 'insert table header_evaluation failed'; die();
+                    }
                 }
             }
+            
             if($insert_header && $insert_score_evaluation){
-                $confirmation = ['message' => 'Rating successfully added', 'icon' => 'success', 'redirect' => '/evaluation/form_evaluation']; 
+                $confirmation = ['message' => 'Rating successfully added', 'icon' => 'success', 'redirect' => '/evaluation/form_evaluation'];
+                $getDataClient = EvaluationModel::getDataClientByLocationId($request->location_id);
+                $data['client_name'] = $getDataClient->client_name;
+                $data['location_name'] = $getDataClient->location_name;
+                $data['rater'] = Auth::user()->fullname;
+                $data['date_appraisal'] = $request->date_evaluation;
+                $data['email'] = Auth::user()->email;
+                Mail::to($data['email'])->send(new \App\Mail\FormatEmail($data));
             }else{
                 $confirmation = ['message' => 'Rating failed added', 'icon' => 'error', 'redirect' => '/evaluation/form_evaluation']; 
             }
         }
-        
         return response()->json($confirmation);
     }
 

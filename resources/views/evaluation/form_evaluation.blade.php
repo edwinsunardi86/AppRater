@@ -559,47 +559,100 @@ $(document).ready(function(){
                         text:location[i].location_name
                     }));
                 });
-                var arr_choice = [];
-                $(document).on('change','#location_name',function(){
-                    var area = ['area'];
-                    var filter_area_sub_area = data.filter(location => location.location_id == $('#location_name').val());
-                    var a=1;
-                    $('.tb_sub_area > tbody').empty();
-                    $.each(filter_area_sub_area,function(i,item){
-                        if($('.'+filter_area_sub_area[i].service_code).attr('id') == filter_area_sub_area[i].service_code){
-                            var content = "<tr><td>"+data[i].area_name+"<input type=\"hidden\" name=\"area_id[]\" id=\"area_id"+a+"\" value="+data[i].area_id+"></td><td>"+data[i].sub_area_name+"<input type=\"hidden\" name=\"sub_area_id[]\" id=\"sub_area_id"+a+"\" value="+data[i].sub_area_id+"></td><td>"+
-                            "<div class=\"col-sm-12\">"+
-                                "<div class=\"form-group row clearfix\">";
-                                    $.each(arr_choice,function(z,item){
-                                        content+="<div class=\"icheck-primary d-inline m-1\">"+
-                                            "<div class=\"icheck-primary d-inline m-1\">"+
-                                                "<input class=\"score\" type=\"radio\" id=\"rating_"+z+"_"+a+"\" name=\"score"+a+"[]\" value="+arr_choice[z].score+">"+
-                                                    "<label for=\"rating_"+z+"_"+a+"\">"+arr_choice[z].initial+
-                                                    "</label>"+
+                // $(document).on('change','#location_name',function(){
+                //     var area = ['area'];
+                //     var filter_area_sub_area = data.filter(location => location.location_id == $('#location_name').val());
+                //     var a=1;
+                //     $('.tb_sub_area > tbody').empty();
+                //     $.each(filter_area_sub_area,function(i,item){
+                //         if($('.'+filter_area_sub_area[i].service_code).attr('id') == filter_area_sub_area[i].service_code){
+                //             var content = "<tr><td>"+data[i].area_name+"<input type=\"hidden\" name=\"area_id[]\" id=\"area_id"+a+"\" value="+data[i].area_id+"></td><td>"+data[i].sub_area_name+"<input type=\"hidden\" name=\"sub_area_id[]\" id=\"sub_area_id"+a+"\" value="+data[i].sub_area_id+"></td><td>"+
+                //             "<div class=\"col-sm-12\">"+
+                //                 "<div class=\"form-group row clearfix\">";
+                //                     $.each(arr_choice,function(z,item){
+                //                         content+="<div class=\"icheck-primary d-inline m-1\">"+
+                //                             "<div class=\"icheck-primary d-inline m-1\">"+
+                //                                 "<input class=\"score\" type=\"radio\" id=\"rating_"+z+"_"+a+"\" name=\"score"+a+"[]\" value="+arr_choice[z].score+">"+
+                //                                     "<label for=\"rating_"+z+"_"+a+"\">"+arr_choice[z].initial+
+                //                                     "</label>"+
+                //                                 "</div>"+
+                //                             "</div>";
+                //                     });
+                //                     content += "</div>"+
+                //                         "<div class=\"form-group\">"+
+                //                             "<label for=\"locationName\" class=\"col-sm-12 col-form-label\">Recommendation and critics</label>"+
+                //                             "<div class=\"col-sm-12\">"+
+                //                                 "<textarea id=\"recommend"+a+"\" name=\"recommend"+a+"[]\" class=\"form-control\" cols=\"30\" rows=\"3\"></textarea>"+
+                //                             "</div>"+
+                //                         "</div>"+
+                //                     "</div>"+
+                //                 "</td></tr>";
+                //             $('.'+filter_area_sub_area[i].service_code+" > tbody").append(content);
+                //         }
+                //         a++;
+                //     });
+                //     var rating_count="<input type=\"hidden\" name=\"count_sub_area\" id=\"count_sub_area\" value="+ parseInt(a-1) +">";
+                //     $('.rating-sub-area').append(rating_count);
+                // });
+                $(document).on('change','#location_name',getSubArea);
+                function getSubArea(){
+                    var content = "";
+                    $.ajax({
+                        headers:{
+                            'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+                        },
+                        url:"/evaluation/getDataTemplateSubArea",
+                        type:"POST",
+                        async:true,
+                        dataType:"JSON",
+                        data:{
+                            location_id:$('#location_name').val(),
+                            date_evaluation:$('#date_evaluation').val(),
+                            _token: '{{csrf_token()}}'
+                        },
+                        processData:true,
+                        success: function(data){
+                            $('#count_sub_area').remove();
+                            var a=1;
+                            $('.tb_sub_area > tbody').empty();
+                            $.each(data,function(i,item){
+                                if($('.'+data[i].service_code).attr('id') == data[i].service_code){
+                                    var content = "<tr><td>"+data[i].area_name+"<input type=\"hidden\" name=\"area_id[]\" id=\"area_id"+a+"\" value="+data[i].id_area+"></td><td>"+data[i].sub_area_name+"<input type=\"hidden\" name=\"sub_area_id[]\" id=\"sub_area_id"+a+"\" value="+data[i].id_sub_area+"></td><td>"+
+                                    "<div class=\"col-sm-12\">"+
+                                        "<div class=\"form-group row clearfix\">";
+                                            $.each(arr_choice,function(i,item){
+                                                content+="<div class=\"icheck-primary d-inline m-1\">"+
+                                                    "<div class=\"icheck-primary d-inline m-1\">"+
+                                                        "<input class=\"score\" type=\"radio\" id=\"rating_"+i+"_"+a+"\" name=\"score"+a+"[]\" value="+arr_choice[i].score+">"+
+                                                            "<label for=\"rating_"+i+"_"+a+"\">"+arr_choice[i].initial+
+                                                            "</label>"+
+                                                        "</div>"+
+                                                    "</div>";
+                                            });
+                                            content += "</div>"+
+                                                "<div class=\"form-group\">"+
+                                                    "<label for=\"locationName\" class=\"col-sm-12 col-form-label\">Recommendation and critics</label>"+
+                                                    "<div class=\"col-sm-12\">"+
+                                                        "<textarea id=\"recommend"+a+"\" name=\"recommend"+a+"[]\" class=\"form-control\" cols=\"30\" rows=\"3\"></textarea>"+
+                                                    "</div>"+
                                                 "</div>"+
-                                            "</div>";
-                                    });
-                                    content += "</div>"+
-                                        "<div class=\"form-group\">"+
-                                            "<label for=\"locationName\" class=\"col-sm-12 col-form-label\">Recommendation and critics</label>"+
-                                            "<div class=\"col-sm-12\">"+
-                                                "<textarea id=\"recommend"+a+"\" name=\"recommend"+a+"[]\" class=\"form-control\" cols=\"30\" rows=\"3\"></textarea>"+
                                             "</div>"+
-                                        "</div>"+
-                                    "</div>"+
-                                "</td></tr>";
-                            $('.'+filter_area_sub_area[i].service_code+" > tbody").append(content);
+                                            "</td></tr>";
+
+                                    $('.'+data[i].service_code+" > tbody").append(content);
+                                }
+                                a++;
+                            });
+                            var rating_count="<input type=\"hidden\" name=\"count_sub_area\" id=\"count_sub_area\" value="+ parseInt(a-1) +">";
+                            $('.rating-sub-area').append(rating_count);
                         }
-                        a++;
                     });
-                    var rating_count="<input type=\"hidden\" name=\"count_sub_area\" id=\"count_sub_area\" value="+ parseInt(a-1) +">";
-                    $('.rating-sub-area').append(rating_count);
-                });
+                }
             });
         });
     });
 
-    
+
 });
 @endif
 </script>

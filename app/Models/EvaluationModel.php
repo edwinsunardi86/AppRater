@@ -21,4 +21,15 @@ class EvaluationModel extends Model
         ->get();
         return $query;
     }
+
+    static function getDataClientByLocationId($location_id){
+        $query = DB::table('header_template')
+        ->join('setup_location','setup_location.id','=','header_template.location_id')
+        ->join('setup_region','setup_region.id','=','setup_location.region_id')
+        ->join('setup_project','setup_project.project_code','=','setup_region.project_code')
+        ->join('m_client','m_client.id','=','setup_project.client_id')
+        ->select('client_name','location_name')
+        ->where('setup_location.id',$location_id)->first();
+        return $query;
+    }
 }

@@ -30,6 +30,6 @@ class FormatEmail extends Mailable
     public function build()
     {
         // return $this->from('eslip@prohr.co.id','E-SLIP PROHR')->subject('E_SLIP '.date('M'))->view('emails.format_email',$this->details)->attachData($this->pdf->output(), "text.pdf");
-        return $this->from('no-reply@sos.co.id','App Satisfaction')->subject('No Reply')->view('emails.format_email',$this->details);
+        return $this->from('sos.report@sos.co.id','App Satisfaction')->subject('Input Satisfaction '.$this->details['location_name'].' - '.$this->details['rater'])->view('emails.format_email',$this->details);
     }
 }
