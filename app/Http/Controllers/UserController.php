@@ -306,7 +306,7 @@ class UserController extends Controller
                 $post = array('remember_token'=>$random_str);
                 DB::table('users')->where('email',$request->email)->update($post);
                 $details = ['title'=>"Forgot Password", 'encrypt'=>$random_str];
-                Mail::to($request->email)->send(new  \App\Mail\FormatEmail($details));
+                Mail::to($request->email)->send(new  \App\Mail\EmailForgetPassword($details));
                 $message = "Check your email";
                 $icon = "success";
             }else{
@@ -331,12 +331,12 @@ class UserController extends Controller
         return $randomString;
     }
 
-    function SessionForgetToPasswordchangePassword($id){
+    function SessionForgetToPasswordchangePassword($token){
         return view('setting.user.forget_password_to_change_password',[
             'active_gm' => 'User',
             'active_m'  => '/change_password',
             'title'     => 'Change Password',
-            'token'     =>  $id
+            'token_user'     =>  $token
         ]);
     }
 

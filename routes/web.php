@@ -36,7 +36,7 @@ Route::get('/', [LoginController::class,'index'])->middleware('guest')->name('lo
 Route::post('/login', [LoginController::class, 'authentication']);
 Route::post('/logout', [LoginController::class, 'signout'])->name('logout');
 Route::post('/forgotPassword',[UserController::class,'forgotPassword']);
-Route::get('/forgetChangePassword/{id}',[UserController::class,'SessionForgetToPasswordchangePassword']);
+Route::get('/forgetChangePassword/{token}',[UserController::class,'SessionForgetToPasswordchangePassword'])->middleware('guest');
 
 Route::get('/dashboard_v1', [DashboardController::class,'dashboard_v1'])->middleware('auth');
 Route::get('/linkstorage', function () {
@@ -151,6 +151,7 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'evaluation'],fun
 });
 
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'template_area'],function(){
+    Route::get('/getDataTableTemplateArea',[TemplateAreaController::class,'getDataTableTemplateArea'])->name('data_template_area');
     Route::get('/',[TemplateAreaController::class,'index']);
     Route::get('/create',[TemplateAreaController::class,'create']);
     Route::post('/storeDataTemplateArea',[TemplateAreaController::class,'storeDataTemplateArea']);
@@ -188,6 +189,5 @@ Route::get('/downloadPDFReportScorePerLocation/{project_code}/{location_id}/{mon
 Route::post('/getDataEvaluationProjectMonthlyPerYear',[DashboardController::class,'getDataEvaluationProjectMonthlyPerYear'])->middleware('auth');
 Route::post('/getDataSummaryMonthlyPerLocation',[DashboardController::class,'getDataSummaryMonthlyPerLocation'])->middleware('auth');
 Route::post('/getFilterLocation',[DashboardController::class,'getFilterLocation'])->middleware('auth');
-Route::post('/users/changePasswordByToken',[UserController::class,'changePasswordByToken'])->middleware('auth');
+Route::post('/users/changePasswordByToken',[UserController::class,'changePasswordByToken'])->middleware('guest');
 Route::post('/evaluation/getYearEvaluationProjectPerLocation',[EvaluationController::class,'get_year_evaluation_project_per_location'])->middleware('auth');
-

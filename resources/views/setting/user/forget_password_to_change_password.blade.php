@@ -47,18 +47,12 @@
                             <h3 class="card-title">Form Change Password</h3>
                         </div>
                         <div class="card-body">
-                            <form method="post" action='/change_password' id="form_password" class="form-horizontal">
+                            <form method="post" id="form_password" class="form-horizontal">
                                 @csrf
-                                @if(session('error'))
-                                <div class="alert alert-danger alert-dismissible">
-                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                                    <h5><i class="icon fas fa-check"></i> Alert!</h5>{{ session('error') }}
-                                </div>
-                                @endif
                                 <div class="form-group row">
                                     <label for="inputPassword" class="col-sm-3 col-form-label">Password</label>
                                     <div class="col-sm-3">
-                                        <input type="hidden" id="token" value="{{ $token }}">
+                                        <input type="hidden" id="token" value="{{ $token_user }}">
                                         <input type="password" class="form-control form-control-sm" name="password" id="password"> 
                                     </div>
                                 </div>
@@ -159,15 +153,15 @@ $(document).ready(function(){
         }, 
         submitHandler: function() { 
             $.ajax({
-                headers:
-                {
-                    'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
-                },
+                headers:{
+                            'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+                        },
                 url:"/users/changePasswordByToken",
                 type:"POST",
                 data:{
                     'password':$('#password').val(),
-                    'token':$('#token').val()
+                    'token':$('#token').val(),
+                    _token: '{{csrf_token()}}',
                 },
                 dataType:"JSON",
                 processData:true,

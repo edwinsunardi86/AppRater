@@ -5,10 +5,17 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\TemplateAreaModel;
 use Illuminate\Support\Facades\Auth;
+use Yajra\DataTables\DataTables as DataTables;
 class TemplateAreaController extends Controller
 {
     function index(){
-
+        return view('project.template_area.index',
+        [
+            'title' => 'Template Area',
+            'active_gm' => 'Template Area',
+            'active_m'=>'template_area'
+        ]
+        );
     }
     
     function create(){
@@ -76,5 +83,14 @@ class TemplateAreaController extends Controller
             $confirmation = ['message' => 'Insert Template Area Success', 'icon' => 'success', 'is_valid' => '1','redirect' => '/template_area/create'];
         }
         return response()->json($confirmation);
+    }
+
+    function getDataTableTemplateArea(){
+        $getData = TemplateAreaModel::getDataTemplateArea2();
+        return DataTables::of($getData)->addColumn('action',function($row){
+            $btn = "<a href='/template_area/detail_template_area/$row->id' class='btn btn-primary btn-xs'><i class='fas fa-eye'></i> View</a>";
+            return $btn;
+        })->make();
+        var_dump($getData);
     }
 }
