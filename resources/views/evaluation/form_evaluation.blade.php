@@ -293,7 +293,8 @@ $(document).on('change','#region_name',function(){
 
 var arr_choice = [];
 $(document).on('change','#location_name',getSubArea);
-
+$(document).on('change','#region_name',getSubArea);
+$('#dateFormat').on('change.datetimepicker',getSubArea);
 function getSubArea(){
     var content = "";
     $.ajax({
@@ -347,10 +348,6 @@ function getSubArea(){
         }
     });
 }
-
-
-
-$('#dateFormat').on('change.datetimepicker',getSubArea);
 @endif
 $(document).ready(function(){
     $('#form_evaluation').validate({
@@ -489,7 +486,6 @@ $(document).ready(function(){
     }));
     
     $.get('/getUserAccessAuthority',function(data){
-        console.log(data);
         var project_name = ['project_name'];
         var project = groupBy(data,'project_code',project_name,'project_name');
         $.each(project,function(i,item){
@@ -501,6 +497,7 @@ $(document).ready(function(){
         
         
         $(document).on('change','#project_code',function(){
+            arr_choice = [];
             $.ajax({
                 headers:{
                     'X-CSRF-TOKEN' : $('meta[name=csrf-token]').attr('content'), 
@@ -521,7 +518,6 @@ $(document).ready(function(){
             });
 
             var category_desc = "";
-            var arr_choice = [];
             $.each(arr_choice,function(i,item){
                 category_desc += arr_choice[i].category+" ("+arr_choice[i].initial+") : "+arr_choice[i].score+"% ";
                 if(arr_choice.length > (i+1)){
@@ -594,7 +590,10 @@ $(document).ready(function(){
                 //     var rating_count="<input type=\"hidden\" name=\"count_sub_area\" id=\"count_sub_area\" value="+ parseInt(a-1) +">";
                 //     $('.rating-sub-area').append(rating_count);
                 // });
+                // var arr_choice = [];
                 $(document).on('change','#location_name',getSubArea);
+                $(document).on('change','#region_name',getSubArea);
+                $('#dateFormat').on('change.datetimepicker',getSubArea);
                 function getSubArea(){
                     var content = "";
                     $.ajax({
@@ -651,8 +650,6 @@ $(document).ready(function(){
             });
         });
     });
-
-
 });
 @endif
 </script>

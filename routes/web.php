@@ -15,7 +15,6 @@ use App\Http\Controllers\ProfileUserController;
 use App\Http\Controllers\SetScoreController;
 use App\Http\Controllers\SignController;
 use App\Http\Controllers\TemplateAreaController;
-use App\Models\SetScoreModel;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 /*
@@ -153,6 +152,7 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'evaluation'],fun
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'template_area'],function(){
     Route::get('/getDataTableTemplateArea',[TemplateAreaController::class,'getDataTableTemplateArea'])->name('data_template_area');
     Route::get('/',[TemplateAreaController::class,'index']);
+    Route::get('/detail_template_area/{id}',[TemplateAreaController::class,'showDataDetailTemplateArea']);
     Route::get('/create',[TemplateAreaController::class,'create']);
     Route::post('/storeDataTemplateArea',[TemplateAreaController::class,'storeDataTemplateArea']);
 });
@@ -191,3 +191,4 @@ Route::post('/getDataSummaryMonthlyPerLocation',[DashboardController::class,'get
 Route::post('/getFilterLocation',[DashboardController::class,'getFilterLocation'])->middleware('auth');
 Route::post('/users/changePasswordByToken',[UserController::class,'changePasswordByToken'])->middleware('guest');
 Route::post('/evaluation/getYearEvaluationProjectPerLocation',[EvaluationController::class,'get_year_evaluation_project_per_location'])->middleware('auth');
+Route::get('/showDataSubAreaByIdTemplateArea/{id}',[TemplateAreaController::class,'showDataSubAreaByIdTemplateArea'])->middleware('auth');

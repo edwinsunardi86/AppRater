@@ -26,4 +26,18 @@ class LocationModel extends Model
         }
         return $query->get();
     }
+
+    static function getDataLocation($arr_where=null, $arr_where_not=null){
+        $query = DB::table('setup_location');
+        if($arr_where){
+                $query->where($arr_where);
+        }
+        
+        if($arr_where_not){
+            $query = $query->whereNot(function($query) use($arr_where_not) {
+                $query->where($arr_where_not);
+            });
+        }
+        return $query;
+    }
 }

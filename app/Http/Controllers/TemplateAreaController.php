@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\LocationModel;
 use Illuminate\Http\Request;
 use App\Models\TemplateAreaModel;
 use Illuminate\Support\Facades\Auth;
@@ -91,6 +92,35 @@ class TemplateAreaController extends Controller
             $btn = "<a href='/template_area/detail_template_area/$row->id' class='btn btn-primary btn-xs'><i class='fas fa-eye'></i> View</a>";
             return $btn;
         })->make();
-        var_dump($getData);
+    }
+
+    function showDataDetailTemplateArea($location_id){
+        $getData = TemplateAreaModel::getDataDetailTemplateArea($location_id);
+        $getLocation = LocationModel::getDataLocation(array('id'=>$location_id))->first();
+        // $service = array();
+        // foreach($getData as $key => $item){
+        //     $service['service'][$key] = $item;
+        //     // array_push($service,array('service_code'=>$item->service_code));
+        // }
+        $grouped = $getData->groupBy('service_code');
+        // var_dump($grouped);
+        $i = 0;
+        foreach($grouped as $row){
+            echo $row[$i]->service_code;
+        }
+        die();
+        return view('project.template_area.detail',[
+            'title'         =>  'Template Area',
+            'active_gm'     =>  'Template Area',
+            'active_m'      =>  'template_area',
+            'location'      =>  $getLocation,
+            'getData'       =>  $getData
+        ]);
+    }
+
+    function showDataSubAreaByIdTemplateArea($area_id){
+        $getData = TemplateAreaModel::getDataTemplateSubArea(array('id_area'=>$area_id))->get();
+        
+        return response()->json($getData);
     }
 }
