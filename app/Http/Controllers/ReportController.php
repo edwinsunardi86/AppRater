@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\ReportModel;
 use Illuminate\Support\Facades\Auth;
+use App\Mail\NotificationSignReport;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use PDF;
 
 class ReportController extends Controller
@@ -60,99 +63,58 @@ class ReportController extends Controller
     }
 
     function approvalSignReportScoreMonthly(Request $request){
-        $data = ReportModel::getDataScoreMonthlyPerLocation($request->project_code,$request->location_id,$request->month,$request->year);
-        $avgSatisfactionPerService = ReportModel::getDataScoreMonthlyPerLocationGroupService($request->project_code,$request->location_id,$request->month,$request->year);
-        $avg_satisfaction = ReportModel::average_satisfaction($request->project_code,$request->month,$request->year,$request->location_id);
-        $rating = ReportModel::getScoreM($request->project_code,$request->month,$request->year,$avg_satisfaction->score);
-        $getListCategoryPerPeriod = ReportModel::getListCategoryPerPeriodDate($request->project_code,$request->month,$request->year);
-        $arr_category = array();
-        foreach($getListCategoryPerPeriod as $row){
-            array_push($arr_category,array('score'=>$row->score,'category'=>$row->initial));
+        $period = $request->month."-".$request->year;
+        $getAlreadySignReport = ReportModel::getAlreadySignReport($request->location_id,$period);
+        if($getAlreadySignReport){
+            return response()->download(public_path('storage/report/'.$getAlreadySignReport->filename));
+            $confirmation = ['title'=>'Warning!','message' => 'You have already sign', 'icon' => 'error'];
+        }else{
+            $data = ReportModel::getDataScoreMonthlyPerLocation($request->project_code,$request->location_id,$request->month,$request->year);
+            $avgSatisfactionPerService = ReportModel::getDataScoreMonthlyPerLocationGroupService($request->project_code,$request->location_id,$request->month,$request->year);
+            $avg_satisfaction = ReportModel::average_satisfaction($request->project_code,$request->month,$request->year,$request->location_id);
+            $rating = ReportModel::getScoreM($request->project_code,$request->month,$request->year,$avg_satisfaction->score);
+            $getListCategoryPerPeriod = ReportModel::getListCategoryPerPeriodDate($request->project_code,$request->month,$request->year);
+            $arr_category = array();
+            foreach($getListCategoryPerPeriod as $row){
+                array_push($arr_category,array('score'=>$row->score,'category'=>$row->initial));
+            }
+            $pdf = PDF::loadView('pdf.documentScoreSatisfaction',[
+                'project_code'      => $request->project_code,
+                'month'             => $request->month,
+                'year'              => $request->year,
+                'project_name'      => $avg_satisfaction->project_name,
+                'location_name'     => $avg_satisfaction->location_name,
+                'service'           => $avgSatisfactionPerService,
+                'signature_client'  => $request->signature,
+                'date_sign_client'  => date("j-F-Y"),
+                'data'              => $data,
+                'rating'            => $rating->initial,
+                'avg_satisfaction'  => $avg_satisfaction,
+                'arr_category'      =>  $arr_category
+                ]
+            );
+            $content = $pdf->download()->getOriginalContent();
+            $filename = "ReportScoreMonthly".$request->month."-".$request->year."_".$avg_satisfaction->location_name;
+            Storage::put('public/report/'.$filename.".pdf",$content);
+            $pdf->save(public_path().'/'.$filename);
+            $detail['project_name'] = $avg_satisfaction->project_name;
+            $detail['location_name'] = $avg_satisfaction->location_name;
+            $detail['period'] = $request->month." - ".$request->year;
+            $detail['inputer'] = Auth::user()->fullname;
+            $path = 'public/report/'.$filename.".pdf";
+            Mail::send(new NotificationSignReport($detail,$filename.".pdf",$path));
+            $pdf->setOption(['dpi' => 150, 'defaultFont' => 'sans-serif']);
+            $pdf = public_path($filename);
+            $post_sign = array(
+                'location_id'   =>  $request->location_id,
+                'period'        =>  $request->month."-".$request->year,
+                'filename'      => $filename.".pdf"
+            );
+            ReportModel::insertLogSignReport($post_sign);
+            $confirmation = ['title'=>'Warning!','message' => 'Thanks for your sign, this report will send automaticaly to our email', 'icon' => 'success'];
+            return response()->download($pdf);
         }
-        $pdf = PDF::loadView('pdf.documentScoreSatisfaction',[
-            'project_code'      => $request->project_code,
-            'month'             => $request->month,
-            'year'              => $request->year,
-            'project_name'      => $avg_satisfaction->project_name,
-            'location_name'     => $avg_satisfaction->location_name,
-            'service'           => $avgSatisfactionPerService,
-            'signature_client'  => $request->signature,
-            'date_sign_client'  => date("j-F-Y"),
-            'month'             => $request->month,
-            'year'              => $request->year,
-            'data'              => $data,
-            'rating'            => $rating->initial,
-            'avg_satisfaction'  => $avg_satisfaction,
-            'arr_category'      =>  $arr_category
-            ]
-        );
-        $filename = "ReportScoreMonthly".$request->month."-".$request->year;
-        $pdf->save(public_path().'/'.$filename);
-        $pdf->setOption(['dpi' => 150, 'defaultFont' => 'sans-serif']);
-        $pdf = public_path($filename);
-        return response()->download($pdf);
-    }
-
-    function downloadPDFReportScorePerLocation($project_code,$location_id,$month,$year){
-        $data = ReportModel::getDataScorePerLocation($project_code,$location_id,$month,$year);
-        $first_date_sql = date_create($year.'-'.$month.'-01');
-        $first_date = date_format($first_date_sql,'D, M 1 '.$year);
-        $find_last_date = date('Y-m-t',strtotime($year.'-'.$month.'-01'));
-        $last_date_sql = date_create($find_last_date);
-        $last_date = date_format($last_date_sql,'D, M 1 '.$year);
-        $first_week = date("W", strtotime($year.'-'.$month.'-01'));
-        $last_week = date("W", strtotime($find_last_date));
-        
-        $sql_work_day = "SELECT (DATEDIFF('$find_last_date','$year-$month-01'))-((WEEK('$find_last_date')-WEEK('$year-$month-01'))*2) - (CASE WHEN WEEKDAY('$find_last_date') = 6 THEN 1 ELSE 0 END) - (CASE WHEN WEEKDAY('$find_last_date') = 5 THEN 1 ELSE 0 END) AS work_day";
-        $work_days = DB::select($sql_work_day);
-
-        $query_avg_score = DB::table('score_evaluation')
-        ->join('setup_sub_area','setup_sub_area.id','=','evaluation.sub_area_id')
-        ->join('setup_area','setup_area.id','=','setup_sub_area.area_id')
-        ->join('setup_location','setup_area.location_id','=','setup_location.id')
-        ->join('setup_region','setup_location.region_id','=','setup_region.id')
-        ->join('setup_project','setup_project.project_code','=','setup_region.project_code')
-        ->join('m_client','m_client.id','=','setup_project.client_id')
-        ->select(DB::Raw('AVG(score) AS score'),'m_client.client_name')
-        ->where('setup_project.project_code',$project_code)
-        ->first();
-        //var_dump($query_avg_score);
-        $approval = ReportModel::getDataPICnCLientPerPeriodProject($project_code,$location_id,$month,$year);
-        // $approval->clie
-        // var_dump($approval); die();
-        // echo $approval[0]->sign_client; die();
-        // if(ceil($query_avg_score->score) >= 0){
-        //     $rating = 'KB';
-        // }elseif(ceil($query_avg_score->score) >= 75){
-        //     $rating = 'CB';
-        // }elseif(ceil($query_avg_score->score) >= 90){
-        //     $rating = 'KB';
-        // }elseif(ceil($query_avg_score->score) >= 96){
-        //     $rating = 'SB';
-        // }
-        $rating = ReportModel::getScoreM($project_code,$month,$year,$query_avg_score->score);
-        // var_dump($rating);
-
-        $datetime_client = date_create($approval[0]->sign_date_client);
-        $date_client = date_format($datetime_client,'d F Y');
-        $pdf = PDF::loadView('pdf.documentScoreSatisfaction',[
-            'query'                 =>  $data,
-            'year'                  =>  $year,
-            'month'                 =>  $month,
-            'first_date'            =>  $first_date,
-            'last_date'             =>  $last_date,
-            'first_week'            =>  $first_week,
-            'last_week'             =>  $last_week,
-            'work_days'             =>  $work_days,
-            'avg_score_location'    =>  $query_avg_score,
-            'rating'                =>  $rating->initial,
-            'user_client'           =>  $approval[0]->nama_user_client,
-            'user_pic'              =>  $approval[0]->nama_user_pic,
-            'sign_client'           =>  $approval[0]->sign_client,
-            'date_client'           =>  $date_client
-        ]);
-        ob_end_clean();
-        return $pdf->stream();
+        return response()->json($confirmation);
     }
 
     function approvalByClient(Request $request){
@@ -162,8 +124,6 @@ class ReportController extends Controller
         ->join('setup_location','setup_location.id','=','sign_approval.location_id')
         ->join('setup_region','setup_location.region_id','=','setup_region.id')
         ->join('setup_project','setup_project.project_code','=','setup_region.project_code')
-        // ->where('usersauthority.location_id',$request->location_id)
-        // ->where('period_project',$request->month.'-'.$request->year)
         ->get();
         if($get_sign_approval->count() > 0){
             $confirmation = ['title'=>'Warning!','message' => 'Project'.$get_sign_approval[0]->project_name.'dengan periode '.$request->month.'-'.$request->year.' sudah diapprove oleh'.$get_sign_approval[0]->fullname, 'icon' => 'error'];
@@ -172,12 +132,12 @@ class ReportController extends Controller
                 'client'            =>  Auth::user()->id,
                 'location_id'       =>  $request->location_id,
                 'period_project'    =>  $request->month.'-'.$request->year,
-                'sign_date_client'  =>  date("Y-m-d H:i:s")
+                'sign_date_client'  =>  date("Y-m-d H:i:s"),
+                'created_by'        => Auth::id()
             );
             DB::table('sign_approval')->insert($post);
             $confirmation = ['title'=>'Warning!','message' => 'Project ini dengan periode '.$request->month.'-'.$request->year.' success approve', 'icon' => 'success'];
         }
-        // var_dump($get_sign_approval); die();
         return response()->json($confirmation);
     }
 

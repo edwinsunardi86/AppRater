@@ -318,7 +318,7 @@ $(document).on('click','#add_sub_area1',function(){
         headers:{
                 'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
         },
-        url:"/area/getDataService",
+        url:"/getDataService",
         type:"GET",
         dataType:"JSON",
         processData:true,

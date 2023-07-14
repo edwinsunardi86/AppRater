@@ -116,7 +116,19 @@ class ReportModel extends Model
         $query = DB::table('header_set_score')
         ->join('detail_set_score_per_project','header_set_score.id_header','=','detail_set_score_per_project.id_header')
         ->where('project_code',$project_code)
-        ->whereRaw("period_date IN(SELECT MAX(period_date) FROM header_set_score WHERE DATE_FORMAT(period_date,'%Y-%m') <= \"$tahun-$bulan\" GROUP BY project_code,DATE_FORMAT(period_date,'%m'))GROUP BY score")->get();
+        ->whereRaw("period_date IN(SELECT MAX(period_date) FROM header_set_score WHERE DATE_FORMAT(period_date,'%Y-%m') <= \"$tahun-$bulan\" GROUP BY project_code,DATE_FORMAT(period_date,'%m')) GROUP BY score")->get();
+        return $query;
+    }
+
+    static function insertLogSignReport($post){
+        $query = DB::table('log_sign_report')->insert($post);
+        return $query;
+    }
+
+    static function getAlreadySignReport($location_id,$period){
+        $query = DB::table('log_sign_report')
+        ->where('location_id',$location_id)
+        ->where("period",$period)->first();
         return $query;
     }
 }

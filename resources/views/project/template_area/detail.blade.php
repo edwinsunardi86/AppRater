@@ -39,18 +39,49 @@
                                 @php
                                 $i = 1;
                                 @endphp
-                                @foreach($getData as $row)
-                                    <div class="div_area" data-iterate = "{{ $i }}">
-                                        <div class="form-group row offset-sm-1">
-                                            <label for="areaName" class="col-form-label col-sm-2">Area Name {{ $i }}</label>
-                                            <div class="col-sm-2">
-                                                <input type="text" class="form-control form-control-sm" name="area_name[]" id="area_name {{ $i }}" value="{{ $row->area_name }}" readonly>
-                                                <input type="hidden" name="area_id" id="area_id{{ $i }}" value="{{ $row->id }}">
+                                <div class="container-fluid h-100">
+                                    <div class="row">
+
+                                    
+                                @foreach($service as $row_service)
+                                    {{-- <h3>{{ $row_service['service_name']; }}</h3>
+                                    @foreach($getData as $row)
+                                        <div class="div_area" data-iterate = "{{ $i }}">
+                                            <div class="form-group row offset-sm-1">
+                                                <label for="areaName" class="col-form-label col-sm-2">Area Name {{ $i }}</label>
+                                                <div class="col-sm-2">
+                                                    <input type="text" class="form-control form-control-sm" name="area_name[]" id="area_name {{ $i }}" value="{{ $row->area_name }}" readonly>
+                                                    <input type="hidden" name="area_id" id="area_id{{ $i }}" value="{{ $row->id }}">
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    @php $i++; @endphp
+                                        @php $i++; @endphp
+                                    @endforeach --}}
+                                    
+                                            <div class="card card-secondary card-outline w-100 mr-1">
+                                                <div class="card-header card-title">
+                                                    {{ $row_service['service_name']}}
+                                                </div>
+                                                <div class="card-body">
+                                                    @foreach($getData as $row)
+                                                        @if($row->service_name == $row_service['service_name'])
+                                                        <div class="div_area" id="div_area{{ $i }}" data-iterate = "{{ $i }}">
+                                                            <div class="form-group row">
+                                                                <label for="areaName" class="col-form-label col-sm-1"> Area Name</label>
+                                                                <div class="col-sm-2">
+                                                                    <input type="text" class="form-control form-control-sm" name="area_name[]" id="area_name {{ $i }}" value="{{ $row->area_name }}" readonly>
+                                                                    <input type="hidden" name="area_id" id="area_id{{ $i }}" value="{{ $row->id }}">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        @endif
+                                                        @php $i++; @endphp
+                                                    @endforeach
+                                                </div>
+                                            </div>
                                 @endforeach
+                                </div>
+                            </div>
                             </form>
                         </div>
                     </div>
@@ -68,8 +99,12 @@ $(document).ready(function(){
             dataType:"JSON",
             type:"GET",
             success:function(data){
-                const data_service = groupBy(data, service=>service.service_code);
-                console.log(data_service.get("cls"));
+                var htmlData = "<div class=\"offset-md-2\"><table class=\"table table-striped table-bordered\" style=\"width:35%\"><tbody>";
+                data.forEach(function(item,index){
+                    htmlData += "<tr><td><input type=\"text\" class=\"form-control form-control-sm\" value=\""+item.sub_area_name+"\" name=\"area"+getIterate+"sub_area_name[]\" id=\"area"+getIterate+"sub_area_name"+index+"\" readonly></td></tr>";
+                });
+                htmlData += "</tbody></table></div>";
+                $('#div_area'+getIterate).append(htmlData);
             }
         });
     });

@@ -97,30 +97,24 @@ class TemplateAreaController extends Controller
     function showDataDetailTemplateArea($location_id){
         $getData = TemplateAreaModel::getDataDetailTemplateArea($location_id);
         $getLocation = LocationModel::getDataLocation(array('id'=>$location_id))->first();
-        // $service = array();
-        // foreach($getData as $key => $item){
-        //     $service['service'][$key] = $item;
-        //     // array_push($service,array('service_code'=>$item->service_code));
-        // }
-        $grouped = $getData->groupBy('service_code');
-        // var_dump($grouped);
-        $i = 0;
+        
+        $grouped = $getData->groupBy('service_name');
+        $service = array();
         foreach($grouped as $row){
-            echo $row[$i]->service_code;
+            array_push($service,array('service_name'=>$row[0]->service_name));
         }
-        die();
         return view('project.template_area.detail',[
             'title'         =>  'Template Area',
             'active_gm'     =>  'Template Area',
             'active_m'      =>  'template_area',
             'location'      =>  $getLocation,
-            'getData'       =>  $getData
+            'getData'       =>  $getData,
+            'service'       => $service
         ]);
     }
 
     function showDataSubAreaByIdTemplateArea($area_id){
         $getData = TemplateAreaModel::getDataTemplateSubArea(array('id_area'=>$area_id))->get();
-        
         return response()->json($getData);
     }
 }

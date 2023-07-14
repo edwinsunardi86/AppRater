@@ -107,7 +107,6 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'area'],function(
     Route::post('/update_area',[AreaController::class,'update_area']);
     Route::post('/delete_area',[AreaController::class,'delete_area']);
     Route::get('/getDataDescriptionById/{id}',[AreaController::class,'get_data_description_area_by_id']);
-    Route::get('/getDataService',[AreaController::class,'get_data_service']);
 });
 
 
@@ -192,3 +191,4 @@ Route::post('/getFilterLocation',[DashboardController::class,'getFilterLocation'
 Route::post('/users/changePasswordByToken',[UserController::class,'changePasswordByToken'])->middleware('guest');
 Route::post('/evaluation/getYearEvaluationProjectPerLocation',[EvaluationController::class,'get_year_evaluation_project_per_location'])->middleware('auth');
 Route::get('/showDataSubAreaByIdTemplateArea/{id}',[TemplateAreaController::class,'showDataSubAreaByIdTemplateArea'])->middleware('auth');
+Route::get('/getDataService',[AreaController::class,'get_data_service'])->middleware('auth');
