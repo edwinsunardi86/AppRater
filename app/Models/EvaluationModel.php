@@ -17,6 +17,7 @@ class EvaluationModel extends Model
         ->where('location_id',$location_id)
         ->where('start_date','<=',$date)
         ->where('finish_date','>=',$date)
+        ->orderBy('service_name','desc')
         ->select(DB::Raw('template_area.id AS id_area,template_area.area_name,template_sub_area.id AS id_sub_area,template_sub_area.sub_area_name AS sub_area_name,template_area.service_code AS service_code'))
         ->get();
         return $query;

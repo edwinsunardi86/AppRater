@@ -437,14 +437,15 @@ $(document).ready(function(){
                     processData:false,
                     contentType:false,
                     success: function(data){
+                        console.log(formData);
                         Swal.fire({
                             title:data.title,
                             html:data.message,
                             icon:data.icon
                         });
-                        setTimeout(() => {
-                            window.location.href=data.redirect;
-                        }, 1500);
+                        // setTimeout(() => {
+                        //     window.location.href=data.redirect;
+                        // }, 1500);
                     }
                 });
             }else{

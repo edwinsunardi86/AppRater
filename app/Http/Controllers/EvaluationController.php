@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Mail;
 class EvaluationController extends Controller
 {
     function form_evaluation(){
-        $service = DB::table('m_service')->get();
+        $service = DB::table('m_service')->orderBy('service_name','desc')->get();
         return view('evaluation.form_evaluation',[
             'title' => 'Evaluation Project',
             'active_gm' => 'Evaluation',
@@ -69,7 +69,7 @@ class EvaluationController extends Controller
                 $data['rater'] = Auth::user()->fullname;
                 $data['date_appraisal'] = $request->date_evaluation;
                 $data['email'] = Auth::user()->email;
-                Mail::to($data['email'])->send(new \App\Mail\FormatEmail($data));
+                // Mail::to($data['email'])->send(new \App\Mail\FormatEmail($data));
             }else{
                 $confirmation = ['message' => 'Rating failed added', 'icon' => 'error', 'redirect' => '/evaluation/form_evaluation']; 
             }
