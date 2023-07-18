@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Mail\NotificationSignReport;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use App\Models\User;
 use PDF;
 
 class ReportController extends Controller
@@ -63,17 +64,12 @@ class ReportController extends Controller
     }
 
     function approvalSignReportScoreMonthly(Request $request){
-        $period = $request->month."-".$request->year;
-        $getAlreadySignReport = ReportModel::getAlreadySignReport($request->location_id,$period);
-        if($getAlreadySignReport){
-            return response()->download(public_path('storage/report/'.$getAlreadySignReport->filename));
-            $confirmation = ['title'=>'Warning!','message' => 'You have already sign', 'icon' => 'error'];
-        }else{
-            $data = ReportModel::getDataScoreMonthlyPerLocation($request->project_code,$request->location_id,$request->month,$request->year);
+        $data = ReportModel::getDataScoreMonthlyPerLocation($request->project_code,$request->location_id,$request->month,$request->year,$request->service_code);
             $avgSatisfactionPerService = ReportModel::getDataScoreMonthlyPerLocationGroupService($request->project_code,$request->location_id,$request->month,$request->year);
             $avg_satisfaction = ReportModel::average_satisfaction($request->project_code,$request->month,$request->year,$request->location_id);
             $rating = ReportModel::getScoreM($request->project_code,$request->month,$request->year,$avg_satisfaction->score);
             $getListCategoryPerPeriod = ReportModel::getListCategoryPerPeriodDate($request->project_code,$request->month,$request->year);
+            $service = ReportModel::getDataService(array('service_code'=>$request->service_code))->first();
             $arr_category = array();
             foreach($getListCategoryPerPeriod as $row){
                 array_push($arr_category,array('score'=>$row->score,'category'=>$row->initial));
@@ -82,6 +78,7 @@ class ReportController extends Controller
                 'project_code'      => $request->project_code,
                 'month'             => $request->month,
                 'year'              => $request->year,
+                'service_name'      => $service->service_name,
                 'project_name'      => $avg_satisfaction->project_name,
                 'location_name'     => $avg_satisfaction->location_name,
                 'service'           => $avgSatisfactionPerService,
@@ -93,26 +90,42 @@ class ReportController extends Controller
                 'arr_category'      =>  $arr_category
                 ]
             );
+        $period = $request->month."-".$request->year;
+        $getAlreadySignReport = ReportModel::getAlreadySignReport($request->location_id,$period,$request->service_code);
+        $subject = "Report Bulanan Penilaian SLA ".$avg_satisfaction->location_name." ".$request->month."-".$request->year;
+        $detail['project_name'] = $avg_satisfaction->project_name;
+        $detail['location_name'] = $avg_satisfaction->location_name;
+        $detail['period'] = $request->month." - ".$request->year;
+        $detail['inputer'] = Auth::user()->fullname;
+        $getUser = User::getUser(array('role'=>1))->get();
+        if($getAlreadySignReport){
+            // return response()->download(public_path('storage/report/'.$getAlreadySignReport->filename));
+            $path = 'public/report/'.$getAlreadySignReport->filename;
+            foreach($getUser as $row){
+                Mail::to($row->email)->send(new NotificationSignReport($row->email,$row->fullname,$subject,$detail,$getAlreadySignReport->filename,$path));
+            }
+            $confirmation = ['title'=>'Warning!','message' => 'You have already sign', 'icon' => 'success'];
+        }else{
+            // $pdf->setOption(['dpi' => 150, 'defaultFont' => 'sans-serif']);
+            // $pdf = public_path($filename);
             $content = $pdf->download()->getOriginalContent();
             $filename = "ReportScoreMonthly".$request->month."-".$request->year."_".$avg_satisfaction->location_name;
             Storage::put('public/report/'.$filename.".pdf",$content);
             $pdf->save(public_path().'/'.$filename);
-            $detail['project_name'] = $avg_satisfaction->project_name;
-            $detail['location_name'] = $avg_satisfaction->location_name;
-            $detail['period'] = $request->month." - ".$request->year;
-            $detail['inputer'] = Auth::user()->fullname;
             $path = 'public/report/'.$filename.".pdf";
-            Mail::send(new NotificationSignReport($detail,$filename.".pdf",$path));
-            $pdf->setOption(['dpi' => 150, 'defaultFont' => 'sans-serif']);
-            $pdf = public_path($filename);
+            foreach($getUser as $row){
+                Mail::to($row->email)->send(new NotificationSignReport($row->email,$row->fullname,$subject,$detail,$filename.".pdf",$path));
+            }
             $post_sign = array(
                 'location_id'   =>  $request->location_id,
+                'service_code'  => $request->service_code,
                 'period'        =>  $request->month."-".$request->year,
-                'filename'      => $filename.".pdf"
+                'filename'      => $filename.".pdf",
+                'created_by'    => Auth::id()
             );
             ReportModel::insertLogSignReport($post_sign);
             $confirmation = ['title'=>'Warning!','message' => 'Thanks for your sign, this report will send automaticaly to our email', 'icon' => 'success'];
-            return response()->download($pdf);
+            // return response()->download($pdf);
         }
         return response()->json($confirmation);
     }
@@ -152,8 +165,8 @@ class ReportController extends Controller
     }
 
     function getDataScoreMonthlyPerLocation(Request $request){
-        $data_score = ReportModel::getDataScoreMonthlyPerLocation($request->project_code,$request->location_id,$request->month,$request->year);
-        $avg_satisfaction = ReportModel::average_satisfaction($request->project_code,$request->month,$request->year,$request->location_id);
+        $data_score = ReportModel::getDataScoreMonthlyPerLocation($request->project_code,$request->location_id,$request->month,$request->year,$request->service_code);
+        $avg_satisfaction = ReportModel::average_satisfaction($request->project_code,$request->month,$request->year,$request->location_id,$request->service_code);
         $data = array('data_score'=>$data_score,'avg'=>$avg_satisfaction);
         return response()->json($data);
     }

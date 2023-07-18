@@ -45,6 +45,9 @@ function getInitialByModel($project_code,$month,$year,$score){
                         <tr>
                             <td><strong>Tahun</strong></td><td>:</td><td><div style="border-radius:15px; background-color:#dbdbdb; padding-left:15px; margin:5px 5px 0px 5px">{{ $year }}</div></td>
                         </tr>
+						<tr>
+                            <td><strong>Service</strong></td><td>:</td><td><div style="border-radius:15px; background-color:#dbdbdb; padding-left:15px; margin:5px 5px 0px 5px">{{ $service_name }}</div></td>
+                        </tr>
                     </table>
                 </td>
 				<td style="width:25%">
@@ -74,7 +77,7 @@ function getInitialByModel($project_code,$month,$year,$score){
 				</thead>
 				<tbody>
 					@php $i = 1; @endphp
-                    @foreach($service as $row_service)
+                    {{-- @foreach($service as $row_service)
                     <tr style="background-color:red">
                         <td colspan="2">{{ $row_service->service_name }}</td>
                         <td>{{ floatval($row_service->score) }} %</td>
@@ -93,7 +96,18 @@ function getInitialByModel($project_code,$month,$year,$score){
 							@php $i++ @endphp
                             @endif
                         @endforeach
-                    @endforeach
+                    @endforeach --}}
+					@foreach($data as $row_sub_area)
+                            <tr>
+                                <td>{{ $i }}</td>
+                                <td>{{ $row_sub_area->sub_area_name }}</td>
+                                <td>{{ floatval($row_sub_area->score) }} %</td>
+                                <td>
+									{{ getInitial($row_sub_area->score,$arr_category) }}
+                                </td>
+                            </tr>
+							@php $i++ @endphp
+                        @endforeach
 				</tbody>
 			</table>
 		</div>

@@ -69,7 +69,7 @@ class EvaluationController extends Controller
                 $data['rater'] = Auth::user()->fullname;
                 $data['date_appraisal'] = $request->date_evaluation;
                 $data['email'] = Auth::user()->email;
-                // Mail::to($data['email'])->send(new \App\Mail\FormatEmail($data));
+                Mail::to($data['email'])->send(new \App\Mail\FormatEmail($data));
             }else{
                 $confirmation = ['message' => 'Rating failed added', 'icon' => 'error', 'redirect' => '/evaluation/form_evaluation']; 
             }

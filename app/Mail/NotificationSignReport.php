@@ -12,11 +12,13 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Address;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 class NotificationSignReport extends Mailable
 {
     use Queueable, SerializesModels;
     // public string $from;
-    public $replyTo;
+    public $emailTo;
+    public $fullname;
     public $subject;
     public $details;
     public $pdf;
@@ -26,11 +28,14 @@ class NotificationSignReport extends Mailable
      *
      * @return void
      */
-    public function __construct($details,$pdf,$path)
+    public function __construct($emailTo,$fullname,$subject,$details,$pdf,$path)
     {
         // $this->from = $from;
         // $this->replyTo = $replyTo;
         // $this->subject = $subject;
+        $this->emailTo = $emailTo;
+        $this->fullname = $fullname;
+        $this->subject = $subject;
         $this->details = $details;
         $this->pdf = $pdf;
         $this->path = Storage::path($path);
@@ -45,8 +50,8 @@ class NotificationSignReport extends Mailable
     {
         return new Envelope(
             from: new Address('sos.report@sos.co.id','SOS Report'),
-            replyTo:[new Address('edwin.sunardi@sos.co.id', 'Edwin Budiyanto Sunardi')],
-            to:[new Address('edwin.sunardi@sos.co.id')],
+            replyTo:[new Address($this->emailTo, $this->fullname)],
+            to:[new Address($this->emailTo)],
             subject: $this->subject
         );
     }

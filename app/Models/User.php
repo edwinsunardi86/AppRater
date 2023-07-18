@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable
 {
@@ -42,4 +43,18 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    static function getUser($arr_where=null, $arr_where_not=null){
+        $query = DB::table('users');
+        if($arr_where){
+                $query->where($arr_where);
+        }
+        
+        if($arr_where_not){
+            $query = $query->whereNot(function($query) use($arr_where_not) {
+                $query->where($arr_where_not);
+            });
+        }
+        return $query;
+    }
 }

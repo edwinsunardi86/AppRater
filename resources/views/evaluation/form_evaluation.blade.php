@@ -291,7 +291,6 @@ $(document).on('change','#region_name',function(){
     });
 });
 
-var arr_choice = [];
 $(document).on('change','#location_name',getSubArea);
 $(document).on('change','#region_name',getSubArea);
 $('#dateFormat').on('change.datetimepicker',getSubArea);

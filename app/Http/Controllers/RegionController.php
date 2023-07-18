@@ -102,16 +102,19 @@ class RegionController extends Controller
     }
 
     public function get_data_region_to_selected(Request $request){
-        $db = DB::table('setup_region')->select('setup_region.id','region_name','client_name','project_name',DB::raw('setup_region.description AS region_description'))->join('setup_project','setup_project.project_code','=','setup_region.project_code')->join('m_client','m_client.id','=','setup_project.client_id');
         if($request->project_code !=""){
+            $db = DB::table('setup_region')->select('setup_region.id','region_name','client_name','project_name',DB::raw('setup_region.description AS region_description'))->join('setup_project','setup_project.project_code','=','setup_region.project_code')->join('m_client','m_client.id','=','setup_project.client_id');
             if(is_array($request->project_code)==1){
                 $db->whereIn('setup_project.project_code',$request->project_code);
             }else{
                 $db->where('setup_project.project_code',$request->project_code);
             }
-            
+            $data = $db->get();
+        }else{
+            $db=null;
+            $data = $db;
         }
         
-        return response()->json($db->get());
+        return response()->json($data);
     }
 }

@@ -27,70 +27,101 @@
                         
                         <div class="card-body">
                             <form method="post" id="convert_to_pdf" class="form-horizontal">
-                                @if(Auth::user()->role == 1 || Auth::user()->role == 2)
-                                <div class="form-group row">
-                                    <label for="inputClientName" class="col-sm-2 col-form-label">Client Name</label>
+                                <div class="row">
                                     <div class="col-sm-4">
-                                        <input type="text" class="form-control" name="client_name" id="client_name" readonly>
-                                        <input type="hidden" class="form-control" name="client_id" id="client_id" readonly>
+                                        @if(Auth::user()->role == 1 || Auth::user()->role == 2)
+                                        <div class="form-group row">
+                                            <label for="inputClientName" class="col-sm-3 col-form-label">Client Name</label>
+                                            <div class="col-sm-7">
+                                                <input type="text" class="form-control form-control-sm" name="client_name" id="client_name" readonly>
+                                                <input type="hidden" class="form-control form-control-sm" name="client_id" id="client_id" readonly>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-xl">Cari</button>
+                                            </div>
+                                        </div>
+                                        @endif
                                     </div>
-                                    <div class="col-sm-2">
-                                        <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#modal-xl">Cari</button>
-                                    </div>
-                                </div>
-                                @endif
-                                <div class="form-group row">
-                                    <label for="projectName" class="col-sm-2 col-form-label">Project Name</label>
                                     <div class="col-sm-4">
-                                        <select name="project_code" id="project_code" class="form-control select2"></select>
+                                        <div class="form-group row">
+                                            <label for="projectName" class="col-sm-3 col-form-label">Project Name</label>
+                                            <div class="col-sm-9">
+                                                <select name="project_code" id="project_code" class="form-control form-control-sm select2"></select>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="form-group row">
-                                    <label for="regionName" class="col-sm-2 col-form-label">Region</label>
+                                <div class="row">
                                     <div class="col-sm-4">
-                                        <select name="region_name" id="region_name" class="form-control select2"></select>
+                                        <div class="form-group row">
+                                            <label for="regionName" class="col-sm-3 col-form-label">Region</label>
+                                            <div class="col-sm-9">
+                                                <select name="region_name" id="region_name" class="form-control form-control-sm select2"></select>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="locationName" class="col-sm-2 col-form-label">Location</label>
                                     <div class="col-sm-4">
-                                        <select name="location_name" id="location_name" class="form-control select2"></select>
+                                        <div class="form-group row">
+                                            <label for="locationName" class="col-sm-3 col-form-label">Location</label>
+                                            <div class="col-sm-9">
+                                                <select name="location_name" id="location_name" class="form-control form-control-sm select2"></select>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="form-group row">
-                                    <label for="locationName" class="col-sm-2 col-form-label">Bulan-Tahun</label>
-                                    <div class="col-sm-2">
-                                        <select class="form-control" name="month_project" id="month_project">
-                                            <option value="">Pilih</option>
-                                            <option value="01">January</option>
-                                            <option value="02">February</option>
-                                            <option value="03">March</option>
-                                            <option value="04">April</option>
-                                            <option value="05">Mei</option>
-                                            <option value="06">June</option>
-                                            <option value="07">July</option>
-                                            <option value="08">August</option>
-                                            <option value="09">September</option>
-                                            <option value="10">October</option>
-                                            <option value="11">November</option>
-                                            <option value="12">December</option>
-                                        </select>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="form-group row">
+                                            <label for="locationName" class="col-sm-3 col-form-label">Bulan-Tahun</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control form-control-sm" name="month_project" id="month_project">
+                                                    <option value="">Pilih</option>
+                                                    <option value="01">January</option>
+                                                    <option value="02">February</option>
+                                                    <option value="03">March</option>
+                                                    <option value="04">April</option>
+                                                    <option value="05">Mei</option>
+                                                    <option value="06">June</option>
+                                                    <option value="07">July</option>
+                                                    <option value="08">August</option>
+                                                    <option value="09">September</option>
+                                                    <option value="10">October</option>
+                                                    <option value="11">November</option>
+                                                    <option value="12">December</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <select class="form-control form-control-sm" name="year_project" id="year_project"></select>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="col-sm-2">
-                                        <select class="form-control" name="year_project" id="year_project"></select>
+                                    <div class="col-sm-4">
+                                        <div class="form-group row">
+                                            <label for="ServiceName" class="col-sm-3 col-form-label">Service</label>
+                                            <div class="col-sm-9">
+                                                <select name="service_name" id="service_name" class="form-control form-control-sm">
+                                                @foreach($service as $row)
+                                                    <option value="{{ $row->service_code }}">{{ $row->service_name }}</option>    
+                                                @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
+                                
+                                
                                 <table class="table table-score table-bordered table-striped" style="width:100%">
                                     <thead>
                                         <th>Sub Area</th>
                                         <th>Score (%)</th>
                                         <th>Summary</th>
                                     </thead>
-                                    <tbody>
+                                    {{-- <tbody>
                                         @foreach($service as $row)
-                                        <tr data-service="{{ $row->service_code }}" class="{{ $row->service_code }}"><td class="bg-red">{{ $row->service_name }}</td><td class="bg-red"><div id="percentage_{{ $row->service_code }}"></div></td><td class="bg-red"><div id="summary_{{ $row->service_code }}"></div></td><tr>
+                                        <tr data-service="{{ $row->service_code }}" class="{{ $row->service_code }}"><td class="bg-red">{{ $row->service_name }}</td><td class="bg-red"><div id="percentage_{{ $row->service_code }}"></div></td><td class="bg-red"><div id="summary_{{ $row->service_code }}"></div></td></tr>
                                         @endforeach
-                                    </tbody>
+                                    </tbody> --}}
+                                    <tbody></tbody>
                                 </table>
                                 <div class="form-group row">
                                     <label for="recommend_critics" class="col-sm-2 col-form-label">Score</label>
@@ -225,7 +256,7 @@ $( "li.item-a" )
     });
 });
 
-@if(Auth::user()->role == 1)
+@if(Auth::user()->role == 1 || Auth::user()->role == 2)
 $(document).ready(function(){
     var i = 1;
     var tb_client = $('#table_client').DataTable({
@@ -296,6 +327,7 @@ $(document).ready(function(){
         },
         processData:true,
         success:function(data){
+            // alert($('#project_code').val());
             $('.table_add_location > tbody').empty();
             $('select#region_name option').remove();
             $('select#region_name').append($('<option>',{
@@ -474,7 +506,7 @@ $(document).on('change','#location_name',function(){
     });
 });
 
-$(document).on('change','#year_project,#month_project',function(){
+$(document).on('change','#year_project,#month_project,#service_name',function(){
     function summary(score){
         var category;
         $.ajax({
@@ -511,40 +543,43 @@ $(document).on('change','#year_project,#month_project',function(){
             'location_id':$('#location_name').val(),
             'month':$('#month_project').val(),
             'year':$('#year_project').val(),
+            'service_code':$('#service_name').val(),
             _token: '{{csrf_token()}}'
         },
         success:function(data){
-            $('.tr_score').remove();
-            $('.table-score tr[data-service]').each(function(i,item){
-                var data_service = $(this).attr('data-service');
-                var average_per_service = 0;
-                var b = 0;
-                $.each(data.data_score,function(a,item){
-                    if(data_service == data.data_score[a].service_code){
-                        average_per_service = parseFloat(average_per_service) + parseFloat(data.data_score[a].score);
-                        $('<tr class="tr_score"><td>'+data.data_score[a].sub_area_name+'</td><td>'+parseFloat(data.data_score[a].score)+'</td><td>'+data.data_score[a].initial+'</td></tr>').insertAfter($('.table-score tr.'+data.data_score[a].service_code));
-                        b+=1;
-                    }
-                });
-                // var service_code = $(this)[i];
-                @foreach($service as $row)
-                var service_code = "{{ $row->service_code }}";
-                // alert(service_code);
-                if(data_service == service_code){
-                    var avg_per_service = average_per_service / b;
-                    $('#percentage_'+service_code).html(avg_per_service.toFixed(2));
-                    $('#summary_'+service_code).html(summary(avg_per_service));
-                    // alert(avg_per_service);
-                }
-                
-                @endforeach
-                
-                // alert(avg_per_service);
-
-                // $("#percentage_"+service_code).html(avg_per_service);
-            });
+            // $('.tr_score').remove();
+            // $('.table-score tr[data-service]').each(function(i,item){
+            //     var data_service = $(this).attr('data-service');
+            //     var average_per_service = 0;
+            //     var b = 0;
+            //     $.each(data.data_score,function(a,item){
+            //         if(data_service == data.data_score[a].service_code){
+            //             average_per_service = parseFloat(average_per_service) + parseFloat(data.data_score[a].score);
+            //             $('<tr class="tr_score"><td>'+data.data_score[a].sub_area_name+'</td><td>'+parseFloat(data.data_score[a].score)+'</td><td>'+data.data_score[a].initial+'</td></tr>').insertAfter($('.table-score tr.'+data.data_score[a].service_code));
+            //             b+=1;
+            //         }
+            //     });
+            //     @foreach($service as $row)
+            //     var service_code = "{{ $row->service_code }}";
+            //     if(data_service == service_code){
+            //         var avg_per_service = average_per_service / b;
+            //         $('#percentage_'+service_code).html(avg_per_service.toFixed(2));
+            //         $('#summary_'+service_code).html(summary(avg_per_service));
+            //     }
+            //     @endforeach
+            // });
+            // var avg_score = data.avg.score
+            // $('#avg').val(parseFloat(avg_score).toFixed(2));
+            console.log(data.data_score);
+            var data_score = data.data_score;
+            $('.table-score > tbody').empty();
+            $.each(data_score,function(i,item){
+                var htmlTable = "<tr><td>"+data_score[i].sub_area_name+"</td><td>"+data_score[i].score+"</td><td>"+data_score[i].initial+"</td></tr>";
+                $('.table-score > tbody').append(htmlTable);
+            })
             var avg_score = data.avg.score
             $('#avg').val(parseFloat(avg_score).toFixed(2));
+            
         }
     });
 });
@@ -586,6 +621,7 @@ $(document).ready(function(){
         submitHandler: function() {
             var location_id = $('#location_name option:selected').val();
             var project_code = $('#project_code option:selected').val();
+            var service_code = $('#service_name').val();
             var month = $('#month_project').val();
             var year = $('#year_project').val();
                 // window.open('/downloadPDFReportScorePerLocation/'+$('#project_code').val()+'/'+$('#location_name').val()+'/'+$('#month_project').val()+'/'+$('#year_project').val());
@@ -595,29 +631,37 @@ $(document).ready(function(){
                         'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
                     },
                     url:'/report/approvalSignReportScoreMonthly',
+                    dataType:'JSON',
                     type:'POST',
+                    processData:true,
                     data:{
                         'signature'     :   signature,
                         'location_id'   :   location_id,
                         'project_code'  :   project_code,
                         'month'         :   month,
                         'year'          :   year,
+                        'service_code'  :   service_code,
                         _token: '{{csrf_token()}}'
                     },
                     processData:true,
-                    xhrFields: {
-                        responseType: 'blob'
+                    // xhrFields: {
+                    //     responseType: 'blob'
+                    // },
+                    success: function(data){
+                        // var blob = new Blob([response]);
+                        // var link = document.createElement('a');
+                        // link.href = window.URL.createObjectURL(blob);
+                        // link.download = "ReportScoreMonthly"+project_code+location_id+month+year+".pdf";
+                        // link.click();
+                        Swal.fire({
+                            title:data.title,
+                            html:data.message,
+                            icon:data.icon
+                        });
                     },
-                    success: function(response){
-                        var blob = new Blob([response]);
-                        var link = document.createElement('a');
-                        link.href = window.URL.createObjectURL(blob);
-                        link.download = "ReportScoreMonthly"+project_code+location_id+month+year+".pdf";
-                        link.click();
-                    },
-                    error: function(blob){
-                        console.log(blob);
-                    }
+                    // error: function(blob){
+                    //     console.log(blob);
+                    // }
                 });
         }
     });
