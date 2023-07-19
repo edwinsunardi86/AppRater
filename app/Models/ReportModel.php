@@ -146,7 +146,6 @@ class ReportModel extends Model
         if($arr_where){
                 $query->where($arr_where);
         }
-        
         if($arr_where_not){
             $query = $query->whereNot(function($query) use($arr_where_not) {
                 $query->where($arr_where_not);

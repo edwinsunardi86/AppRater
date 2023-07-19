@@ -8,6 +8,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EvaluationController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\LogController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserController;
@@ -172,6 +173,10 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'sign'],function(
     Route::post('/storeSignatureDigital',[SignController::class,'storeSignatureDigital']);
 });
 
+Route::group(['middleware'=>['auth','authorization'],'prefix'=>'log'],function(){
+    Route::get('/log_sign_report',[LogController::class,'log_sign_report']);
+});
+
 Route::get('/client/getDatatableClientToSelected',[ClientController::class,'get_datatable_client_to_selected'])->name('data_client_to_selected:dt')->middleware('auth');
 Route::post('/region/getDataRegionToSelected',[RegionController::class,'get_data_region_to_selected'])->middleware('auth');
 Route::post('/location/getDataLocationToSelected',[LocationController::class,'get_data_location_to_selected_by_region'])->middleware('auth');
@@ -192,3 +197,6 @@ Route::post('/users/changePasswordByToken',[UserController::class,'changePasswor
 Route::post('/evaluation/getYearEvaluationProjectPerLocation',[EvaluationController::class,'get_year_evaluation_project_per_location'])->middleware('auth');
 Route::get('/showDataSubAreaByIdTemplateArea/{id}',[TemplateAreaController::class,'showDataSubAreaByIdTemplateArea'])->middleware('auth');
 Route::get('/getDataService',[AreaController::class,'get_data_service'])->middleware('auth');
+Route::post('/getInputRatePeriodYearPerProject',[LogController::class,'getInputRatePeriodYearPerProject'])->middleware('auth');
+Route::post('/getInputRateMonthlyPerLocation',[LogController::class,'getInputRateMonthlyPerLocation'])->middleware('auth');
+Route::post('/getInputrateMonthlyPercentageByMonth',[LogController::class,'getInputrateMonthlyPercentageByMonth'])->middleware('auth');
