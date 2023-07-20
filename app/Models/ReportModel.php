@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Query\JoinClause;
 class ReportModel extends Model
 {
     use HasFactory;
@@ -151,6 +152,55 @@ class ReportModel extends Model
                 $query->where($arr_where_not);
             });
         }
+        return $query;
+    }
+
+    static public function checkExistingInputRateGroupYear($project_code){
+        $query = DB::table('report_summary_monthly_per_location')
+        ->select(DB::Raw("YEAR(appraisal_date) AS \"period\""))
+        ->where('project_code',$project_code)
+        ->groupBy('period')
+        ->get();
+        return $query;
+    }
+    
+    static public function checkExistingInputRatePerLocationByMonth($project_code,$month,$year){
+        $query = DB::table('setup_location')
+        ->leftJoin('header_evaluation','setup_location.id','=','header_evaluation.location_id')
+        ->leftJoin('users','users.id','=','header_evaluation.created_by')
+        ->join('setup_region','setup_region.id','=','setup_location.region_id')
+        ->join('setup_project','setup_project.project_code','=','setup_region.project_code')
+        ->whereRaw("date_format(appraisal_date,\"%Y\")=$year")
+        ->where('setup_project.project_code',$project_code)
+        ->select(
+            "location_id",
+            "location_name",
+            DB::Raw("CASE WHEN COUNT(CASE WHEN DATE_FORMAT(appraisal_date,\"%m\") =\"$month\" THEN header_evaluation.id_header END)  > 0 THEN 1 ELSE 0 END AS \"status\"")
+        )
+        ->groupBy('location_id')->get();
+        return $query;
+    } 
+
+    static public function checkExistingInputRatePercentageByMonth($project_code,$month,$year){
+        $period = $month."-".$year;
+        // $query = DB::table('header_evaluation')
+        // ->join('setup_location','setup_location.id','=','header_evaluation.location_id')
+        // ->join('setup_region','setup_region.id','=','setup_location.region_id')
+        // ->join('setup_project','setup_project.project_code','=','setup_region.project_code')
+        $evaluationMonthlyPerlocation = DB::table('header_evaluation')->groupByRaw('location_id,DATE_FORMAT(appraisal_date,"%m-%Y")');
+        $query = DB::table('setup_location')
+        ->joinSub($evaluationMonthlyPerlocation,'header', function(JoinClause $join){
+            $join->on('setup_location.id','=','header.location_id');
+        })
+        ->join('setup_region','setup_region.id','=','setup_location.region_id')
+        ->join('setup_project','setup_project.project_code','=','setup_region.project_code')
+        ->select(DB::Raw("DISTINCT setup_project.project_code,((SELECT COUNT(*) FROM header_template WHERE DATE_FORMAT(start_date,\"%m-%Y\") <= \"$period\" AND DATE_FORMAT(finish_date,\"%m-%Y\") >= \"$period\")-(SELECT COUNT(CASE WHEN DATE_FORMAT(appraisal_date,\"%m-%Y\") = \"$period\" THEN id_header END)))        
+        / (SELECT COUNT(*) FROM header_template WHERE DATE_FORMAT(start_date,\"%m-%Y\") <= \"$period\" AND DATE_FORMAT(finish_date,\"%m-%Y\") >= \"$period\")*100 AS 'percentage_not_yet',
+        ((SELECT COUNT(*) FROM header_template WHERE DATE_FORMAT(start_date,\"%m-%Y\") <= \"$period\" AND DATE_FORMAT(finish_date,\"%m-%Y\") >= \"$period\")-(SELECT COUNT(CASE WHEN DATE_FORMAT(appraisal_date,\"%m-%Y\") = \"$period\" THEN id_header END))) AS 'qty_not_yet',
+        COUNT(CASE WHEN DATE_FORMAT(appraisal_date,\"%m-%Y\") = \"$period\" THEN id_header END) / (SELECT COUNT(*) FROM header_template WHERE DATE_FORMAT(start_date,\"%m-%Y\") <= \"$period\" AND DATE_FORMAT(finish_date,\"%m-%Y\") >= \"$period\")*100 AS 'percentage_done',
+        COUNT(CASE WHEN DATE_FORMAT(appraisal_date,\"%m-%Y\") = \"$period\" THEN id_header END) AS qty_done"))
+        ->where("setup_project.project_code",$project_code)
+        ->first();
         return $query;
     }
 }

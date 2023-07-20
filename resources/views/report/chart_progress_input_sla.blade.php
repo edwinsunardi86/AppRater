@@ -5,12 +5,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Log Sign Report</h1>
+                    <h1>Chart Progress Input SLA</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="#">Log</a></li>
-                    <li class="breadcrumb-item active">Sign Report</li>
+                    <li class="breadcrumb-item"><a href="#">Chart</a></li>
+                    <li class="breadcrumb-item active">Progress Input SLA</li>
                     </ol>
                 </div>
             </div>
@@ -70,6 +70,7 @@
                                     <select name="year_project" id="year_project" class="form-control"></select>
                                 </div>
                             </div>
+                            <div id="container"></div>
                         </div>
                     </div>
                 </div>
@@ -114,6 +115,10 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
+<script src="/plugins/Highcharts-10.3.3/code/highcharts.js"></script>
+<script src="/plugins/Highcharts-10.3.3/code/modules/exporting.js"></script>
+<script src="/plugins/Highcharts-10.3.3/code/modules/export-data.js"></script>
+<script src="/plugins/Highcharts-10.3.3/code/modules/accessibility.js"></script>
 <script>
 $(document).ready(function(){
     var i = 1;
@@ -203,7 +208,7 @@ $(document).on('click','.pilih_client',function(){
                 'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content'),
             },
             // url:'/getInputRateMonthlyPerLocation',
-            url:'/log/getDataLogSignReport',
+            url:'/getInputrateMonthlyPercentageByMonth',
             dataType:'JSON',
             type:'POST',
             processData:true,
@@ -213,7 +218,49 @@ $(document).on('click','.pilih_client',function(){
                 'year_project':$('#year_project').val(),
             },
             success:function(data){
-
+                // Data retrieved from https://netmarketshare.com
+                var chart = Highcharts.chart('container', {
+                    chart: {
+                        plotBackgroundColor: null,
+                        plotBorderWidth: null,
+                        plotShadow: false,
+                        type: 'pie'
+                    },
+                    title: {
+                        text: 'Progress Input SLA',
+                        align: 'left'
+                    },
+                    tooltip: {
+                        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                    },
+                    accessibility: {
+                        point: {
+                            valueSuffix: '%'
+                        }
+                    },
+                    plotOptions: {
+                        pie: {
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            dataLabels: {
+                                enabled: true,
+                                format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                            }
+                        }
+                    },
+                    series: [{
+                    name: 'Brands',
+                    colorByPoint: true,
+                    data: [{
+                        name: 'DONE'+'('+data+')',
+                        y: parseInt(data.percentage_done),
+                        sliced: true,
+                        selected: true
+                    }, {
+                        name: 'NOT YET',
+                        y: parseInt(data.percentage_not_yet)
+                    }]}]
+                });
             }
         });
     });

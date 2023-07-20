@@ -166,6 +166,7 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'report'],functio
     Route::post('/approvalSignReportScoreMonthly',[ReportController::class,'approvalSignReportScoreMonthly']);
     Route::post('/getCategory',[ReportController::class,'getCategory']);
     Route::post('/getCategory_var2',[ReportController::class,'getCategory_var2']);
+    Route::get('/chartProgressInputSLA',[ReportController::class,'chartProgressInputSLA']);
 });
 
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'sign'],function(){
@@ -175,6 +176,7 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'sign'],function(
 
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'log'],function(){
     Route::get('/log_sign_report',[LogController::class,'log_sign_report']);
+    Route::post('/getDataLogSignReport',[LogController::class,'getDataLogSignReport']);
 });
 
 Route::get('/client/getDatatableClientToSelected',[ClientController::class,'get_datatable_client_to_selected'])->name('data_client_to_selected:dt')->middleware('auth');
@@ -197,6 +199,6 @@ Route::post('/users/changePasswordByToken',[UserController::class,'changePasswor
 Route::post('/evaluation/getYearEvaluationProjectPerLocation',[EvaluationController::class,'get_year_evaluation_project_per_location'])->middleware('auth');
 Route::get('/showDataSubAreaByIdTemplateArea/{id}',[TemplateAreaController::class,'showDataSubAreaByIdTemplateArea'])->middleware('auth');
 Route::get('/getDataService',[AreaController::class,'get_data_service'])->middleware('auth');
-Route::post('/getInputRatePeriodYearPerProject',[LogController::class,'getInputRatePeriodYearPerProject'])->middleware('auth');
-Route::post('/getInputRateMonthlyPerLocation',[LogController::class,'getInputRateMonthlyPerLocation'])->middleware('auth');
-Route::post('/getInputrateMonthlyPercentageByMonth',[LogController::class,'getInputrateMonthlyPercentageByMonth'])->middleware('auth');
+Route::post('/getInputRatePeriodYearPerProject',[ReportController::class,'getInputRatePeriodYearPerProject'])->middleware('auth');
+Route::post('/getInputRateMonthlyPerLocation',[ReportController::class,'getInputRateMonthlyPerLocation'])->middleware('auth');
+Route::post('/getInputrateMonthlyPercentageByMonth',[ReportController::class,'getInputrateMonthlyPercentageByMonth'])->middleware('auth');

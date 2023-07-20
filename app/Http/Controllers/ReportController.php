@@ -97,24 +97,24 @@ class ReportController extends Controller
         $detail['location_name'] = $avg_satisfaction->location_name;
         $detail['period'] = $request->month." - ".$request->year;
         $detail['inputer'] = Auth::user()->fullname;
-        $getUser = User::getUser(array('role'=>1))->get();
+        $getUser = User::getUser(array('role'=>2))->get();
         if($getAlreadySignReport){
             // return response()->download(public_path('storage/report/'.$getAlreadySignReport->filename));
             $path = 'public/report/'.$getAlreadySignReport->filename;
             foreach($getUser as $row){
-                Mail::to($row->email)->send(new NotificationSignReport($row->email,$row->fullname,$subject,$detail,$getAlreadySignReport->filename,$path));
+                Mail::to($row->email)->send(new NotificationSignReport($row->email,$row->fullname,$detail['location_name'],$detail['period'],$subject,$detail,$getAlreadySignReport->filename,$path));
             }
             $confirmation = ['title'=>'Warning!','message' => 'You have already sign', 'icon' => 'success'];
         }else{
             // $pdf->setOption(['dpi' => 150, 'defaultFont' => 'sans-serif']);
             // $pdf = public_path($filename);
             $content = $pdf->download()->getOriginalContent();
-            $filename = "ReportScoreMonthly".$request->month."-".$request->year."_".$avg_satisfaction->location_name;
+            $filename = "ReportScoreMonthly".$request->month."-".$request->year."_".$avg_satisfaction->location_name."_".$request->service_code;
             Storage::put('public/report/'.$filename.".pdf",$content);
             $pdf->save(public_path().'/'.$filename);
             $path = 'public/report/'.$filename.".pdf";
             foreach($getUser as $row){
-                Mail::to($row->email)->send(new NotificationSignReport($row->email,$row->fullname,$subject,$detail,$filename.".pdf",$path));
+                Mail::to($row->email)->send(new NotificationSignReport($row->email,$row->fullname,$detail['location_name'],$detail['period'],$subject,$detail,$filename.".pdf",$path));
             }
             $post_sign = array(
                 'location_id'   =>  $request->location_id,
@@ -180,4 +180,29 @@ class ReportController extends Controller
         $getCategory = ReportModel::getScoreM_var2($request->project_code,$request->month,$request->year,$request->score);
         return response()->json($getCategory);
     }
+
+    public function getInputRateMonthlyPerLocation(Request $request){
+        $getData = ReportModel::checkExistingInputRateMonthlyPerLocation($request->project_code,$request->year_project);
+        return response()->json($getData);
+    }
+
+    public function getInputrateMonthlyPercentageByMonth(Request $request){
+        $getData = ReportModel::checkExistingInputRatePercentageByMonth($request->project_code,$request->month_project,$request->year_project);
+        return response()->json($getData);
+    }
+
+    public function getInputRatePeriodYearPerProject(Request $request){
+        $getData = ReportModel::checkExistingInputRateGroupYear($request->project_code);
+        return response()->json($getData);
+    }
+
+    public function chartProgressInputSLA(){
+        return view('report.chart_progress_input_sla',[
+            'title' => 'Chart Progress Input SLA By Month',
+            'active_gm' => 'Report',
+            'active_m'=> 'report/chart_progress_input_sla'
+        ]);
+    }
+
+
 }

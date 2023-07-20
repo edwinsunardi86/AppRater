@@ -153,7 +153,7 @@
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-sm-2">
-                                        <button type="submit" class="btn btn-block btn-outline-warning btn-sm">Download</button>
+                                        <button type="submit" id="submit" class="btn btn-block btn-outline-warning btn-sm">Submit</button>
                                     </div>
                                 </div>
                             </form>
@@ -583,86 +583,113 @@ $(document).on('change','#year_project,#month_project,#service_name',function(){
         }
     });
 });
+
+
+
+
 $(document).ready(function(){
-    $('#convert_to_pdf').validate({
-    rules:{
-        location_name:{
-            required:true
-        },
-        month_project:{
-            required:true
-        },
-        year_project:{
-            required:true
-        }
-    },
-    messages:{
-        location_name:{
-            required:"Please choice location name"
-        },
-        month_project:{
-            required: "Please choice month"
-        },
-        year_project:{
-            required:"Please choice year"
-        }
-    },
-    errorElement: 'span',
-            errorPlacement: function (error, element) {
-            error.addClass('invalid-feedback');
-            element.closest('.form-group').append(error);
-        },
-        highlight: function (element, errorClass, validClass) {
-            $(element).addClass('is-invalid');
-        },
-        unhighlight: function (element, errorClass, validClass) {
-            $(element).removeClass('is-invalid');
-        },
-        submitHandler: function() {
-            var location_id = $('#location_name option:selected').val();
-            var project_code = $('#project_code option:selected').val();
-            var service_code = $('#service_name').val();
-            var month = $('#month_project').val();
-            var year = $('#year_project').val();
-                // window.open('/downloadPDFReportScorePerLocation/'+$('#project_code').val()+'/'+$('#location_name').val()+'/'+$('#month_project').val()+'/'+$('#year_project').val());
-                var signature = signaturePad.toDataURL();
-                $.ajax({
-                    headers:{
-                        'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
-                    },
-                    url:'/report/approvalSignReportScoreMonthly',
-                    dataType:'JSON',
-                    type:'POST',
-                    processData:true,
-                    data:{
-                        'signature'     :   signature,
-                        'location_id'   :   location_id,
-                        'project_code'  :   project_code,
-                        'month'         :   month,
-                        'year'          :   year,
-                        'service_code'  :   service_code,
-                        _token: '{{csrf_token()}}'
-                    },
-                    processData:true,
-                    // xhrFields: {
-                    //     responseType: 'blob'
-                    // },
-                    success: function(data){
-                        // var blob = new Blob([response]);
-                        // var link = document.createElement('a');
-                        // link.href = window.URL.createObjectURL(blob);
-                        // link.download = "ReportScoreMonthly"+project_code+location_id+month+year+".pdf";
-                        // link.click();
-                        Swal.fire({
-                            title:data.title,
-                            html:data.message,
-                            icon:data.icon
-                        });
-                    },
-                    // error: function(blob){
-                    //     console.log(blob);
-                    // }
-                });
+    function isCanvasBlank(canvas) {
+        const blank = document.createElement('canvas');
+
+        blank.width = canvas.width;
+        blank.height = canvas.height;
+
+        return canvas.toDataURL() === blank.toDataURL();
+    }
+    
+    $(document).on('click','#submit',function(e){
+        const blank = isCanvasBlank(document.getElementById('signature-pad'));
+        if(!blank){
+            $('#convert_to_pdf').validate({
+            rules:{
+                location_name:{
+                    required:true
+                },
+                month_project:{
+                    required:true
+                },
+                year_project:{
+                    required:true
+                }
+            },
+            messages:{
+                location_name:{
+                    required:"Please choice location name"
+                },
+                month_project:{
+                    required: "Please choice month"
+                },
+                year_project:{
+                    required:"Please choice year"
+                }
+            },
+            errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-group').append(error);
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function() {
+                    var location_id = $('#location_name option:selected').val();
+                    var project_code = $('#project_code option:selected').val();
+                    var service_code = $('#service_name').val();
+                    var month = $('#month_project').val();
+                    var year = $('#year_project').val();
+                    // window.open('/downloadPDFReportScorePerLocation/'+$('#project_code').val()+'/'+$('#location_name').val()+'/'+$('#month_project').val()+'/'+$('#year_project').val());
+                    var signature = signaturePad.toDataURL();
+                    // console.log(signature);
+                    $.ajax({
+                        headers:{
+                            'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+                        },
+                        url:'/report/approvalSignReportScoreMonthly',
+                        dataType:'JSON',
+                        type:'POST',
+                        processData:true,
+                        async:false,
+                        data:{
+                            'signature'     :   signature,
+                            'location_id'   :   location_id,
+                            'project_code'  :   project_code,
+                            'month'         :   month,
+                            'year'          :   year,
+                            'service_code'  :   service_code,
+                            _token: '{{csrf_token()}}'
+                        },
+                        processData:true,
+                        // xhrFields: {
+                        //     responseType: 'blob'
+                        // },
+                        success: function(data){
+                            // var blob = new Blob([response]);
+                            // var link = document.createElement('a');
+                            // link.href = window.URL.createObjectURL(blob);
+                            // link.download = "ReportScoreMonthly"+project_code+location_id+month+year+".pdf";
+                            // link.click();
+                            Swal.fire({
+                                title:data.title,
+                                html:data.message,
+                                icon:data.icon
+                            });
+                        },
+                        // error: function(blob){
+                        //     console.log(blob);
+                        // }
+                    });
+                }
+            });
+        }else{
+            e.preventDefault();
+            Swal.fire({
+                title:"Perhatian",
+                html:"Please Your Sign",
+                icon:"error"
+            });
         }
     });
 });
@@ -736,16 +763,17 @@ document.addEventListener('DOMContentLoaded', function () {
             //saat tombol clear diklik maka akan menghilangkan seluruh tanda tangan
             document.getElementById('clear').addEventListener('click', function () {
                 signaturePad.clear();
+                
             });
     
             //saat tombol undo diklik maka akan mengembalikan tanda tangan sebelumnya
             document.getElementById('undo').addEventListener('click', function () {
                 var data = signaturePad.toData();
-      if (data) {
-    data.pop(); // remove the last dot or line
-    signaturePad.fromData(data);
-    }
-});
+                if (data) {
+                data.pop(); // remove the last dot or line
+                signaturePad.fromData(data);
+                }
+            });
 $(document).ready(function(){
     $('#form_signature').submit(function(e){
         e.preventDefault();

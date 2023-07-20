@@ -13,18 +13,9 @@ class LogController extends Controller
             'active_m'=>'log/log_sign_report',
         ]);
     }
-    public function getInputRatePeriodYearPerProject(Request $request){
-        $getData = LogModel::checkExistingInputRateGroupYear($request->project_code);
-        return response()->json($getData);
-    }
-
-    public function getInputRateMonthlyPerLocation(Request $request){
-        $getData = LogModel::checkExistingInputRateMonthlyPerLocation($request->project_code,$request->year_project);
-        return response()->json($getData);
-    }
-
-    public function getInputrateMonthlyPercentageByMonth(Request $request){
-        $getData = LogModel::checkExistingInputRatePercentageByMonth($request->project_code,$request->month_project,$request->year_project);
-        return response()->json($getData);
+    
+    public function getDataLogSignReport(Request $request){
+        $query = LogModel::getDatalogSignReport($request->project,$request->month,$request->year);
+        return response()->json($query);
     }
 }
