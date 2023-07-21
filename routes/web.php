@@ -167,6 +167,7 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'report'],functio
     Route::post('/getCategory',[ReportController::class,'getCategory']);
     Route::post('/getCategory_var2',[ReportController::class,'getCategory_var2']);
     Route::get('/chartProgressInputSLA',[ReportController::class,'chartProgressInputSLA']);
+    Route::post('/exportProgressInputRateArea',[ReportController::class,'exportProgressInputRateArea']);
 });
 
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'sign'],function(){

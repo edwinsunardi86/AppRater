@@ -11,7 +11,10 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 use PDF;
-
+use PhpOffice\PhpSpreadsheet\IOFactory as IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Helper\Sample;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 class ReportController extends Controller
 {
     function report_weekly(){
@@ -200,9 +203,53 @@ class ReportController extends Controller
         return view('report.chart_progress_input_sla',[
             'title' => 'Chart Progress Input SLA By Month',
             'active_gm' => 'Report',
-            'active_m'=> 'report/chart_progress_input_sla'
+            'active_m'=> 'report/chartProgressInputSLA'
         ]);
     }
 
-
+    public function exportProgressInputRateArea(Request $request){
+        $spreadsheet = new Spreadsheet();
+        $activeWorksheet = $spreadsheet->getActiveSheet();
+        $activeWorksheet->setCellValue('A1', 'Report Progress Input Rate SLA');
+        $activeWorksheet->setCellValue('A4','Location Name')
+                        ->setCellValue('A4','Jan')
+                        ->setCellValue('B4','Feb')
+                        ->setCellValue('C4','Mar')
+                        ->setCellValue('D4','Apr')
+                        ->setCellValue('E4','May')
+                        ->setCellValue('F4','Jun')
+                        ->setCellValue('G4','Jul')
+                        ->setCellValue('H4','Aug')
+                        ->setCellValue('I4','Sep')
+                        ->setCellValue('J4','Oct')
+                        ->setCellValue('K4','Nov')
+                        ->setCellValue('L4','Dec');
+        
+        $getData = ReportModel::checkExistingInputRateMonthlyPerLocation($request->project_code,$request->year_project);
+        $i = 5;
+        foreach($getData as $row){
+            $activeWorksheet->setCellValue('A'.$i,$row->location_name);
+            $activeWorksheet->setCellValue('B'.$i,$row->Jan);
+            $activeWorksheet->setCellValue('C'.$i,$row->Feb);
+            $activeWorksheet->setCellValue('D'.$i,$row->Mar);
+            $activeWorksheet->setCellValue('E'.$i,$row->Apr);
+            $activeWorksheet->setCellValue('F'.$i,$row->May);
+            $activeWorksheet->setCellValue('G'.$i,$row->Jun);
+            $activeWorksheet->setCellValue('H'.$i,$row->Jul);
+            $activeWorksheet->setCellValue('I'.$i,$row->Aug);
+            $activeWorksheet->setCellValue('J'.$i,$row->Sep);
+            $activeWorksheet->setCellValue('K'.$i,$row->Oct);
+            $activeWorksheet->setCellValue('L'.$i,$row->Sep);
+            $activeWorksheet->setCellValue('M'.$i,$row->Oct);
+            $activeWorksheet->setCellValue('N'.$i,$row->Sep);
+            $activeWorksheet->setCellValue('O'.$i,$row->Nov);
+            $activeWorksheet->setCellValue('P'.$i,$row->Dec);
+            $i++;
+        }
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename="Data Siswa.xlsx"'); // Set nama file excel nya
+        header('Cache-Control: max-age=0');
+        $writer = new Xlsx($spreadsheet);
+        $writer->save('php://output');
+    }
 }

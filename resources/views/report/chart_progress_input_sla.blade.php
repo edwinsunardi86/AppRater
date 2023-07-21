@@ -25,52 +25,75 @@
                             <h3 class="card-title">Log Sign Report</h3>
                         </div>
                         <div class="card-body">
-                            <div class="form-group row">
-                                <label for="inputClientName" class="col-sm-2 col-form-label">Client Name</label>
-                                <div class="col-sm-4">
-                                    <input type="text" class="form-control" name="client_name" id="client_name" readonly>
-                                    <input type="hidden" class="form-control" name="client_id" id="client_id" readonly>
+                            <form id="form" class="form-horizontal">
+                                <div class="form-group row">
+                                    <label for="inputClientName" class="col-sm-2 col-form-label">Client Name</label>
+                                    <div class="col-sm-4">
+                                        <input type="text" class="form-control" name="client_name" id="client_name" readonly>
+                                        <input type="hidden" class="form-control" name="client_id" id="client_id" readonly>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#modal-xl">Cari</button>
+                                    </div>
                                 </div>
-                                <div class="col-sm-2">
-                                    <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#modal-xl">Cari</button>
+                                <div class="form-group row">
+                                    <label for="projectName" class="col-sm-2 col-form-label">Project Name</label>
+                                    <div class="col-sm-4">
+                                        <select name="project_code" id="project_code" class="form-control select2 col-sm-4">
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="projectName" class="col-sm-2 col-form-label">Project Name</label>
-                                <div class="col-sm-4">
-                                    <select name="project_code" id="project_code" class="form-control select2 col-sm-4">
-                                    </select>
+                                <div class="form-group row">
+                                    <label for="locationName" class="col-sm-2 col-form-label">Bulan</label>
+                                    <div class="col-sm-3">
+                                        <select class="form-control" name="month_project" id="month_project">
+                                            <option value="01">January</option>
+                                            <option value="02">February</option>
+                                            <option value="03">March</option>
+                                            <option value="04">April</option>
+                                            <option value="05">Mei</option>
+                                            <option value="06">June</option>
+                                            <option value="07">July</option>
+                                            <option value="08">August</option>
+                                            <option value="09">September</option>
+                                            <option value="10">October</option>
+                                            <option value="11">November</option>
+                                            <option value="12">December</option>
+                                        </select>
+                                    </div>
+                                    {{-- <div class="col-sm-2">
+                                        <select class="form-control" name="year_project" id="year_project"></select>
+                                    </div> --}}
                                 </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="locationName" class="col-sm-2 col-form-label">Bulan</label>
-                                <div class="col-sm-3">
-                                    <select class="form-control" name="month_project" id="month_project">
-                                        <option value="01">January</option>
-                                        <option value="02">February</option>
-                                        <option value="03">March</option>
-                                        <option value="04">April</option>
-                                        <option value="05">Mei</option>
-                                        <option value="06">June</option>
-                                        <option value="07">July</option>
-                                        <option value="08">August</option>
-                                        <option value="09">September</option>
-                                        <option value="10">October</option>
-                                        <option value="11">November</option>
-                                        <option value="12">December</option>
-                                    </select>
+                                <div class="form-group row">
+                                    <label for="yearProject" class="col-sm-2 col-form-lable">Year</label>
+                                    <div class="col-sm-2">
+                                        <select name="year_project" id="year_project" class="form-control"></select>
+                                    </div>
                                 </div>
-                                {{-- <div class="col-sm-2">
-                                    <select class="form-control" name="year_project" id="year_project"></select>
-                                </div> --}}
-                            </div>
-                            <div class="form-group row">
-                                <label for="yearProject" class="col-sm-2 col-form-lable">Year</label>
-                                <div class="col-sm-2">
-                                    <select name="year_project" id="year_project" class="form-control"></select>
+                                <div class="row mb-5">
+                                    <button type="submit" class="btn btn-md btn-primary">Export</button>
                                 </div>
-                            </div>
-                            <div id="container"></div>
+                            </form>
+                            <div id="container" style="width:80%"></div>
+                            <table id="table-summary" class="table table-striped table-bordered" style="width:50%">
+                                <thead>
+                                    <th>Location Name</th>
+                                    <th>Jan</th>
+                                    <th>Feb</th>
+                                    <th>Mar</th>
+                                    <th>Apr</th>
+                                    <th>May</th>
+                                    <th>Jun</th>
+                                    <th>Jul</th>
+                                    <th>Aug</th>
+                                    <th>Sept</th>
+                                    <th>Oct</th>
+                                    <th>Nov</th>
+                                    <th>Dec</th>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -120,27 +143,13 @@
 <script src="/plugins/Highcharts-10.3.3/code/modules/export-data.js"></script>
 <script src="/plugins/Highcharts-10.3.3/code/modules/accessibility.js"></script>
 <script>
-$(document).ready(function(){
-    var i = 1;
-    var tb_client = $('#table_client').DataTable({
-        processing:true,
-        serverSide:true,
-        destroy: true,
-        ajax:'{!! route("data_client_to_selected:dt") !!}',
-        columns:[
-            {data:'', name:'', render:function(row, type, set){
-                return i++;
-            }},
-            { data:'client_name', name:'client_name' },
-            { data:'address', name:'address' },
-            { data: 'contact1', name:'contact1' },
-            { data: 'contact2', name: 'contact2' },
-            { data: 'contact_mobile', name: 'contact_mobile'},
-            { data: 'description', name: 'description'},
-            { data: 'action', name: 'action'}
-        ],
-    });
-});
+function getMonthName(monthNumber) {
+  const date = new Date();
+  date.setMonth(monthNumber - 1);
+
+  return date.toLocaleString('en-US', { month: 'long' });
+}
+
 $(document).on('click','.pilih_client',function(){
     $('#client_id').val(($(this).attr('data-id')));
     $('#client_name').val(($(this).attr('data-client_name')));
@@ -183,7 +192,8 @@ $(document).on('click','.pilih_client',function(){
             type:'POST',
             processData:true,
             data:{
-                'project_code':$('#project_code').val()
+                'project_code':$('#project_code').val(),
+                _token: '{{csrf_token()}}'
             },
             success:function(data){
                 $('select#year_project option').remove();
@@ -202,67 +212,198 @@ $(document).on('click','.pilih_client',function(){
         });
     });
 
-    $(document).on('change','#year_project',function(){
-        $.ajax({
-            headers:{
-                'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content'),
-            },
-            // url:'/getInputRateMonthlyPerLocation',
-            url:'/getInputrateMonthlyPercentageByMonth',
-            dataType:'JSON',
-            type:'POST',
-            processData:true,
-            data:{
-                'project_code':$('#project_code').val(),
-                'month_project':$('#month_project').val(),
-                'year_project':$('#year_project').val(),
-            },
-            success:function(data){
-                // Data retrieved from https://netmarketshare.com
-                var chart = Highcharts.chart('container', {
-                    chart: {
-                        plotBackgroundColor: null,
-                        plotBorderWidth: null,
-                        plotShadow: false,
-                        type: 'pie'
-                    },
-                    title: {
-                        text: 'Progress Input SLA',
-                        align: 'left'
-                    },
-                    tooltip: {
-                        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-                    },
-                    accessibility: {
-                        point: {
-                            valueSuffix: '%'
-                        }
-                    },
-                    plotOptions: {
-                        pie: {
-                            allowPointSelect: true,
-                            cursor: 'pointer',
-                            dataLabels: {
-                                enabled: true,
-                                format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+    $(document).on('change','#year_project,#month_project',function(){
+        if($('#year_project').val() != ""){
+            $.ajax({
+                headers:{
+                    'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content'),
+                },
+                // url:'/getInputRateMonthlyPerLocation',
+                url:'/getInputrateMonthlyPercentageByMonth',
+                dataType:'JSON',
+                type:'POST',
+                processData:true,
+                data:{
+                    'project_code':$('#project_code').val(),
+                    'month_project':$('#month_project').val(),
+                    'year_project':$('#year_project').val(),
+                    _token: '{{csrf_token()}}'
+                },
+                success:function(data){
+                    // Data retrieved from https://netmarketshare.com
+                    var chart = Highcharts.chart('container', {
+                        chart: {
+                            plotBackgroundColor: null,
+                            plotBorderWidth: null,
+                            plotShadow: false,
+                            type: 'pie'
+                        },
+                        title: {
+                            text: 'Progress Input SLA '+getMonthName($('#month_project').val())+' '+$('#year_project').val(),
+                            align: 'left'
+                        },
+                        tooltip: {
+                            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                        },
+                        accessibility: {
+                            point: {
+                                valueSuffix: '%'
                             }
-                        }
-                    },
-                    series: [{
-                    name: 'Brands',
-                    colorByPoint: true,
-                    data: [{
-                        name: 'DONE'+'('+data+')',
-                        y: parseInt(data.percentage_done),
-                        sliced: true,
-                        selected: true
-                    }, {
-                        name: 'NOT YET',
-                        y: parseInt(data.percentage_not_yet)
-                    }]}]
-                });
+                        },
+                        plotOptions: {
+                            pie: {
+                                allowPointSelect: true,
+                                cursor: 'pointer',
+                                dataLabels: {
+                                    enabled: true,
+                                    format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                                }
+                            }
+                        },
+                        series: [{
+                        name: 'Brands',
+                        colorByPoint: true,
+                        data: [{
+                            name: 'DONE ('+data.qty_done+')',
+                            y: parseInt(data.percentage_done),
+                            sliced: true,
+                            selected: true
+                        }, {
+                            name: 'NOT YET ('+data.qty_not_yet+')',
+                            y: parseInt(data.percentage_not_yet)
+                        }]}]
+                    });
+                }
+            });
+            $.ajax({
+                headers:{
+                    'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content'),
+                },
+                url:'/getInputRateMonthlyPerLocation',
+                dataType:'JSON',
+                type:'POST',
+                processData:true,
+                data:{
+                    'project_code':$('#project_code').val(),
+                    'year_project':$('#year_project').val(),
+                    _token: '{{csrf_token()}}'
+                },
+                success:function(data){
+                    $('.table-summary tbody').empty();
+                    $.each(data,function(i,item){
+                        var row = "<tr><td>"+data[i].location_name+"</td><td>"+data[i].Jan+"</td><td>"+data[i].Feb+"</td><td>"+data[i].Mar+"</td><td>"+data[i].Apr+"</td><td>"+data[i].May+"</td><td>"+data[i].Jun+"</td><td>"+data[i].Jul+"</td><td>"+data[i].Aug+"</td><td>"+data[i].Sep+"</td><td>"+data[i].Oct+"</td><td>"+data[i].Nov+"</td><td>"+data[i].Dec+"</td></tr>";
+                        $("#table-summary > tbody").append(row);
+
+                    });
+                }
+            });
+        }
+    });
+});
+
+$(document).ready(function(){
+    var i = 1;
+    var tb_client = $('#table_client').DataTable({
+        processing:true,
+        serverSide:true,
+        destroy: true,
+        ajax:'{!! route("data_client_to_selected:dt") !!}',
+        columns:[
+            {data:'', name:'', render:function(row, type, set){
+                return i++;
+            }},
+            { data:'client_name', name:'client_name' },
+            { data:'address', name:'address' },
+            { data: 'contact1', name:'contact1' },
+            { data: 'contact2', name: 'contact2' },
+            { data: 'contact_mobile', name: 'contact_mobile'},
+            { data: 'description', name: 'description'},
+            { data: 'action', name: 'action'}
+        ],
+    });
+
+    $('#form').validate({
+        rules:{
+            project_code:{
+                required:true
+            },
+            year_project:{
+                required:true
             }
-        });
+        },
+        messages:{
+            project_code:{
+                required:"Please input project name"
+            },
+            year_project:{
+                required:"Please input Year Rate SLA"
+            }
+        },
+        errorElement: 'span',
+        errorPlacement: function (error, element) {
+            error.addClass('invalid-feedback');
+            element.closest('.form-group').append(error);
+        },
+        highlight: function (element, errorClass, validClass) {
+            $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element, errorClass, validClass) {
+            $(element).removeClass('is-invalid');
+        },
+        submitHandler: function() {
+            $.ajax({
+                headers:{
+                    'X_CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+                },
+                url:'/report/exportProgressInputRateArea',
+                type:'post',
+                processData:true,
+                data:{
+                    'project_code':$('#project_code').val(),
+                    'year_project':$('#year_project').val(),
+                    _token: '{{csrf_token()}}'
+                },
+                xhrFields:{
+                    responseType:'arraybuffer'
+                },
+                error: function(blob){
+                    console.log(blob);
+                }
+            }).done(function (data, status, xmlHeaderRequest) {
+                    var downloadLink = document.createElement('a');
+                    var blob = new Blob([data],
+                        {
+                            type: xmlHeaderRequest.getResponseHeader('Content-Type')
+                        });
+                    var url = window.URL || window.webkitURL;
+                    var downloadUrl = url.createObjectURL(blob);
+                    var fileName = '';
+
+                  
+
+                    if (typeof window.navigator.msSaveBlob !== 'undefined') {
+                        window.navigator.msSaveBlob(blob, fileName);
+                    } else {
+                        if (fileName) {
+                            if (typeof downloadLink.download === 'undefined') {
+                                window.location = downloadUrl;
+                            } else {
+                                downloadLink.href = downloadUrl;
+                                downloadLink.download = fileName;
+                                document.body.appendChild(downloadLink);
+                                downloadLink.click();
+                            }
+                        } else {
+                            window.location = downloadUrl;
+                        }
+
+                        setTimeout(function () {
+                            url.revokeObjectURL(downloadUrl);
+                        },
+                            100);
+                    }
+                });
+        }
     });
 });
 </script>

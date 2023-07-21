@@ -286,7 +286,7 @@ function groupBy(list, group, key, value) {
         );
 }
 /*----------------------------------------------WEEKLY-------------------------------------------*/
-@if(Auth::user()->role == 1)
+@if(Auth::user()->role == 1 || Auth::user()->role == 2)
 $(document).ready(function(){
     var i = 1;
     var tb_client = $('#table_client').DataTable({
@@ -595,7 +595,6 @@ $(document).on('change','#year_project,#month_project',function(){
                 if(typeof kategori === 'undefined'){
                     kategori = "";
                 }
-                alert(kategori);
                 var cardbox = "<div class=\"card card-primary card-outline mr-2\">"+
                         "<div class=\"card-body\">"+
                             "<div class=\"text-center mb-n4\">"+
