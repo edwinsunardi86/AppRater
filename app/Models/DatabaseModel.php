@@ -9,8 +9,8 @@ class DatabaseModel extends Model
 {
     use HasFactory;
 
-    function getData($arr_where,$arr_where_not,$arr_select,$rawSelect){
-        $query = DB::table('setup_location');
+    static function getData($table,$arr_where=null,$arr_where_not=null,$arr_select=null,$rawSelect=null){
+        $query = DB::table($table);
         if($arr_where){
                 $query->where($arr_where);
         }

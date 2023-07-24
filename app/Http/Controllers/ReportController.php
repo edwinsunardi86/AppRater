@@ -5,16 +5,18 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\ReportModel;
+use App\Models\User;
+use App\Models\DatabaseModel;
 use Illuminate\Support\Facades\Auth;
 use App\Mail\NotificationSignReport;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
-use App\Models\User;
 use PDF;
 use PhpOffice\PhpSpreadsheet\IOFactory as IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Helper\Sample;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Yajra\DataTables\DataTables as DataTables;
 class ReportController extends Controller
 {
     function report_weekly(){
@@ -251,5 +253,21 @@ class ReportController extends Controller
         header('Cache-Control: max-age=0');
         $writer = new Xlsx($spreadsheet);
         $writer->save('php://output');
+    }
+    function log_sign_report(){
+        return view('report.report_log_sign',[
+            'title' => 'Report Log Sign Report',
+            'active_gm' => 'Report',
+            'active_m'=>'report/report_log_sign_report'
+        ]);
+    }
+
+    function getDataTableSignReport(){
+        $getData = ReportModel::getDataLogSignReport();
+        return DataTables::of($getData)->make();
+    }
+
+    function getFileNameSignReport($filename){
+        return response()->download(storage_path('app/public/report/'.$filename));
     }
 }

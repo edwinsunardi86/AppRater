@@ -228,4 +228,13 @@ class ReportModel extends Model
         ->groupBy('location_id')->get();
         return $query;
     }
+
+    static function getDataLogSignReport(){
+        $query = DB::table('log_sign_report')
+        ->select('location_name','period','service_name','log_sign_report.filename','fullname')
+        ->join('setup_location','setup_location.id','=','log_sign_report.location_id')
+        ->join('m_service','m_service.service_code','=','log_sign_report.service_code')
+        ->join('users','users.id','=','log_sign_report.created_by');
+        return $query->get();
+    }
 }

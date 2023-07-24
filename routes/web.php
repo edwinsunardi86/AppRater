@@ -9,6 +9,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EvaluationController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\LogController;
+use App\Http\Controllers\PinaltyController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserController;
@@ -168,6 +169,9 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'report'],functio
     Route::post('/getCategory_var2',[ReportController::class,'getCategory_var2']);
     Route::get('/chartProgressInputSLA',[ReportController::class,'chartProgressInputSLA']);
     Route::post('/exportProgressInputRateArea',[ReportController::class,'exportProgressInputRateArea']);
+    Route::get('/LogSignReport',[ReportController::class,'log_sign_report']);
+    Route::get('/getDataTableSignReport',[ReportController::class,'getDataTableSignReport'])->name('data_log_sign');
+    Route::get('/getFileNameSignReport/{id}',[ReportController::class,'getFileNameSignReport'])->name('download');
 });
 
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'sign'],function(){
@@ -180,6 +184,10 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'log'],function()
     Route::post('/getDataLogSignReport',[LogController::class,'getDataLogSignReport']);
 });
 
+Route::group(['middleware'=>['auth','authorization'],'prefix'=>'pinalty'],function(){
+    Route::get('/',[PinaltyController::class,'index']);
+    Route::get('/getDataTablePinalty',[PinaltyController::class,'getDataTablePinalty'])->name('data_pinalty:dt');
+});
 Route::get('/client/getDatatableClientToSelected',[ClientController::class,'get_datatable_client_to_selected'])->name('data_client_to_selected:dt')->middleware('auth');
 Route::post('/region/getDataRegionToSelected',[RegionController::class,'get_data_region_to_selected'])->middleware('auth');
 Route::post('/location/getDataLocationToSelected',[LocationController::class,'get_data_location_to_selected_by_region'])->middleware('auth');
