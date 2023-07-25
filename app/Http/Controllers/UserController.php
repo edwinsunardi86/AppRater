@@ -277,9 +277,10 @@ class UserController extends Controller
         join('setup_location','setup_location.id','=','usersauthority.location_id')->
         join('setup_region','setup_region.id','=','setup_location.region_id')->
         join('setup_project','setup_project.project_code','=','setup_region.project_code')->
-        join('setup_area','setup_area.location_id','=','setup_location.id')->
-        join('setup_sub_area','setup_sub_area.area_id','=','setup_area.id')->
-        join('m_service','m_service.service_code','=','setup_area.service_code')->select('setup_project.project_code','project_name',DB::Raw('setup_region.id AS region_id'),'setup_region.region_name',DB::Raw('setup_location.id AS location_id'),'location_name',DB::Raw('setup_area.id AS area_id'),'area_name',DB::Raw('setup_sub_area.id AS sub_area_id'),'sub_area_name','m_service.service_code','service_name')->where('usersauthority.user_id',Auth::id())->get();
+        join('header_template','header_template.location_id','=','setup_location.id')->
+        join('template_area','template_area.id_header','=','header_template.id')->
+        join('template_sub_area','template_sub_area.id_area','=','template_area.id')->
+        join('m_service','m_service.service_code','=','template_area.service_code')->select('setup_project.project_code','project_name',DB::Raw('setup_region.id AS region_id'),'setup_region.region_name',DB::Raw('setup_location.id AS location_id'),'location_name',DB::Raw('template_area.id AS area_id'),'area_name',DB::Raw('template_sub_area.id AS sub_area_id'),'sub_area_name','m_service.service_code','service_name')->where('usersauthority.user_id',Auth::id())->get();
         return response()->json($query);
     }
 

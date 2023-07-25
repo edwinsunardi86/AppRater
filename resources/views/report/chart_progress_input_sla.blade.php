@@ -75,25 +75,39 @@
                                     <button type="submit" class="btn btn-md btn-primary">Export</button>
                                 </div>
                             </form>
-                            <div id="container" style="width:80%"></div>
-                            <table id="table-summary" class="table table-striped table-bordered" style="width:50%">
-                                <thead>
-                                    <th>Location Name</th>
-                                    <th>Jan</th>
-                                    <th>Feb</th>
-                                    <th>Mar</th>
-                                    <th>Apr</th>
-                                    <th>May</th>
-                                    <th>Jun</th>
-                                    <th>Jul</th>
-                                    <th>Aug</th>
-                                    <th>Sept</th>
-                                    <th>Oct</th>
-                                    <th>Nov</th>
-                                    <th>Dec</th>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
+                            <div class="col-12 col-sm-12">
+                                <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" id="progress_input_sla-tab" data-toggle="pill" href="#content_progress_input_sla">Progress Input SLA</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="existing_sign_sla-tab" data-toggle="pill" href="#content_existing_sign_sla">Sign SLA</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content" id="content_report">
+                                    <div class="tab-pane fade show active" id="content_progress_input_sla" role="tabpanel" aria-labelledby="progress_input_sla-tab">
+                                        <table id="table-summary" class="table table-striped table-bordered" style="width:50%">
+                                            <thead>
+                                                <th>Location Name</th>
+                                                <th>Jan</th>
+                                                <th>Feb</th>
+                                                <th>Mar</th>
+                                                <th>Apr</th>
+                                                <th>May</th>
+                                                <th>Jun</th>
+                                                <th>Jul</th>
+                                                <th>Aug</th>
+                                                <th>Sept</th>
+                                                <th>Oct</th>
+                                                <th>Nov</th>
+                                                <th>Dec</th>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                    <div class="tab-pane fade" id="content_existing_sign_sla" role="tabpanel" aria-labelledby="existing_sign_sla-tab">sdsad</div>
+                                </div>    
+                            </div>
                         </div>
                     </div>
                 </div>

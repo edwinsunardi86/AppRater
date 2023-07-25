@@ -49,14 +49,7 @@ $(document).ready(function(){
         columns:[
             { data:'project_name', name:'project_name' },
             { data: 'period', name: 'period' },
-            { data: 'pinalty_score', render: function(row, type, set){
-                var pinalty_score = row.split(",");
-                var new_row = "";
-                $.each(pinalty_score, function(i,item){
-                    new_row += pinalty_score[i]+"</br>";
-                })
-                return new_row;
-            }}
+            { data: 'pinalty_score', name: 'pinalty_score'}
         ]
     });
 });

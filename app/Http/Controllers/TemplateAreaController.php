@@ -13,7 +13,7 @@ class TemplateAreaController extends Controller
         return view('project.template_area.index',
         [
             'title' => 'Template Area',
-            'active_gm' => 'Template Area',
+            'active_gm' => 'Setup Project',
             'active_m'=>'template_area'
         ]
         );
@@ -23,7 +23,7 @@ class TemplateAreaController extends Controller
         return view('project.template_area.create',
         [
             'title' => 'Template Area',
-            'active_gm' => 'Template Area',
+            'active_gm' => 'Setup Project',
             'active_m'=>'template_area'
         ]
         );
