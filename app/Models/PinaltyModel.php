@@ -10,11 +10,6 @@ class PinaltyModel extends Model
     use HasFactory;
 
     static function getDataPinalty(){
-        // $query = "SELECT project_name, CONCAT(a.start_date,\" s/d \",a.finish_date) AS 'period',GROUP_CONCAT(\" \",b.score,\" : \",percentage_pinalty,\" \") AS 'pinalty_score' FROM header_pinalty a
-        // INNER JOIN detail_pinalty b ON a.id_header = b.id_header
-        // INNER JOIN setup_project c ON a.project_code = c.project_code
-        // INNER JOIN header_set_score d ON a.id_header_set_score = d.id_header";
-
         $query = DB::table('header_pinalty')
         ->join('detail_pinalty','header_pinalty.id_header','=','detail_pinalty.id_header')
         ->join('setup_project','setup_project.project_code','=','header_pinalty.project_code')

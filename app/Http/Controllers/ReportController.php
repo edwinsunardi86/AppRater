@@ -201,6 +201,11 @@ class ReportController extends Controller
         return response()->json($getData);
     }
 
+    public function getSignReportPeriodYearOfProject(Request $request){
+        $getData = ReportModel::checkExistingSignRateMonthlyPerLocation($request->project_code,$request->year_project);
+        return response()->json($getData);
+    }
+
     public function chartProgressInputSLA(){
         return view('report.chart_progress_input_sla',[
             'title' => 'Chart Progress Input SLA By Month',
@@ -214,19 +219,18 @@ class ReportController extends Controller
         $activeWorksheet = $spreadsheet->getActiveSheet();
         $activeWorksheet->setCellValue('A1', 'Report Progress Input Rate SLA');
         $activeWorksheet->setCellValue('A4','Location Name')
-                        ->setCellValue('A4','Jan')
-                        ->setCellValue('B4','Feb')
-                        ->setCellValue('C4','Mar')
-                        ->setCellValue('D4','Apr')
-                        ->setCellValue('E4','May')
-                        ->setCellValue('F4','Jun')
-                        ->setCellValue('G4','Jul')
-                        ->setCellValue('H4','Aug')
-                        ->setCellValue('I4','Sep')
-                        ->setCellValue('J4','Oct')
-                        ->setCellValue('K4','Nov')
-                        ->setCellValue('L4','Dec');
-        
+                        ->setCellValue('B4','Jan')
+                        ->setCellValue('C4','Feb')
+                        ->setCellValue('D4','Mar')
+                        ->setCellValue('E4','Apr')
+                        ->setCellValue('F4','May')
+                        ->setCellValue('G4','Jun')
+                        ->setCellValue('H4','Jul')
+                        ->setCellValue('I4','Aug')
+                        ->setCellValue('J4','Sep')
+                        ->setCellValue('K4','Oct')
+                        ->setCellValue('L4','Nov')
+                        ->setCellValue('M4','Dec');
         $getData = ReportModel::checkExistingInputRateMonthlyPerLocation($request->project_code,$request->year_project);
         $i = 5;
         foreach($getData as $row){
@@ -241,16 +245,49 @@ class ReportController extends Controller
             $activeWorksheet->setCellValue('I'.$i,$row->Aug);
             $activeWorksheet->setCellValue('J'.$i,$row->Sep);
             $activeWorksheet->setCellValue('K'.$i,$row->Oct);
-            $activeWorksheet->setCellValue('L'.$i,$row->Sep);
-            $activeWorksheet->setCellValue('M'.$i,$row->Oct);
-            $activeWorksheet->setCellValue('N'.$i,$row->Sep);
-            $activeWorksheet->setCellValue('O'.$i,$row->Nov);
-            $activeWorksheet->setCellValue('P'.$i,$row->Dec);
+            $activeWorksheet->setCellValue('L'.$i,$row->Nov);
+            $activeWorksheet->setCellValue('M'.$i,$row->Dec);
             $i++;
         }
+
+        $spreadsheet->createSheet();
+        $sheet2 = $spreadsheet->getSheet(1);
+        $sheet2->setCellValue('A1','Report Check Existing Sign report');
+        $sheet2->setCellValue('A4','Location Name')
+                        ->setCellValue('B4','Jan')
+                        ->setCellValue('C4','Feb')
+                        ->setCellValue('D4','Mar')
+                        ->setCellValue('E4','Apr')
+                        ->setCellValue('F4','May')
+                        ->setCellValue('G4','Jun')
+                        ->setCellValue('H4','Jul')
+                        ->setCellValue('I4','Aug')
+                        ->setCellValue('J4','Sep')
+                        ->setCellValue('K4','Oct')
+                        ->setCellValue('L4','Nov')
+                        ->setCellValue('M4','Dec');
+        $getData = ReportModel::checkExistingSignRateMonthlyPerLocation($request->project_code,$request->year_project);
+        $i = 5;
+        foreach($getData as $row){
+            $sheet2->setCellValue('A'.$i,$row->location_name)
+            ->setCellValue('B'.$i,$row->Jan)
+            ->setCellValue('C'.$i,$row->Feb)
+            ->setCellValue('D'.$i,$row->Mar)
+            ->setCellValue('E'.$i,$row->Apr)
+            ->setCellValue('F'.$i,$row->May)
+            ->setCellValue('G'.$i,$row->Jun)
+            ->setCellValue('H'.$i,$row->Jul)
+            ->setCellValue('I'.$i,$row->Aug)
+            ->setCellValue('J'.$i,$row->Sep)
+            ->setCellValue('K'.$i,$row->Oct)
+            ->setCellValue('L'.$i,$row->Nov)
+            ->setCellValue('M'.$i,$row->Dec);
+            $i++;
+        }
+    
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment; filename="Data Siswa.xlsx"'); // Set nama file excel nya
-        header('Cache-Control: max-age=0');
+        // header('Content-Disposition: attachment; filename="Data Siswa.xlsx"'); // Set nama file excel nya
+        // header('Cache-Control: max-age=0');
         $writer = new Xlsx($spreadsheet);
         $writer->save('php://output');
     }

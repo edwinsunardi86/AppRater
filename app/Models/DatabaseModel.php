@@ -29,4 +29,8 @@ class DatabaseModel extends Model
         }
         return $query;
     }
+
+    static function insertData($table,$post){
+        return DB::table($table)->insert($post);
+    }
 }

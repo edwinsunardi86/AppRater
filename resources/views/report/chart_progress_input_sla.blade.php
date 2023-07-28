@@ -86,6 +86,7 @@
                                 </ul>
                                 <div class="tab-content" id="content_report">
                                     <div class="tab-pane fade show active" id="content_progress_input_sla" role="tabpanel" aria-labelledby="progress_input_sla-tab">
+                                        <div id="container" class="m-3"></div>
                                         <table id="table-summary" class="table table-striped table-bordered" style="width:50%">
                                             <thead>
                                                 <th>Location Name</th>
@@ -105,7 +106,26 @@
                                             <tbody></tbody>
                                         </table>
                                     </div>
-                                    <div class="tab-pane fade" id="content_existing_sign_sla" role="tabpanel" aria-labelledby="existing_sign_sla-tab">sdsad</div>
+                                    <div class="tab-pane fade" id="content_existing_sign_sla" role="tabpanel" aria-labelledby="existing_sign_sla-tab">
+                                        <table id="table-summary-sign" class="table table-striped table-bordered" style="width:50%">
+                                            <thead>
+                                                <th>Location Name</th>
+                                                <th>Jan</th>
+                                                <th>Feb</th>
+                                                <th>Mar</th>
+                                                <th>Apr</th>
+                                                <th>May</th>
+                                                <th>Jun</th>
+                                                <th>Jul</th>
+                                                <th>Aug</th>
+                                                <th>Sept</th>
+                                                <th>Oct</th>
+                                                <th>Nov</th>
+                                                <th>Dec</th>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
                                 </div>    
                             </div>
                         </div>
@@ -311,6 +331,29 @@ $(document).on('click','.pilih_client',function(){
                     });
                 }
             });
+
+            $.ajax({
+                headers:{
+                    'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content'),
+                },
+                url:'/report/getSignReportPeriodYearOfProject',
+                dataType:'JSON',
+                type:'POST',
+                processData:true,
+                data:{
+                    'project_code':$('#project_code').val(),
+                    'year_project':$('#year_project').val(),
+                    _token: '{{csrf_token()}}'
+                },
+                success:function(data){
+                    $('.table-summary-sign tbody').empty();
+                    $.each(data,function(i,item){
+                        var row = "<tr><td>"+data[i].location_name+"</td><td>"+data[i].Jan+"("+data[i].service_jan+")</td><td>"+data[i].Feb+"("+data[i].service_feb+")</td><td>"+data[i].Mar+"("+data[i].service_mar+")</td><td>"+data[i].Apr+"("+data[i].service_apr+")</td><td>"+data[i].May+"("+data[i].service_may+")</td><td>"+data[i].Jun+"("+data[i].service_jun+")</td><td>"+data[i].Jul+"("+data[i].service_jul+")</td><td>"+data[i].Aug+"("+data[i].service_aug+")</td><td>"+data[i].Sep+"("+data[i].service_sep+")</td><td>"+data[i].Oct+"("+data[i].service_oct+")</td><td>"+data[i].Nov+"("+data[i].service_nov+")</td><td>"+data[i].Dec+"("+data[i].service_dec+")</td></tr>";
+                        $("#table-summary-sign > tbody").append(row);
+
+                    });
+                }
+            });
         }
     });
 });
@@ -414,9 +457,9 @@ $(document).ready(function(){
                         setTimeout(function () {
                             url.revokeObjectURL(downloadUrl);
                         },
-                            100);
-                    }
-                });
+                    100);
+                }
+            });
         }
     });
 });

@@ -61,6 +61,8 @@ Route::group(['middleware' => ['auth','authorization'],'prefix'=>'score'],functi
     Route::get('/getListScore',[SetScoreController::class,'getListScore'])->name('getListScore:dt');
     Route::get('/createScore',[SetScoreController::class,'createScore']);
     Route::post('/setScore',[SetScoreController::class,'setScore']);
+    Route::post('/getDataTableScoreToSelected',[SetScoreController::class,'getDataTableScoreToSelected'])->name('score_to_selected:dt');
+    Route::get('/getDataScoreByIdHeader/{id}',[SetScoreController::class,'getDataScoreByIdHeader']);
 });
 
 Route::get('/change_password',[ProfileUserController::class,'viewChangePassword'])->middleware('auth');
@@ -172,6 +174,7 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'report'],functio
     Route::get('/LogSignReport',[ReportController::class,'log_sign_report']);
     Route::get('/getDataTableSignReport',[ReportController::class,'getDataTableSignReport'])->name('data_log_sign');
     Route::get('/getFileNameSignReport/{id}',[ReportController::class,'getFileNameSignReport'])->name('download');
+    Route::post('/getSignReportPeriodYearOfProject',[ReportController::class,'getSignReportPeriodYearOfProject']);
 });
 
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'sign'],function(){
@@ -187,6 +190,8 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'log'],function()
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'pinalty'],function(){
     Route::get('/',[PinaltyController::class,'index']);
     Route::get('/getDataTablePinalty',[PinaltyController::class,'getDataTablePinalty'])->name('data_pinalty:dt');
+    Route::get('/create',[PinaltyController::class,'create']);
+    Route::post('/store_pinalty',[PinaltyController::class,'store_pinalty']);
 });
 Route::get('/client/getDatatableClientToSelected',[ClientController::class,'get_datatable_client_to_selected'])->name('data_client_to_selected:dt')->middleware('auth');
 Route::post('/region/getDataRegionToSelected',[RegionController::class,'get_data_region_to_selected'])->middleware('auth');

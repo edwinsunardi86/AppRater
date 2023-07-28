@@ -25,6 +25,7 @@
                             <h3 class="card-title">Setup Pinalty</h3>
                         </div>
                         <div class="card-body">
+                            <a href="/pinalty/create" class="btn btn-md btn-primary">Create</a>
                             <table id="table-pinalty" class="table table-bordered table-striped">
                                 <thead>
                                     <th>Project Name</th>

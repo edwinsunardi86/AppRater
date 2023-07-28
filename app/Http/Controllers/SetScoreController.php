@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DatabaseModel;
 use Illuminate\Http\Request;
 use App\Models\SetScoreModel;
 use Yajra\DataTables\DataTables as DataTables;
@@ -18,7 +19,6 @@ class SetScoreController extends Controller
 
     function getListScore(){
         $getData = SetScoreModel::getListScoreM();
-        // return response()->json($getData);
         return DataTables::of($getData)->addIndexColumn()->addColumn('action',function(){
             $btn = "<a href=\"score/editScore\" class=\"btn btn-sm btn-warning\">Edit</a>";
             return $btn;
@@ -78,5 +78,18 @@ class SetScoreController extends Controller
         }
 
         return response()->json($confirmation);
+    }
+
+    function getDataTableScoreToSelected(Request $request){
+        $getData = SetScoreModel::getListScoreByProject($request->project_code);
+        return DataTables::of($getData)->addColumn('action',function($row){
+            $btn = "<a class=\"btn btn-md bg-purple choose-template-score\" data-id=".$row->id_header." data-start_date=".$row->start_date." data-finish_date=".$row->finish_date.">Choose</a>";
+            return $btn;
+        })->make();
+    }
+
+    function getDataScoreByIdHeader($id){
+        $getData = DatabaseModel::getData('detail_set_score_per_project',array('id_header'=>$id))->get();
+        return response()->json($getData);
     }
 }

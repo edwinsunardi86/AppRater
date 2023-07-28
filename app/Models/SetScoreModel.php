@@ -47,4 +47,14 @@ class SetScoreModel extends Model
         $query = DB::table('header_set_score')->where(['project_code'=>$project_code])->where(['period_date'=>$period_date])->get();
         return $query;
     }
+
+    static function getListScoreByProject($project_code){
+        $getData = DB::table('header_set_score')
+        ->join('detail_set_score_per_project','header_set_score.id_header','=','detail_set_score_per_project.id_header')
+        ->join('setup_project','setup_project.project_code','=','header_set_score.project_code')
+        ->select('header_set_score.id_header','setup_project.project_code','project_name','start_date','finish_date','is_current_active',DB::Raw('GROUP_CONCAT(category,"(",initial,":",score,")") AS kategori_nilai'))
+        ->where('header_set_score.project_code',$project_code)
+        ->groupBy('header_set_score.id_header','project_code')->get();
+        return $getData;
+    }
 }
