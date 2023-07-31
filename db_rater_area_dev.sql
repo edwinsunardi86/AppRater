@@ -24,17 +24,19 @@ CREATE TABLE `detail_pinalty` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `id_header` int(11) DEFAULT NULL,
   `score` int(11) DEFAULT NULL,
-  `percentage_pinalty` int(11) DEFAULT NULL,
+  `percent_pinalty` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `id_header` (`id_header`),
   CONSTRAINT `detail_pinalty_ibfk_1` FOREIGN KEY (`id_header`) REFERENCES `header_pinalty` (`id_header`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `detail_pinalty` */
 
-insert  into `detail_pinalty`(`id`,`id_header`,`score`,`percentage_pinalty`) values 
-(1,1,100,0),
-(2,1,96,5);
+insert  into `detail_pinalty`(`id`,`id_header`,`score`,`percent_pinalty`) values 
+(45,1,95,12),
+(46,1,89,36),
+(47,1,74,21),
+(48,1,74,67);
 
 /*Table structure for table `detail_set_score_per_project` */
 
@@ -940,7 +942,6 @@ DROP TABLE IF EXISTS `header_pinalty`;
 CREATE TABLE `header_pinalty` (
   `id_header` int(11) NOT NULL,
   `id_header_set_score` int(11) DEFAULT NULL,
-  `project_code` varchar(50) DEFAULT NULL,
   `start_date` date DEFAULT NULL,
   `finish_date` date DEFAULT NULL,
   `description` text DEFAULT NULL,
@@ -949,8 +950,8 @@ CREATE TABLE `header_pinalty` (
 
 /*Data for the table `header_pinalty` */
 
-insert  into `header_pinalty`(`id_header`,`id_header_set_score`,`project_code`,`start_date`,`finish_date`,`description`) values 
-(1,2,'BRIN20230529','2023-01-01','2023-12-31',NULL);
+insert  into `header_pinalty`(`id_header`,`id_header_set_score`,`start_date`,`finish_date`,`description`) values 
+(1,1,'2023-07-01','2023-07-31',NULL);
 
 /*Table structure for table `header_set_score` */
 
@@ -1125,6 +1126,21 @@ insert  into `m_service`(`service_code`,`service_name`,`description`,`created_by
 ('cls','Cleaning Service',NULL,NULL,'2023-03-22 15:19:59',NULL,NULL),
 ('las','Labor Service',NULL,NULL,'2023-03-22 15:20:04',NULL,NULL),
 ('ses','Security Service',NULL,NULL,'2023-03-22 15:20:09',NULL,NULL);
+
+/*Table structure for table `management_fee` */
+
+DROP TABLE IF EXISTS `management_fee`;
+
+CREATE TABLE `management_fee` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_header_pinalty` int(11) DEFAULT NULL,
+  `location_id` int(11) DEFAULT NULL,
+  `start_date` date DEFAULT NULL,
+  `finish_date` date DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+/*Data for the table `management_fee` */
 
 /*Table structure for table `menu` */
 
