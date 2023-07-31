@@ -5,7 +5,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Create Setup Pinalty</h1>
+                    <h1>Update Setup Pinalty</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -23,14 +23,15 @@
                     <form class="form-horizontal" id="form">
                         <div class="card card-primary">
                             <div class="card-header">
-                                <h3 class="card-title">Create Setup Pinalty</h3>
+                                <h3 class="card-title">Update Setup Pinalty</h3>
                             </div>
                             <div class="card-body">
                                 <div class="form-group row">
+                                    <input type="hidden" name="id_header" id="id_header" value="{{ $header_pinalty->id_header }}">
                                     <label for="inputClientName" class="col-sm-2 col-form-label">Client Name</label>
                                     <div class="col-sm-4">
-                                        <input type="text" class="form-control" name="client_name" id="client_name" readonly>
-                                        <input type="hidden" class="form-control" name="client_id" id="client_id" readonly>
+                                        <input type="text" class="form-control" name="client_name" id="client_name" value="{{ $header_pinalty->client_name }}" readonly>
+                                        <input type="hidden" class="form-control" name="client_id" id="client_id" value="{{ $header_pinalty->client_id }}" readonly>
                                     </div>
                                     <div class="col-sm-2">
                                         <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#modal-xl">Cari</button>
@@ -39,21 +40,29 @@
                                 <div class="form-group row">
                                         <label for="projectName" class="col-sm-2 col-form-label">Project Name</label>
                                     <div class="col-sm-4">
-                                        <select name="project_code" id="project_code" class="form-control select2"></select>
-                                        <input type="hidden" name="id_header" id="id_header"/>
+                                        <select name="project_code" id="project_code" class="form-control select2">
+                                            <option value="{{ $header_pinalty->project_code }}">{{ $header_pinalty->project_name }}</option>
+                                        </select>
                                      </div>
                                 </div>
+                                @php
+                                    $exp_start_date = explode("-",$header_pinalty->start_date);
+                                    $start_date = $exp_start_date[1]."/".$exp_start_date[2]."/".$exp_start_date[0];
+
+                                    $exp_finish_date = explode("-",$header_pinalty->finish_date);
+                                    $finish_date = $exp_finish_date[1]."/".$exp_finish_date[2]."/".$exp_finish_date[0];
+                                @endphp
                                 <div class="form-group row">
                                     <label for="StartDate" class="col-sm-2 col-form-label">Start Date</label>
                                     <div class="col-sm-2 input-group date" id="startDateFormat" data-target-input="nearest">
-                                        <input type="text" class="form-control datetimepicker-input" id="start_date" name="start_date" data-target="#startDateFormat"/>
+                                        <input type="text" class="form-control datetimepicker-input" id="start_date" name="start_date" data-target="#startDateFormat" value="{{ $start_date }}"/>
                                         <div class="input-group-append" data-target="#startDateFormat" data-toggle="datetimepicker">
                                             <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                         </div>
                                     </div>
                                     <label for="StartDate" class="col-sm-1 col-form-label">Finish Date</label>
                                     <div class="col-sm-2 input-group date" id="finishDateFormat" data-target-input="nearest">
-                                        <input type="text" class="form-control datetimepicker-input" id="finish_date" name="finish_date" data-target="#finishDateFormat"/>
+                                        <input type="text" class="form-control datetimepicker-input" id="finish_date" name="finish_date" data-target="#finishDateFormat" value="{{ $finish_date }}"/>
                                         <div class="input-group-append" data-target="#finishDateFormat" data-toggle="datetimepicker">
                                             <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                         </div>
@@ -75,6 +84,7 @@
                                 <button type="submit" class="btn btn-md btn-primary">Submit</button>
                             </div>
                         </div>
+                        <input type="hidden" name="id_header_set_score" id="id_header_set_score" value="{{ $header_pinalty->id_header_set_score }}">
                     </form>
                 </div>
             </div>
@@ -170,7 +180,30 @@ $(document).ready(function(){
             { data: 'action', name: 'action'}
         ],
     });
-    var tb_score = $('#table').DataTable();
+
+    $.ajax({
+        headers:{
+            'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+        },
+        url:"/pinalty/getDetailScorePinalty/"+{{ $header_pinalty->id_header }},
+        type:"GET",
+        dataType:"JSON",
+        success:function(data){
+            $('#display_score').empty();
+            $.each(data,function(i,item){
+                $('#id_header').val(data[i].id_header);
+                var html_pinalty = "<div class=\"form-group row\">"+
+                        "<label for=\"score"+i+"\" class=\"col-sm-2 col-form-label\">"+data[i].score+" ("+data[i].category+")</label>"+
+                        "<div class=\"col-sm-1\">"+
+                            "<input type=\"number\" min=0 max=100 class=\"form-control form-control-sm num_valid\" name=\"percentage[]\" value="+data[i].percent_pinalty+" id=\"percentage"+i+"\" maxlength=3>"+
+                            "<input type=\"hidden\" name=\"score[]\" id=\"score"+i+"\" value=\""+data[i].score+"\">"+
+                        "</div>"+
+                        "<label for=\"score"+i+"\" class=\"col-sm-2 col-form-label\">%</label>"+
+                    "</div>";
+                $('#display_score').append(html_pinalty);
+            });
+        }
+    });
 });
 
 $(document).on('click','.pilih_client',function(){
@@ -257,7 +290,7 @@ $(document).on('click','.choose-template-score',function(){
         success:function(data){
             $('#display_score').empty();
             $.each(data,function(i,item){
-                $('#id_header').val(data[i].id_header);
+                $('#id_header_set_score').val(data[i].id_header_set_score);
                 var html_pinalty = "<div class=\"form-group row\">"+
                         "<label for=\"score"+i+"\" class=\"col-sm-2 col-form-label\">"+data[i].score+" ("+data[i].category+")</label>"+
                         "<div class=\"col-sm-1\">"+
@@ -289,11 +322,23 @@ $(document).ready(function(){
         rules:{
             project_code:{
                 required:true
+            },
+            start_date:{
+                required:true
+            },
+            finish_date:{
+                required:true
             }
         },
         messages:{
             project_code:{
                 required:"Please Input Project Name"
+            },
+            start_date:{
+                required:"Please Input Start Date"
+            },
+            finish_date:{
+                required:"Please Input Finish Date"
             }
         },
         errorElement: 'span',
@@ -323,13 +368,14 @@ $(document).ready(function(){
                     headers:{
                         'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
                     },
-                    url:'/pinalty/store_pinalty',
+                    url:'/pinalty/update_pinalty/',
                     dataType:'JSON',
                     type:'POST',
                     processData:true,
                     async:false,
                     data:{
-                        'id_header_set_score'   :   $('#id_header').val(),
+                        'id_header'             :   $('#id_header').val(),
+                        'id_header_set_score'   :   $('#id_header_set_score').val(),
                         'percent_id'            :   arr_percent_id,
                         'start_date'            :   $('#start_date').val(),
                         'finish_date'           :   $('#finish_date').val()
@@ -343,7 +389,6 @@ $(document).ready(function(){
                         setTimeout(() => {
                             window.location.href=data.redirect;
                         }, 1500);
-                        
                     }
                 });
             }else{

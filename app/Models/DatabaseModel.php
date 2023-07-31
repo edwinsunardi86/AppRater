@@ -33,4 +33,20 @@ class DatabaseModel extends Model
     static function insertData($table,$post){
         return DB::table($table)->insert($post);
     }
+
+    static function getMaxIdHeader($table){
+        $query = DB::table($table)
+        ->select(DB::Raw("MAX(id_header) AS id_header"));
+        return $query->first();
+    }
+
+    static function updateData($table,$post,$field_name,$id){
+        $query = DB::table($table)->where($field_name,$id)->update($post);
+        return $query;
+    }
+
+    static function deleteData($table,$field_name,$id){
+        $query = DB::table($table)->where($field_name,$id)->delete();
+        return $query;
+    }
 }

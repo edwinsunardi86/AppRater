@@ -192,6 +192,10 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'pinalty'],functi
     Route::get('/getDataTablePinalty',[PinaltyController::class,'getDataTablePinalty'])->name('data_pinalty:dt');
     Route::get('/create',[PinaltyController::class,'create']);
     Route::post('/store_pinalty',[PinaltyController::class,'store_pinalty']);
+    Route::get('/edit/{id}',[PinaltyController::class,'edit']);
+    Route::get('/getDetailScorePinalty/{id}',[PinaltyController::class,'getDetailScorePinalty']);
+    Route::post('/update_pinalty',[PinaltyController::class,'update_pinalty']);
+    Route::post('/delete_pinalty',[PinaltyController::class,'delete_pinalty']);
 });
 Route::get('/client/getDatatableClientToSelected',[ClientController::class,'get_datatable_client_to_selected'])->name('data_client_to_selected:dt')->middleware('auth');
 Route::post('/region/getDataRegionToSelected',[RegionController::class,'get_data_region_to_selected'])->middleware('auth');

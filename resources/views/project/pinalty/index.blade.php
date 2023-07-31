@@ -26,11 +26,12 @@
                         </div>
                         <div class="card-body">
                             <a href="/pinalty/create" class="btn btn-md btn-primary">Create</a>
-                            <table id="table-pinalty" class="table table-bordered table-striped">
+                            <table id="table-pinalty" class="table table-bordered table-striped" style="width:100%">
                                 <thead>
                                     <th>Project Name</th>
                                     <th>Period</th>
                                     <th>Pinalty Score</th>
+                                    <th>Action</th>
                                 </thead>
                             </table>
                         </div>
@@ -50,9 +51,48 @@ $(document).ready(function(){
         columns:[
             { data:'project_name', name:'project_name' },
             { data: 'period', name: 'period' },
-            { data: 'pinalty_score', name: 'pinalty_score'}
+            { data: 'pinalty_score', name: 'pinalty_score'},
+            { data: 'action', name: 'action'}
         ]
     });
 });
+function deletePinalty(id_header){
+    $('#deletePinalty'+id_header).submit(function(){
+        Swal.fire({
+            title: 'Perhatian!',
+            html: 'Apakah anda yakin ingin menghapus data region ini?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText:'Delete',
+        }).then((result)=>{
+            if(result.isConfirmed){
+                $.ajax({
+                    headers:{
+                        'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+                    },
+                    url:'pinalty/delete_pinalty',
+                    type:"POST",
+                    dataType:"JSON",
+                    data:{
+                        'id_header':id_header
+                    },
+                    processData:true,
+                    success:function(data){
+                        Swal.fire({
+                            title:data.title,
+                            html:data.message,
+                            icon:data.icon
+                        });
+                        setTimeout(() => {
+                            window.location.href=data.redirect;
+                        }, 1500);
+                    }
+                });    
+            }
+        });
+    });
+    
+}
 </script>
+
 @endsection
