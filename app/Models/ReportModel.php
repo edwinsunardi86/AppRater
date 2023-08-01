@@ -52,8 +52,7 @@ class ReportModel extends Model
             $query = $query->where('service_code',$service_code);
         }
         if($month != "" && $year != ""){
-            $query = $query->whereRaw("DATE_FORMAT(appraisal_date,\"%Y\") = $year")
-            ->whereRaw("DATE_FORMAT(appraisal_date,\"%m\") = \"$month\"")
+            $query = $query->whereRaw("DATE_FORMAT(appraisal_date,\"%m-%Y\") = \"$month-$year\"")
             ->select('sub_area_id','sub_area_name','service_code','service_name',DB::Raw("
             AVG(score) AS score"),'initial')
             ->groupBy('sub_area_id');
@@ -61,12 +60,11 @@ class ReportModel extends Model
         }
     }
 
-    static function getDataScoreMonthlyPerLocationGroupService($project_code,$location_id,$month,$year){
+    static function getDataScoreMonthlyPerLocationGroupService($project_code,$location_id,$month,$year,$service_code=null){
         $query = DB::table('report_summary_monthly_per_location')
         ->where('project_code','=',$project_code)
         ->where('location_id',$location_id)
-        ->whereRaw("DATE_FORMAT(appraisal_date,\"%Y\") = \"$year\"")
-        ->whereRaw("DATE_FORMAT(appraisal_date,\"%m\") = \"$month\"")
+        ->whereRaw("DATE_FORMAT(appraisal_date,\"%m-%Y\") = \"$month-$year\"")
         ->select('service_code','service_name',DB::Raw("
         AVG(score) AS score"))
         ->groupBy('service_code');
@@ -74,34 +72,46 @@ class ReportModel extends Model
     }
 
     static function average_satisfaction($project_code,$month,$year,$location_id,$service_code=null){
-        $query_avg_score = DB::table('score_evaluation')
-        ->join('header_evaluation','header_evaluation.id_header','=','score_evaluation.id_header') 
-        // ->join('setup_sub_area','setup_sub_area.id','=','score_evaluation.sub_area_id')
-        // ->join('setup_area','setup_area.id','=','setup_sub_area.area_id')
-        ->join('template_sub_area','template_sub_area.id','=','score_evaluation.sub_area_id')
-        ->join('template_area','template_area.id','=','template_sub_area.id_area')
-        ->join('header_template','header_template.id','=','template_area.id_header')
-        ->join('setup_location','header_template.location_id','=','setup_location.id')
-        ->join('setup_region','setup_location.region_id','=','setup_region.id')
-        ->join('setup_project','setup_project.project_code','=','setup_region.project_code')
-        ->join('m_client','m_client.id','=','setup_project.client_id')
-        ->select(DB::Raw('AVG(score) AS score'),'m_client.client_name','project_name','location_name','service_code','critic_recommend');
-        if($project_code != ""){
-            $query_avg_score = $query_avg_score->where('setup_project.project_code',$project_code);
-        }
+        // $query_avg_score = DB::table('score_evaluation')
+        // ->join('header_evaluation','header_evaluation.id_header','=','score_evaluation.id_header') 
+        // ->join('template_sub_area','template_sub_area.id','=','score_evaluation.sub_area_id')
+        // ->join('template_area','template_area.id','=','template_sub_area.id_area')
+        // ->join('header_template','header_template.id','=','template_area.id_header')
+        // ->join('setup_location','header_template.location_id','=','setup_location.id')
+        // ->join('setup_region','setup_location.region_id','=','setup_region.id')
+        // ->join('setup_project','setup_project.project_code','=','setup_region.project_code')
+        // ->join('m_client','m_client.id','=','setup_project.client_id')
+        // ->select(DB::Raw('AVG(score) AS score'),'m_client.client_name','project_name','location_name','service_code','critic_recommend');
+        // if($project_code != ""){
+        //     $query_avg_score = $query_avg_score->where('setup_project.project_code',$project_code);
+        // }
         
-        if($location_id != ""){
-            $query_avg_score = $query_avg_score->where('setup_location.id',$location_id);
-        }
+        // if($location_id != ""){
+        //     $query_avg_score = $query_avg_score->where('setup_location.id',$location_id);
+        // }
 
-        if($month != "" && $year != ""){
-            $query_avg_score = $query_avg_score->whereRaw("DATE_FORMAT(appraisal_date,'%Y-%m')='".$year."-".$month."'");
-        }
+        // if($month != "" && $year != ""){
+        //     $query_avg_score = $query_avg_score->whereRaw("DATE_FORMAT(appraisal_date,'%Y-%m')='".$year."-".$month."'");
+        // }
+        // if($service_code !=""){
+        //     $query_avg_score = $query_avg_score->where('service_code',$service_code);
+        // }
+        // $query_avg_score = $query_avg_score->first();
+        // return $query_avg_score;
+
+        $query = DB::table('report_summary_monthly_per_location')
+        ->where('project_code','=',$project_code)
+        ->where('location_id',$location_id);
         if($service_code !=""){
-            $query_avg_score = $query_avg_score->where('service_code',$service_code);
+            $query = $query->where('service_code',$service_code);
         }
-        $query_avg_score = $query_avg_score->first();
-        return $query_avg_score;
+        if($month != "" && $year != ""){
+            $query = $query->whereRaw("DATE_FORMAT(appraisal_date,\"%m-%Y\") = \"$month-$year\"")
+            ->select('project_name','sub_area_id','sub_area_name','service_code','service_name',DB::Raw("
+            AVG(score) AS score"),'initial','location_name','client_name')
+            ->groupBy('sub_area_id');
+            return $query->first();
+        }
     }
 
     static function getScoreM($project_code,$bulan,$tahun,$score){

@@ -293,9 +293,9 @@ class ReportController extends Controller
     }
     function log_sign_report(){
         return view('report.report_log_sign',[
-            'title' => 'Report Log Sign Report',
+            'title' => 'Report Log Sign',
             'active_gm' => 'Report',
-            'active_m'=>'report/report_log_sign_report'
+            'active_m'=>'report/LogSignReport'
         ]);
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\LocationModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables as DataTables;
@@ -122,5 +123,17 @@ class LocationController extends Controller
     public function get_data_location_to_selected(Request $request){
         $db = DB::table('setup_location')->select('setup_location.id','setup_location.location_name','setup_location.address','setup_location.description AS location_description')->get();
         return response()->json($db);
+    }
+
+    public function getDataTableLocationToSelected(Request $request){
+        $query = LocationModel::getLocation($request->project_code);
+        return DataTables::of($query)->addColumn('action',function($row){
+            $btn = "<div class=\"icheck-primary d-inline\">
+            <input type=\"checkbox\" id=\"checkboxPrimary".$row->location_id."\" name=\"cb_location[]\" class=\"cb_location\" data-location_id=\"$row->location_id\" data-location_name=\"$row->location_name\">
+            <label for=\"checkboxPrimary".$row->location_id."\">
+            </label>
+          </div>";
+            return $btn;
+        })->make();
     }
 }

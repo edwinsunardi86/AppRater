@@ -225,8 +225,8 @@ $(document).on('click','#btn-template-score',function(){
             },
         },
         columns:[
-            {data:'', name:'', render:function(row, type, set){
-                return i++;
+            { data:i, name: i, render: function (data, type, row, meta) {
+                return meta.row + meta.settings._iDisplayStart + 1;
             }},
             { data: 'project_code', name:'project_code' },
             { data: 'project_name', name: 'project_name' },

@@ -9,6 +9,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EvaluationController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\LogController;
+use App\Http\Controllers\ManagementFeeController;
 use App\Http\Controllers\PinaltyController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ReportController;
@@ -197,6 +198,13 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'pinalty'],functi
     Route::post('/update_pinalty',[PinaltyController::class,'update_pinalty']);
     Route::post('/delete_pinalty',[PinaltyController::class,'delete_pinalty']);
 });
+
+Route::group(['middleware'=>['auth','authorization'],'prefix'=>'management_fee'],function(){
+    Route::get('/',[ManagementFeeController::class,'index']);
+    Route::get('/getDataTableManagementFee',[ManagementFeeController::class,'getDataTableManagementFee'])->name('data_fee_management:dt');
+    Route::get('/create',[ManagementFeeController::class,'create']);
+});
+
 Route::get('/client/getDatatableClientToSelected',[ClientController::class,'get_datatable_client_to_selected'])->name('data_client_to_selected:dt')->middleware('auth');
 Route::post('/region/getDataRegionToSelected',[RegionController::class,'get_data_region_to_selected'])->middleware('auth');
 Route::post('/location/getDataLocationToSelected',[LocationController::class,'get_data_location_to_selected_by_region'])->middleware('auth');
@@ -220,3 +228,4 @@ Route::get('/getDataService',[AreaController::class,'get_data_service'])->middle
 Route::post('/getInputRatePeriodYearPerProject',[ReportController::class,'getInputRatePeriodYearPerProject'])->middleware('auth');
 Route::post('/getInputRateMonthlyPerLocation',[ReportController::class,'getInputRateMonthlyPerLocation'])->middleware('auth');
 Route::post('/getInputrateMonthlyPercentageByMonth',[ReportController::class,'getInputrateMonthlyPercentageByMonth'])->middleware('auth');
+Route::post('/getDataTableLocationToSelected',[LocationController::class,'getDataTableLocationToSelected'])->name('data_location_to_selected:dt');
