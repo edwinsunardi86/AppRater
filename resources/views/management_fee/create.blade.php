@@ -14,7 +14,7 @@
                     </ol>
                 </div>
             </div>
-        </div><!-- /.container-fluid -->
+        </div>
     </section>
     <section class="content">
         <div class="container-fluid">
@@ -22,23 +22,64 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <div class="form-group row">
-                                <label for="inputClientName" class="col-sm-3 col-form-label">Client Name</label>
-                                <div class="col-sm-3">
-                                    <input type="text" class="form-control form-control-sm" name="client_name" id="client_name" readonly>
-                                    <input type="hidden" class="form-control form-control-sm" name="client_id" id="client_id" readonly>
+                            <form class="form-horizontal" id="form" method="post">
+                                <div class="form-group row">
+                                    <label for="inputClientName" class="col-sm-2 col-form-label">Client Name</label>
+                                    <div class="col-sm-3">
+                                        <input type="text" class="form-control form-control-sm" name="client_name" id="client_name" readonly>
+                                        <input type="hidden" class="form-control form-control-sm" name="client_id" id="client_id" readonly>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-xl">Cari</button>
+                                    </div>
                                 </div>
-                                <div class="col-sm-2">
-                                    <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-xl">Cari</button>
+                                <div class="form-group row">
+                                    <label for="projectName" class="col-sm-2 col-form-label">Project Name</label>
+                                    <div class="col-sm-3">
+                                        <select name="project_code" id="project_code" class="form-control form-control-sm select2"></select>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="projectName" class="col-sm-3 col-form-label">Project Name</label>
-                                <div class="col-sm-3">
-                                    <select name="project_code" id="project_code" class="form-control form-control-sm select2"></select>
+                                <div class="form-group row">
+                                    <label for="pinalty" class="col-sm-2 col-form-label">Pinalty</label>
+                                    <div class="col-sm-3">
+                                        <textarea name="set_pinalty" id="set_pinalty" cols="10" rows="5" class="form-control form-control-sm"></textarea>
+                                        <input type="hidden" name="id_pinalty" id="id_pinalty">
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <button type="button" class="btn btn-sm btn-primary" id="btn_set_pinalty" data-toggle="modal" data-target="#modal-set-pinalty">Set Pinalty</button>
+                                    </div>
                                 </div>
-                            </div>
-                            <button data-toggle="modal" data-target="#modal-location" class="btn btn-block bg-gradient-primary col-md-2"><i class="fas fa-user-plus"></i>Add Location</button>
+                                <div class="form-group row">
+                                    <label for="StartDate" class="col-sm-2 col-form-label">Start Date</label>
+                                    <div class="col-sm-2 input-group date" id="startDateFormat" data-target-input="nearest">
+                                        <input type="text" class="form-control datetimepicker-input" id="start_date" name="start_date" data-target="#startDateFormat"/>
+                                        <div class="input-group-append" data-target="#startDateFormat" data-toggle="datetimepicker">
+                                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                        </div>
+                                    </div>
+                                    <label for="StartDate" class="col-sm-1 col-form-label">Finish Date</label>
+                                    <div class="col-sm-2 input-group date" id="finishDateFormat" data-target-input="nearest">
+                                        <input type="text" class="form-control datetimepicker-input" id="finish_date" name="finish_date" data-target="#finishDateFormat"/>
+                                        <div class="input-group-append" data-target="#finishDateFormat" data-toggle="datetimepicker">
+                                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="button" data-toggle="modal" data-target="#modal-location" class="btn btn-block bg-gradient-primary col-md-2 mb-5"><i class="fas fa-user-plus"></i>Add Location</button>
+                                <div class="table-responsive">
+                                    <table id="fee_location" class="table table-bordered table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th>Location Name</th>
+                                            <th>Fee</th>
+                                            <th>Action</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                                <button type="submit" class="btn btn-sm btn-primary">Submit</button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -78,10 +119,42 @@
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>
+    </div>
+</div>
+<div class="modal fade" id="modal-set-pinalty">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Setup Pinalty</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="overflow:scroll">
+                <div class="table-responsive">
+                    <table id="table_pinalty" class="display table table-bordered table-striped table-hover" style="width:70%">
+                        <thead>
+                            <tr>
+                                <th>Period</th>
+                                <th>Pinalty Score</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
         <!-- /.modal-content -->
     </div>
     <!-- /.modal-dialog -->
 </div>
+
 <div class="modal fade" id="modal-location">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
@@ -110,6 +183,7 @@
                         </tbody>
                     </table>
                 </div>
+                <button type="button" id="choiceLocation" class="btn btn-md btn-primary" data-dismiss="modal">Pilih</button>
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -119,11 +193,18 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
+
+
+
+<script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
 <script>
+$('#startDateFormat').datetimepicker({
+    format: 'L',
+});
+$('#finishDateFormat').datetimepicker({
+    format: 'L',
+});
 $(document).ready(function(){
-$( "li.item-a" )
-  .closest( "ul" )
-  .css( "background-color", "red" );
     var i = 1;
     var tb_client = $('#table_client').DataTable({
     processing:true,
@@ -179,14 +260,43 @@ $(document).on('click','.pilih_client',function(){
     });
 });
 
+
 $(document).on('change','#project_code', function(){
-    $('#modal-location').on('shown.bs.modal',function(){
-        var i = 1;
-        var table_location = $('#table_location').DataTable({
+    var table_pinalty = $('#table_pinalty').DataTable({
+        processing:false,
+        serverSide:false,
+        destroy:true,
+        ajax:{
+            headers:{
+                'X_CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content'),
+            },
+            type:'POST',
+            dataType:'JSON',
+            url:'{!! route("data_pinalty_per_project_to_selected:dt") !!}',
+            processData:true,
+            data:{
+                    'project_code':$('#project_code').val()
+            },
+        },
+        columns:[
+                { data: 'period', name: 'period' },
+                { data: 'pinalty_score', name: 'pinalty_score' },
+                { data: 'action', name: 'action' },
+            ]
+    });
+    
+    $(document).on('click','.btn_choice', function(){
+        var id_header_pinalty = $(this).attr('data-id_header_pinalty');
+        var period = $(this).attr('data-period');
+        var pinalty_score = $(this).attr('data-pinalty_score');
+        $('#id_pinalty').val(id_header_pinalty);
+        var html_desc = period + "\n" + pinalty_score;
+        $('#set_pinalty').val(html_desc);
+    });
+    var table_location = $('#table_location').DataTable({
             processing:false,
             serverSide:false,
-            // destroy:true,
-            // autoWidth: true,
+            destroy:true,
             ajax:{
                 headers:{
                     'X_CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content'),
@@ -204,27 +314,115 @@ $(document).on('change','#project_code', function(){
                 { data: 'location_name', name: 'location_name' },
                 { data: 'description', name: 'description' }
             ],
-        });
+    });
 
+    $('#modal-location').on('shown.bs.modal',function(){
+        var i = 1;
         $(document).on('click','#checkboxPrimary_all',function(){
             var checkbox_all = document.getElementById('checkboxPrimary_all');
+            var cb_location = table_location.rows().nodes().to$().find('input[name="cb_location[]"]').each(function(){
             if(checkbox_all.checked == true){
-                alert('all');
+                    $(this).prop('checked',true);
             }else{
-                alert('not');
-            }
-            var data = table_location.row(0).data();
-            var cb_location = table_location.rows().nodes().to$().find('input[name="cb_location[]"]:checked').each(function(){
-                if($(this).is(':checked')){
-                    alert('test');
+                    $(this).prop('checked',false);
                 }
             });
-            // console.log(data);
-            console.log(cb_location.length);
+        });
+        $(document).on('click','#choiceLocation',function(){
+            $('#fee_location tbody').empty();
+            var arr_location = [];
+            var cb_location = table_location.rows().nodes().to$().find('input[name="cb_location[]"]:checked').each(function(){
+                if($(this).is(':checked')){
+                    arr_location.push({ location_id:$(this).attr('data-location_id'), location_name:$(this).attr('data-location_name') });
+                }
+            });
+            $.each(arr_location,function(i,item){
+                $('#fee_location tbody').append("<tr><td>"+arr_location[i].location_name+"<input type=\"hidden\" name=\"location_id[]\" data-location_id="+arr_location[i].location_id+" id=\"location_id"+i+"\" value="+arr_location[i].location_id+"></td><td><input type=\"number\" class=\"form-control form-control-sm\" name=\"fee[]\" id=\"fee"+arr_location[i].location_id+"\"></td><td><button class=\"delete_location btn btn-md btn-danger\">Delete</button></td></tr>");
+            });
+        });
+
+        $(document).on('click','.delete_location',function(){
+            $(this).closest('tr').remove();
         });
     });
-    // table_location.columns.adjust();
 })
 
+$(document).ready(function(){
+    $('#form').validate({
+        rules:{
+            project_code:{
+                required:true
+            },
+            set_pinalty:{
+                required:true
+            },
+            start_date:{
+                required:true
+            },
+            finish_date:{
+                required:true
+            }
+        },
+        messages:{
+            project_code:{
+                required:"Please choice project name"
+            },
+            set_pinalty:{
+                required:"Please choice set pinalty"
+            },
+            start_date:{
+                required:"Please choice start date"
+            },
+            finish_date:{
+                required:"Please choice finish_date"
+            }
+        },
+        errorElement: 'span',
+            errorPlacement: function (error, element) {
+            error.addClass('invalid-feedback');
+            element.closest('.form-group').append(error);
+        },
+        highlight: function (element, errorClass, validClass) {
+            $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element, errorClass, validClass) {
+            $(element).removeClass('is-invalid');
+        },
+        submitHandler: function() {
+            var input_location = $('input[name="location_id[]"]');
+            var arr_fee_location = [];
+            $.each(input_location,function(i,item){
+                var data_id = $(this).attr('data-location_id');
+                arr_fee_location.push({ location_id : data_id, fee:$('#fee'+data_id).val()})
+            });
+            console.log(input_location);
+            $.ajax({
+                headers:{
+                    'X_CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+                },
+                url:'/management_fee/storeManagementFee',
+                type:"POST",
+                dataType:"JSON",
+                data:{
+                    'id_pinalty':$('#id_pinalty').val(),
+                    'start_date':$('#start_date').val(),
+                    'finish_date':$('#finish_date').val(),
+                    'arr_fee_location':arr_fee_location
+                },
+                processData:true,
+                success:function(data){
+                    Swal.fire({
+                            title:data.title,
+                            html:data.message,
+                            icon:data.icon
+                        });
+                        setTimeout(() => {
+                            window.location.href=data.redirect;
+                        }, 1500);
+                }
+            });
+        }
+    });
+});
 </script>
 @endsection

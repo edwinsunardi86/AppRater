@@ -323,7 +323,7 @@ $(document).on('click','.pilih_client',function(){
                     _token: '{{csrf_token()}}'
                 },
                 success:function(data){
-                    $('.table-summary tbody').empty();
+                    $('#table-summary tbody').empty();
                     $.each(data,function(i,item){
                         var row = "<tr><td>"+data[i].location_name+"</td><td>"+data[i].Jan+"</td><td>"+data[i].Feb+"</td><td>"+data[i].Mar+"</td><td>"+data[i].Apr+"</td><td>"+data[i].May+"</td><td>"+data[i].Jun+"</td><td>"+data[i].Jul+"</td><td>"+data[i].Aug+"</td><td>"+data[i].Sep+"</td><td>"+data[i].Oct+"</td><td>"+data[i].Nov+"</td><td>"+data[i].Dec+"</td></tr>";
                         $("#table-summary > tbody").append(row);
@@ -346,7 +346,7 @@ $(document).on('click','.pilih_client',function(){
                     _token: '{{csrf_token()}}'
                 },
                 success:function(data){
-                    $('.table-summary-sign tbody').empty();
+                    $('#table-summary-sign tbody').empty();
                     $.each(data,function(i,item){
                         var row = "<tr><td>"+data[i].location_name+"</td><td>"+data[i].Jan+"("+data[i].service_jan+")</td><td>"+data[i].Feb+"("+data[i].service_feb+")</td><td>"+data[i].Mar+"("+data[i].service_mar+")</td><td>"+data[i].Apr+"("+data[i].service_apr+")</td><td>"+data[i].May+"("+data[i].service_may+")</td><td>"+data[i].Jun+"("+data[i].service_jun+")</td><td>"+data[i].Jul+"("+data[i].service_jul+")</td><td>"+data[i].Aug+"("+data[i].service_aug+")</td><td>"+data[i].Sep+"("+data[i].service_sep+")</td><td>"+data[i].Oct+"("+data[i].service_oct+")</td><td>"+data[i].Nov+"("+data[i].service_nov+")</td><td>"+data[i].Dec+"("+data[i].service_dec+")</td></tr>";
                         $("#table-summary-sign > tbody").append(row);

@@ -203,6 +203,7 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'management_fee']
     Route::get('/',[ManagementFeeController::class,'index']);
     Route::get('/getDataTableManagementFee',[ManagementFeeController::class,'getDataTableManagementFee'])->name('data_fee_management:dt');
     Route::get('/create',[ManagementFeeController::class,'create']);
+    Route::post('/storeManagementFee',[ManagementFeeController::class,'storeManagementFee']);
 });
 
 Route::get('/client/getDatatableClientToSelected',[ClientController::class,'get_datatable_client_to_selected'])->name('data_client_to_selected:dt')->middleware('auth');
@@ -229,3 +230,4 @@ Route::post('/getInputRatePeriodYearPerProject',[ReportController::class,'getInp
 Route::post('/getInputRateMonthlyPerLocation',[ReportController::class,'getInputRateMonthlyPerLocation'])->middleware('auth');
 Route::post('/getInputrateMonthlyPercentageByMonth',[ReportController::class,'getInputrateMonthlyPercentageByMonth'])->middleware('auth');
 Route::post('/getDataTableLocationToSelected',[LocationController::class,'getDataTableLocationToSelected'])->name('data_location_to_selected:dt');
+Route::post('/getDataTablePinaltyPerProjectToSelected',[PinaltyController::class,'getDataTablePinaltyPerProjectToSelected'])->name('data_pinalty_per_project_to_selected:dt');

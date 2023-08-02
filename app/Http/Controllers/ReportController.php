@@ -270,18 +270,18 @@ class ReportController extends Controller
         $i = 5;
         foreach($getData as $row){
             $sheet2->setCellValue('A'.$i,$row->location_name)
-            ->setCellValue('B'.$i,$row->Jan)
-            ->setCellValue('C'.$i,$row->Feb)
-            ->setCellValue('D'.$i,$row->Mar)
-            ->setCellValue('E'.$i,$row->Apr)
-            ->setCellValue('F'.$i,$row->May)
-            ->setCellValue('G'.$i,$row->Jun)
-            ->setCellValue('H'.$i,$row->Jul)
-            ->setCellValue('I'.$i,$row->Aug)
-            ->setCellValue('J'.$i,$row->Sep)
-            ->setCellValue('K'.$i,$row->Oct)
-            ->setCellValue('L'.$i,$row->Nov)
-            ->setCellValue('M'.$i,$row->Dec);
+            ->setCellValue('B'.$i,$row->Jan."(".$row->service_jan.")")
+            ->setCellValue('C'.$i,$row->Feb."(".$row->service_feb.")")
+            ->setCellValue('D'.$i,$row->Mar."(".$row->service_mar.")")
+            ->setCellValue('E'.$i,$row->Apr."(".$row->service_apr.")")
+            ->setCellValue('F'.$i,$row->May."(".$row->service_may.")")
+            ->setCellValue('G'.$i,$row->Jun."(".$row->service_jun.")")
+            ->setCellValue('H'.$i,$row->Jul."(".$row->service_jul.")")
+            ->setCellValue('I'.$i,$row->Aug."(".$row->service_aug.")")
+            ->setCellValue('J'.$i,$row->Sep."(".$row->service_sep.")")
+            ->setCellValue('K'.$i,$row->Oct."(".$row->service_oct.")")
+            ->setCellValue('L'.$i,$row->Nov."(".$row->service_nov.")")
+            ->setCellValue('M'.$i,$row->Dec."(".$row->service_dec.")");
             $i++;
         }
     
@@ -295,7 +295,7 @@ class ReportController extends Controller
         return view('report.report_log_sign',[
             'title' => 'Report Log Sign',
             'active_gm' => 'Report',
-            'active_m'=>'report/LogSignReport'
+            'active_m'=>'report/log_sign_report'
         ]);
     }
 

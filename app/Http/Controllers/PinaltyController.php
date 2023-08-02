@@ -116,4 +116,12 @@ class PinaltyController extends Controller
         }
         return response()->json($confirmation);
     }
+
+    public function getDataTablePinaltyPerProjectToSelected(Request $request){
+        $getData = PinaltyModel::getDataPinaltyByProject($request->project_code);
+        return DataTables::of($getData)->addColumn('action',function($row){
+            $btn = "<button type=\"button\" class=\"btn_choice btn btn-sm bg-purple\" data-id_header_pinalty=\"$row->id_header\" data-period=\"$row->period\" data-pinalty_score=\"$row->pinalty_score\" data-dismiss=\"modal\">Pilih</button>";
+            return $btn;
+        })->make();
+    }
 }

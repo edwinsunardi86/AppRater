@@ -187,7 +187,7 @@ class ReportModel extends Model
             "location_name",
             DB::Raw("CASE WHEN COUNT(CASE WHEN DATE_FORMAT(appraisal_date,\"%m\") =\"$month\" THEN header_evaluation.id_header END)  > 0 THEN 1 ELSE 0 END AS \"status\"")
         )
-        ->groupBy('location_id')->get();
+        ->groupBy('setup_location.id')->get();
         return $query;
     } 
 
@@ -213,11 +213,12 @@ class ReportModel extends Model
 
     static public function checkExistingInputRateMonthlyPerLocation($project_code,$year){
         $query = DB::table('setup_location')
-        ->leftJoin('header_evaluation','setup_location.id','=','header_evaluation.location_id')
+        // ->leftJoin('header_evaluation','setup_location.id','=','header_evaluation.location_id')
+        ->leftJoin(DB::Raw("(SELECT * FROM header_evaluation WHERE DATE_FORMAT(appraisal_date,\"%Y\") = $year) AS header_evaluation"),'header_evaluation.location_id','=','setup_location.id')
         ->leftJoin('users','users.id','=','header_evaluation.created_by')
         ->join('setup_region','setup_region.id','=','setup_location.region_id')
         ->join('setup_project','setup_project.project_code','=','setup_region.project_code')
-        ->whereRaw("date_format(appraisal_date,\"%Y\")=$year")
+        // ->whereRaw("date_format(appraisal_date,\"%Y\")=$year")
         ->where('setup_project.project_code',$project_code)
         ->select(
             "location_id",
@@ -235,7 +236,7 @@ class ReportModel extends Model
             DB::Raw("CASE WHEN COUNT(CASE WHEN DATE_FORMAT(appraisal_date,\"%m\") =\"11\" THEN header_evaluation.id_header END)  > 0 THEN 1 ELSE 0 END AS \"Nov\""),
             DB::Raw("CASE WHEN COUNT(CASE WHEN DATE_FORMAT(appraisal_date,\"%m\") =\"12\" THEN header_evaluation.id_header END)  > 0 THEN 1 ELSE 0 END AS \"Dec\"")
         )
-        ->groupBy('location_id')->get();
+        ->groupBy('setup_location.id')->get();
         return $query;
     }
 
@@ -245,26 +246,29 @@ class ReportModel extends Model
         location_id, 
         service_code,
         start_date,
-        finish_date
+        finish_date,
+        PERIOD,
+        sign
       FROM 
         (
           SELECT 
             DISTINCT ht.location_id, 
-            service_code,
+            ta1.service_code,
             start_date,
-            finish_date
+            finish_date,
+            PERIOD,
+            b.id AS sign
           FROM 
-            template_area ta 
-            LEFT JOIN `header_template` ht ON id_header = ht.id 
+            template_area ta1 
+            LEFT JOIN `header_template` ht ON ta1.id_header = ht.id
+            LEFT JOIN log_sign_report b ON ht.location_id = b.location_id AND ta1.service_code = b.service_code
           GROUP BY 
             service_code, 
             ht.location_id
-        ) AS sub) AS ta'),function(JoinClause $join){
-            $join->on('ta.location_id','=','a.id');
-        })
+        ) AS sub) AS ta'),'a.id','=','ta.location_id')
         // ->leftJoin('log_sign_report AS c','c.location_id','=','a.id')
         ->leftJoin('log_sign_report AS c', function(JoinClause $join){
-            $join->on('c.location_id','=','a.id');
+            $join->on('c.location_id','=','ta.location_id');
             $join->on('c.service_code','=','ta.service_code');
         })
         ->join('m_service AS e','e.service_code','=','ta.service_code')
@@ -272,30 +276,30 @@ class ReportModel extends Model
         ->where('f.project_code',$project_code)
         ->selectRaw("
         a.id AS location_id,location_name,
-        COUNT(CASE WHEN DATE_FORMAT(start_date,\"%m-%Y\") <= \"01-$year\" AND DATE_FORMAT(finish_date,\"%m-%Y\") >= \"01-$year\" THEN a.id END) as 'service_jan',
-        COUNT(CASE WHEN PERIOD = \"01-$year\" THEN c.location_id END) AS 'Jan',
-        COUNT(CASE WHEN DATE_FORMAT(start_date,\"%m-%Y\") <= \"02-$year\" AND DATE_FORMAT(finish_date,\"%m-%Y\") >= \"02-$year\" THEN a.id END) as 'service_feb',
-        COUNT(CASE WHEN PERIOD = \"02-$year\" THEN c.location_id END) AS 'Feb',
-        COUNT(CASE WHEN DATE_FORMAT(start_date,\"%m-%Y\") <= \"03-$year\" AND DATE_FORMAT(finish_date,\"%m-%Y\") >= \"03-$year\" THEN a.id END) as 'service_mar',
-        COUNT(CASE WHEN PERIOD = \"03-$year\" THEN c.location_id END) AS 'Mar',
-        COUNT(CASE WHEN DATE_FORMAT(start_date,\"%m-%Y\") <= \"04-$year\" AND DATE_FORMAT(finish_date,\"%m-%Y\") >= \"04-$year\" THEN a.id END) as 'service_apr',
-        COUNT(CASE WHEN PERIOD = \"04-$year\" THEN c.location_id END) AS 'Apr',
-        COUNT(CASE WHEN DATE_FORMAT(start_date,\"%m-%Y\") <= \"05-$year\" AND DATE_FORMAT(finish_date,\"%m-%Y\") >= \"05-$year\" THEN a.id END) as 'service_may',
-        COUNT(CASE WHEN PERIOD = \"05-$year\" THEN c.location_id END) AS 'May',
-        COUNT(CASE WHEN DATE_FORMAT(start_date,\"%m-%Y\") <= \"06-$year\" AND DATE_FORMAT(finish_date,\"%m-%Y\") >= \"06-$year\" THEN a.id END) as 'service_jun',
-        COUNT(CASE WHEN PERIOD = \"06-$year\" THEN c.location_id END) AS 'Jun',
-        COUNT(CASE WHEN DATE_FORMAT(start_date,\"%m-%Y\") <= \"07-$year\" AND DATE_FORMAT(finish_date,\"%m-%Y\") >= \"07-$year\" THEN a.id END) as 'service_jul',
-        COUNT(CASE WHEN PERIOD = \"07-$year\" THEN c.location_id END) AS 'Jul',
-        COUNT(CASE WHEN DATE_FORMAT(start_date,\"%m-%Y\") <= \"08-$year\" AND DATE_FORMAT(finish_date,\"%m-%Y\") >= \"08-$year\" THEN a.id END) as 'service_aug',
-        COUNT(CASE WHEN PERIOD = \"08-$year\" THEN c.location_id END) AS 'Aug',
-        COUNT(CASE WHEN DATE_FORMAT(start_date,\"%m-%Y\") <= \"09-$year\" AND DATE_FORMAT(finish_date,\"%m-%Y\") >= \"09-$year\" THEN a.id END) as 'service_sep',
-        COUNT(CASE WHEN PERIOD = \"09-$year\" THEN c.location_id END) AS 'Sep',
-        COUNT(CASE WHEN DATE_FORMAT(start_date,\"%m-%Y\") <= \"10-$year\" AND DATE_FORMAT(finish_date,\"%m-%Y\") >= \"10-$year\" THEN a.id END) as 'service_oct',
-        COUNT(CASE WHEN PERIOD = \"10-$year\" THEN c.location_id END) AS 'Oct',
-        COUNT(CASE WHEN DATE_FORMAT(start_date,\"%m-%Y\") <= \"11-$year\" AND DATE_FORMAT(finish_date,\"%m-%Y\") >= \"11-$year\" THEN a.id END) as 'service_nov',
-        COUNT(CASE WHEN PERIOD = \"11-$year\" THEN c.location_id END) AS 'Nov',
-        COUNT(CASE WHEN DATE_FORMAT(start_date,\"%m-%Y\") <= \"12-$year\" AND DATE_FORMAT(finish_date,\"%m-%Y\") >= \"12-$year\" THEN a.id END) as 'service_dec',
-        COUNT(CASE WHEN PERIOD = \"12-$year\" THEN c.location_id END) AS 'Dec'
+        COUNT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"01-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"01-$year\" THEN ta.location_id END) as 'service_jan',
+        COUNT(CASE WHEN c.PERIOD = \"01-$year\" THEN a.id END) AS 'Jan',
+        COUNT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"02-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"02-$year\" THEN ta.location_id END) as 'service_feb',
+        COUNT(CASE WHEN c.PERIOD = \"02-$year\" THEN a.id END) AS 'Feb',
+        COUNT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"03-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"03-$year\" THEN ta.location_id END) as 'service_mar',
+        COUNT(CASE WHEN c.PERIOD = \"03-$year\" THEN a.id END) AS 'Mar',
+        COUNT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"04-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"04-$year\" THEN ta.location_id END) as 'service_apr',
+        COUNT(CASE WHEN c.PERIOD = \"04-$year\" THEN a.id END) AS 'Apr',
+        COUNT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"05-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"05-$year\" THEN ta.location_id END) as 'service_may',
+        COUNT(CASE WHEN c.PERIOD = \"05-$year\" THEN a.id END) AS 'May',
+        COUNT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"06-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"06-$year\" THEN ta.location_id END) as 'service_jun',
+        COUNT(CASE WHEN c.PERIOD = \"06-$year\" THEN a.id END) AS 'Jun',
+        COUNT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"07-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"07-$year\" THEN ta.location_id END) as 'service_jul',
+        COUNT(CASE WHEN c.PERIOD = \"07-$year\" THEN a.id END) AS 'Jul',
+        COUNT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"08-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"08-$year\" THEN ta.location_id END) as 'service_aug',
+        COUNT(CASE WHEN c.PERIOD = \"08-$year\" THEN a.id END) AS 'Aug',
+        COUNT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"09-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"09-$year\" THEN ta.location_id END) as 'service_sep',
+        COUNT(CASE WHEN c.PERIOD = \"09-$year\" THEN a.id END) AS 'Sep',
+        COUNT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"10-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"10-$year\" THEN ta.location_id END) as 'service_oct',
+        COUNT(CASE WHEN c.PERIOD = \"10-$year\" THEN a.id END) AS 'Oct',
+        COUNT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"11-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"11-$year\" THEN ta.location_id END) as 'service_nov',
+        COUNT(CASE WHEN c.PERIOD = \"11-$year\" THEN a.id END) AS 'Nov',
+        COUNT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"12-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"12-$year\" THEN ta.location_id END) as 'service_dec',
+        COUNT(CASE WHEN c.PERIOD = \"12-$year\" THEN a.id END) AS 'Dec'
         ")
         ->groupBy('a.id')->get();
         return $query;
