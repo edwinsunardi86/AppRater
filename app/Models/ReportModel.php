@@ -108,8 +108,7 @@ class ReportModel extends Model
         if($month != "" && $year != ""){
             $query = $query->whereRaw("DATE_FORMAT(appraisal_date,\"%m-%Y\") = \"$month-$year\"")
             ->select('project_name','sub_area_id','sub_area_name','service_code','service_name',DB::Raw("
-            AVG(score) AS score"),'initial','location_name','client_name')
-            ->groupBy('sub_area_id');
+            AVG(score) AS score"),'initial','location_name','client_name');
             return $query->first();
         }
     }
@@ -246,60 +245,51 @@ class ReportModel extends Model
         location_id, 
         service_code,
         start_date,
-        finish_date,
-        PERIOD,
-        sign
+        finish_date
       FROM 
         (
           SELECT 
             DISTINCT ht.location_id, 
             ta1.service_code,
             start_date,
-            finish_date,
-            PERIOD,
-            b.id AS sign
+            finish_date
           FROM 
             template_area ta1 
             LEFT JOIN `header_template` ht ON ta1.id_header = ht.id
-            LEFT JOIN log_sign_report b ON ht.location_id = b.location_id AND ta1.service_code = b.service_code
           GROUP BY 
-            service_code, 
-            ht.location_id
+            service_code,
+            ht.location_id,
+            ht.id
         ) AS sub) AS ta'),'a.id','=','ta.location_id')
-        // ->leftJoin('log_sign_report AS c','c.location_id','=','a.id')
-        ->leftJoin('log_sign_report AS c', function(JoinClause $join){
-            $join->on('c.location_id','=','ta.location_id');
-            $join->on('c.service_code','=','ta.service_code');
-        })
         ->join('m_service AS e','e.service_code','=','ta.service_code')
         ->join('setup_region AS f','f.id','=','a.region_id')
         ->where('f.project_code',$project_code)
         ->selectRaw("
         a.id AS location_id,location_name,
         COUNT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"01-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"01-$year\" THEN ta.location_id END) as 'service_jan',
-        COUNT(CASE WHEN c.PERIOD = \"01-$year\" THEN a.id END) AS 'Jan',
+        (SELECT COUNT(*) FROM log_sign_report lsr WHERE period = \"01-$year\" AND lsr.location_id = a.id) AS 'Jan',
         COUNT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"02-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"02-$year\" THEN ta.location_id END) as 'service_feb',
-        COUNT(CASE WHEN c.PERIOD = \"02-$year\" THEN a.id END) AS 'Feb',
+        (SELECT COUNT(*) FROM log_sign_report lsr WHERE period = \"02-$year\" AND lsr.location_id = a.id) AS 'Feb',
         COUNT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"03-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"03-$year\" THEN ta.location_id END) as 'service_mar',
-        COUNT(CASE WHEN c.PERIOD = \"03-$year\" THEN a.id END) AS 'Mar',
+        (SELECT COUNT(*) FROM log_sign_report lsr WHERE period = \"03-$year\" AND lsr.location_id = a.id) AS 'Mar',
         COUNT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"04-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"04-$year\" THEN ta.location_id END) as 'service_apr',
-        COUNT(CASE WHEN c.PERIOD = \"04-$year\" THEN a.id END) AS 'Apr',
+        (SELECT COUNT(*) FROM log_sign_report lsr WHERE period = \"04-$year\" AND lsr.location_id = a.id) AS 'Apr',
         COUNT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"05-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"05-$year\" THEN ta.location_id END) as 'service_may',
-        COUNT(CASE WHEN c.PERIOD = \"05-$year\" THEN a.id END) AS 'May',
+        (SELECT COUNT(*) FROM log_sign_report lsr WHERE period = \"05-$year\" AND lsr.location_id = a.id) AS 'May',
         COUNT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"06-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"06-$year\" THEN ta.location_id END) as 'service_jun',
-        COUNT(CASE WHEN c.PERIOD = \"06-$year\" THEN a.id END) AS 'Jun',
+        (SELECT COUNT(*) FROM log_sign_report lsr WHERE period = \"06-$year\" AND lsr.location_id = a.id) AS 'Jun',
         COUNT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"07-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"07-$year\" THEN ta.location_id END) as 'service_jul',
-        COUNT(CASE WHEN c.PERIOD = \"07-$year\" THEN a.id END) AS 'Jul',
+        (SELECT COUNT(*) FROM log_sign_report lsr WHERE period = \"07-$year\" AND lsr.location_id = a.id) AS 'Jul',
         COUNT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"08-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"08-$year\" THEN ta.location_id END) as 'service_aug',
-        COUNT(CASE WHEN c.PERIOD = \"08-$year\" THEN a.id END) AS 'Aug',
+        (SELECT COUNT(*) FROM log_sign_report lsr WHERE period = \"08-$year\" AND lsr.location_id = a.id) AS 'Aug',
         COUNT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"09-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"09-$year\" THEN ta.location_id END) as 'service_sep',
-        COUNT(CASE WHEN c.PERIOD = \"09-$year\" THEN a.id END) AS 'Sep',
+        (SELECT COUNT(*) FROM log_sign_report lsr WHERE period = \"09-$year\" AND lsr.location_id = a.id) AS 'Sep',
         COUNT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"10-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"10-$year\" THEN ta.location_id END) as 'service_oct',
-        COUNT(CASE WHEN c.PERIOD = \"10-$year\" THEN a.id END) AS 'Oct',
+        (SELECT COUNT(*) FROM log_sign_report lsr WHERE period = \"10-$year\" AND lsr.location_id = a.id) AS 'Oct',
         COUNT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"11-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"11-$year\" THEN ta.location_id END) as 'service_nov',
-        COUNT(CASE WHEN c.PERIOD = \"11-$year\" THEN a.id END) AS 'Nov',
+        (SELECT COUNT(*) FROM log_sign_report lsr WHERE period = \"11-$year\" AND lsr.location_id = a.id) AS 'Nov',
         COUNT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"12-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"12-$year\" THEN ta.location_id END) as 'service_dec',
-        COUNT(CASE WHEN c.PERIOD = \"12-$year\" THEN a.id END) AS 'Dec'
+        (SELECT COUNT(*) FROM log_sign_report lsr WHERE period = \"12-$year\" AND lsr.location_id = a.id) AS 'Dec'
         ")
         ->groupBy('a.id')->get();
         return $query;

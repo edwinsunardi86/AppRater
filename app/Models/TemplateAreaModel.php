@@ -72,17 +72,17 @@ class TemplateAreaModel extends Model
         $query = DB::table('header_template AS a')
         ->join('setup_location AS b','a.location_id','=','b.id')
         ->join('template_area AS c','a.id','=','c.id_header')
-        ->select(DB::Raw('b.id,location_name,CONCAT(DATE_FORMAT(start_date,"%d-%m-%Y")," - ",DATE_FORMAT(finish_date,"%d-%m-%Y")) AS period,COUNT(area_name) as count_area_name'))
-        ->groupBy('location_id')->get();
+        ->select(DB::Raw('a.id,location_name,CONCAT(DATE_FORMAT(start_date,"%d-%m-%Y")," - ",DATE_FORMAT(finish_date,"%d-%m-%Y")) AS period,COUNT(area_name) as count_area_name'))
+        ->groupBy('location_id','a.id')->get();
         return $query;
     }
 
-    static function getDataDetailTemplateArea($location_id){
+    static function getDataDetailTemplateArea($id){
         $query = DB::table('header_template AS a')
         ->join('setup_location AS b','a.location_id','=','b.id')
         ->join('template_area AS c','c.id_header','=','a.id')
         ->join('m_service AS d','d.service_code','=','c.service_code')
-        ->where('a.location_id',$location_id)->get();
+        ->where('a.id',$id)->get();
         return $query;
     }
 }

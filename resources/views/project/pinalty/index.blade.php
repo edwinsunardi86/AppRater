@@ -60,7 +60,7 @@ function deletePinalty(id_header){
     $('#deletePinalty'+id_header).submit(function(){
         Swal.fire({
             title: 'Perhatian!',
-            html: 'Apakah anda yakin ingin menghapus data region ini?',
+            html: 'Apakah anda yakin ingin menghapus data pinalty ini?',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText:'Delete',

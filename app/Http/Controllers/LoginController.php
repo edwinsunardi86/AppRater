@@ -14,9 +14,9 @@ class LoginController extends Controller
         return view('login', [
             'title'=>'Login'
         ]);
-        return view('maintenance', [
-            'title'=>'Maintenance'
-        ]);
+        // return view('maintenance', [
+        //     'title'=>'Maintenance'
+        // ]);
     }
 
     public function authentication(Request $request){

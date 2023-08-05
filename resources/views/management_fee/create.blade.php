@@ -65,7 +65,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <button type="button" data-toggle="modal" data-target="#modal-location" class="btn btn-block bg-gradient-primary col-md-2 mb-5"><i class="fas fa-user-plus"></i>Add Location</button>
+                                <button type="button" data-toggle="modal" data-target="#modal-location" class="btn btn-block bg-gradient-primary col-md-2 mb-5"><i class="fas fa-user-plus"></i>Change Location</button>
                                 <div class="table-responsive">
                                     <table id="fee_location" class="table table-bordered table-striped">
                                         <thead>
@@ -303,7 +303,7 @@ $(document).on('change','#project_code', function(){
                 },
                 type:'POST',
                 dataType:'JSON',
-                url:'{!! route("data_location_to_selected:dt") !!}',
+                url:'{!! route("data_location_to_checked:dt") !!}',
                 processData:true,
                 data:{
                     'project_code':$('#project_code').val()

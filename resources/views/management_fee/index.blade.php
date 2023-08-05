@@ -71,5 +71,41 @@ $(document).ready(function(){
     });
 });
 
+function deleteManagementFee(id){
+    $('#deleteManagementFee'+id).submit(function(){
+        Swal.fire({
+            title: 'Perhatian!',
+            html: 'Apakah anda yakin ingin menghapus data management_fee ini?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText:'Delete',
+        }).then((result)=>{
+            if(result.isConfirmed){
+                $.ajax({
+                    headers:{
+                        'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+                    },
+                    url:'management_fee/deleteManagementFee',
+                    type:"POST",
+                    dataType:"JSON",
+                    data:{
+                        'id':id
+                    },
+                    processData:true,
+                    success:function(data){
+                        Swal.fire({
+                            title:data.title,
+                            html:data.message,
+                            icon:data.icon
+                        });
+                        setTimeout(() => {
+                            window.location.href=data.redirect;
+                        }, 1500);
+                    }
+                });    
+            }
+        });
+    });
+}
 </script>
 @endsection

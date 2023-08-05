@@ -120,12 +120,15 @@ class LocationController extends Controller
         return response()->json($db);
     }
 
-    public function get_data_location_to_selected(Request $request){
-        $db = DB::table('setup_location')->select('setup_location.id','setup_location.location_name','setup_location.address','setup_location.description AS location_description')->get();
-        return response()->json($db);
+    public function getDataTableLocationToSelected(Request $request){
+        $query = LocationModel::getLocation($request->project_code);
+        return DataTables::of($query)->addColumn('action',function($row){
+            $btn = "<button type=\"button\" data-dismiss=\"modal\" class=\"btn-choose-location btn btn-sm bg-green\" data-location_id=\"$row->location_id\" data-location_name=\"$row->location_name\">choose</button>";
+            return $btn;
+        })->make();
     }
 
-    public function getDataTableLocationToSelected(Request $request){
+    public function getDataTableLocationToChecked(Request $request){
         $query = LocationModel::getLocation($request->project_code);
         return DataTables::of($query)->addColumn('action',function($row){
             $btn = "<div class=\"icheck-primary d-inline\">

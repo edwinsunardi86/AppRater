@@ -102,9 +102,10 @@ function getInitialByModel($project_code,$month,$year,$score){
                                 <td>{{ $i }}</td>
                                 <td>{{ $row_sub_area->sub_area_name }}</td>
                                 <td>{{ floatval($row_sub_area->score) }} %</td>
-                                <td>
+                                {{-- <td>
 									{{ getInitial($row_sub_area->score,$arr_category) }}
-                                </td>
+                                </td> --}}
+								<td>{{ $row_sub_area->initial }}</td>
                             </tr>
 							@php $i++ @endphp
                         @endforeach

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DatabaseModel;
 use App\Models\LocationModel;
 use Illuminate\Http\Request;
 use App\Models\TemplateAreaModel;
@@ -94,9 +95,10 @@ class TemplateAreaController extends Controller
         })->make();
     }
 
-    function showDataDetailTemplateArea($location_id){
-        $getData = TemplateAreaModel::getDataDetailTemplateArea($location_id);
-        $getLocation = LocationModel::getDataLocation(array('id'=>$location_id))->first();
+    function showDataDetailTemplateArea($id){
+        $getData = TemplateAreaModel::getDataDetailTemplateArea($id);
+        $getDataHeader = DatabaseModel::getData('header_template',array('id'=>$id))->first();
+        $getLocation = LocationModel::getDataLocation(array('id'=>$getDataHeader->location_id))->first();
         
         $grouped = $getData->groupBy('service_name');
         $service = array();
