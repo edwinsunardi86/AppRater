@@ -107,7 +107,7 @@ class ReportController extends Controller
             // return response()->download(public_path('storage/report/'.$getAlreadySignReport->filename));
             $path = 'public/report/'.$getAlreadySignReport->filename;
             foreach($getUser as $row){
-                Mail::to($row->email)->send(new NotificationSignReport($row->email,$row->fullname,$detail['location_name'],$detail['period'],$subject,$detail,$getAlreadySignReport->filename,$path));
+                Mail::to([$row->email,Auth::id()])->send(new NotificationSignReport($row->fullname,$detail['location_name'],$detail['period'],$subject,$detail,$getAlreadySignReport->filename,$path));
             }
             $confirmation = ['title'=>'Warning!','message' => 'You have already sign', 'icon' => 'success'];
         }else{

@@ -30,12 +30,11 @@ class NotificationSignReport extends Mailable
      *
      * @return void
      */
-    public function __construct($emailTo,$fullname,$location_name,$period,$subject,$details,$pdf,$path)
+    public function __construct($fullname,$location_name,$period,$subject,$details,$pdf,$path)
     {
         // $this->from = $from;
         // $this->replyTo = $replyTo;
         // $this->subject = $subject;
-        $this->emailTo = $emailTo;
         $this->fullname = $fullname;
         $this->location_name =$location_name;
         $this->period = $period;
