@@ -1,86 +1,6 @@
 @extends('layouts.main')
 @section('container')
-<style>
-.lds-spinner {
-  color: official;
-  display: inline-block;
-  position: relative;
-  width: 80px;
-  height: 80px;
-}
-.lds-spinner div {
-  transform-origin: 40px 40px;
-  animation: lds-spinner 1.2s linear infinite;
-}
-.lds-spinner div:after {
-  content: " ";
-  display: block;
-  position: absolute;
-  top: 3px;
-  left: 37px;
-  width: 6px;
-  height: 18px;
-  border-radius: 20%;
-  background: #fff;
-}
-.lds-spinner div:nth-child(1) {
-  transform: rotate(0deg);
-  animation-delay: -1.1s;
-}
-.lds-spinner div:nth-child(2) {
-  transform: rotate(30deg);
-  animation-delay: -1s;
-}
-.lds-spinner div:nth-child(3) {
-  transform: rotate(60deg);
-  animation-delay: -0.9s;
-}
-.lds-spinner div:nth-child(4) {
-  transform: rotate(90deg);
-  animation-delay: -0.8s;
-}
-.lds-spinner div:nth-child(5) {
-  transform: rotate(120deg);
-  animation-delay: -0.7s;
-}
-.lds-spinner div:nth-child(6) {
-  transform: rotate(150deg);
-  animation-delay: -0.6s;
-}
-.lds-spinner div:nth-child(7) {
-  transform: rotate(180deg);
-  animation-delay: -0.5s;
-}
-.lds-spinner div:nth-child(8) {
-  transform: rotate(210deg);
-  animation-delay: -0.4s;
-}
-.lds-spinner div:nth-child(9) {
-  transform: rotate(240deg);
-  animation-delay: -0.3s;
-}
-.lds-spinner div:nth-child(10) {
-  transform: rotate(270deg);
-  animation-delay: -0.2s;
-}
-.lds-spinner div:nth-child(11) {
-  transform: rotate(300deg);
-  animation-delay: -0.1s;
-}
-.lds-spinner div:nth-child(12) {
-  transform: rotate(330deg);
-  animation-delay: 0s;
-}
-@keyframes lds-spinner {
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
 
-</style>
 <div class="content-wrapper">
     <section class="content-header">
         <div class="container-fluid">
@@ -441,7 +361,7 @@ $(document).on('change','#project_code', function(){
                     success:function(data){
                         $.each(data,function(a,item){
                             // arr_service.push({"service_code":data[i].service_code,"service_name":data[a].service_name});
-                            inp_amount_service += "<div class=\"form-group row\"><label class=\"col-sm-2 col-form-label\">"+data[a].service_name+"</label><div class=\"col-md-2\"><input type=\"number\" name=\"amount[]\" id=\"amount"+a+"\" class=\"form-control form-control-sm mb-3\" data-getter_location_id="+arr_location[i].location_id+"></div></div>";
+                            inp_amount_service += "<div class=\"form-group row\"><label class=\"col-sm-4 col-form-label\">"+data[a].service_name+"</label><input type=\"hidden\" name=\"service_code"+arr_location[i].location_id+"\"  value="+data[a].service_code+"><div class=\"col-md-6\"><input type=\"number\" name=\"amount"+arr_location[i].location_id+"["+a+"]\" id=\"amount"+a+"\" class=\"form-control form-control-sm mb-3\"></div></div>";
                         });
                     }
                 });
@@ -499,35 +419,43 @@ $(document).ready(function(){
             var input_location = $('input[name="location_id[]"]');
             var arr_fee_location = [];
             $.each(input_location,function(i,item){
-                var data_id = $(this).attr('data-location_id');
-                arr_fee_location.push({ location_id : data_id, fee:$('#fee'+data_id).val()})
+                var data_location_id = $(this).attr('data-location_id');
+                // alert(data_location_id);
+                var service_code = $("input[name=\"service_code"+data_location_id+"\"]");
+                alert(service_code.length);
+                var arr_service = [];
+                $.each(service_code,function(a,item){
+                    arr_service.push({ service_code : $(this).val(), amount : $("input[name=\"amount"+data_location_id+"["+a+"]\"]").val() });
+                })
+                // alert(service_code.length);
+                arr_fee_location.push({ location_id : $(this).val(), fee_service : arr_service})
             });
-            console.log(input_location);
-            $.ajax({
-                headers:{
-                    'X_CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
-                },
-                url:'/management_fee/storeManagementFee',
-                type:"POST",
-                dataType:"JSON",
-                data:{
-                    'id_pinalty':$('#id_pinalty').val(),
-                    'start_date':$('#start_date').val(),
-                    'finish_date':$('#finish_date').val(),
-                    'arr_fee_location':arr_fee_location
-                },
-                processData:true,
-                success:function(data){
-                    Swal.fire({
-                            title:data.title,
-                            html:data.message,
-                            icon:data.icon
-                        });
-                        setTimeout(() => {
-                            window.location.href=data.redirect;
-                        }, 1500);
-                }
-            });
+            console.log(arr_fee_location);
+            // $.ajax({
+            //     headers:{
+            //         'X_CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+            //     },
+            //     url:'/management_fee/storeManagementFee',
+            //     type:"POST",
+            //     dataType:"JSON",
+            //     data:{
+            //         'id_pinalty':$('#id_pinalty').val(),
+            //         'start_date':$('#start_date').val(),
+            //         'finish_date':$('#finish_date').val(),
+            //         'arr_fee_location':arr_fee_location
+            //     },
+            //     processData:true,
+            //     success:function(data){
+            //         Swal.fire({
+            //                 title:data.title,
+            //                 html:data.message,
+            //                 icon:data.icon
+            //             });
+            //             setTimeout(() => {
+            //                 window.location.href=data.redirect;
+            //             }, 1500);
+            //     }
+            // });
         }
     });
 });
