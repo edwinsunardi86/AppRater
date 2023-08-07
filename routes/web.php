@@ -159,6 +159,7 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'template_area'],
     Route::get('/detail_template_area/{id}',[TemplateAreaController::class,'showDataDetailTemplateArea']);
     Route::get('/create',[TemplateAreaController::class,'create']);
     Route::post('/storeDataTemplateArea',[TemplateAreaController::class,'storeDataTemplateArea']);
+    Route::post('/getDataServicePerLocation',[TemplateAreaController::class,'getDataServicePerLocation']);
 });
 
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'report'],function(){

@@ -119,4 +119,9 @@ class TemplateAreaController extends Controller
         $getData = TemplateAreaModel::getDataTemplateSubArea(array('id_area'=>$area_id))->get();
         return response()->json($getData);
     }
+
+    function getDataServicePerLocation(Request $request){
+        $getData = TemplateAreaModel::getDataServicePerLocation($request->location_id);
+        return response()->json($getData);
+    }
 }

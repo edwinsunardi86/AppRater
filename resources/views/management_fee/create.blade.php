@@ -1,5 +1,86 @@
 @extends('layouts.main')
 @section('container')
+<style>
+.lds-spinner {
+  color: official;
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+.lds-spinner div {
+  transform-origin: 40px 40px;
+  animation: lds-spinner 1.2s linear infinite;
+}
+.lds-spinner div:after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 3px;
+  left: 37px;
+  width: 6px;
+  height: 18px;
+  border-radius: 20%;
+  background: #fff;
+}
+.lds-spinner div:nth-child(1) {
+  transform: rotate(0deg);
+  animation-delay: -1.1s;
+}
+.lds-spinner div:nth-child(2) {
+  transform: rotate(30deg);
+  animation-delay: -1s;
+}
+.lds-spinner div:nth-child(3) {
+  transform: rotate(60deg);
+  animation-delay: -0.9s;
+}
+.lds-spinner div:nth-child(4) {
+  transform: rotate(90deg);
+  animation-delay: -0.8s;
+}
+.lds-spinner div:nth-child(5) {
+  transform: rotate(120deg);
+  animation-delay: -0.7s;
+}
+.lds-spinner div:nth-child(6) {
+  transform: rotate(150deg);
+  animation-delay: -0.6s;
+}
+.lds-spinner div:nth-child(7) {
+  transform: rotate(180deg);
+  animation-delay: -0.5s;
+}
+.lds-spinner div:nth-child(8) {
+  transform: rotate(210deg);
+  animation-delay: -0.4s;
+}
+.lds-spinner div:nth-child(9) {
+  transform: rotate(240deg);
+  animation-delay: -0.3s;
+}
+.lds-spinner div:nth-child(10) {
+  transform: rotate(270deg);
+  animation-delay: -0.2s;
+}
+.lds-spinner div:nth-child(11) {
+  transform: rotate(300deg);
+  animation-delay: -0.1s;
+}
+.lds-spinner div:nth-child(12) {
+  transform: rotate(330deg);
+  animation-delay: 0s;
+}
+@keyframes lds-spinner {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+</style>
 <div class="content-wrapper">
     <section class="content-header">
         <div class="container-fluid">
@@ -65,7 +146,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <button type="button" data-toggle="modal" data-target="#modal-location" class="btn btn-block bg-gradient-primary col-md-2 mb-5"><i class="fas fa-user-plus"></i>Change Location</button>
+                                <button type="button" data-toggle="modal" data-target="#modal-location" class="btn btn-block bg-gradient-primary col-md-2 mb-5"><i class="fas fa-user-plus"></i>Add Location</button>
                                 <div class="table-responsive">
                                     <table id="fee_location" class="table table-bordered table-striped">
                                         <thead>
@@ -328,7 +409,14 @@ $(document).on('change','#project_code', function(){
                 }
             });
         });
-        $(document).on('click','#choiceLocation',function(){
+        
+
+        $(document).on('click','.delete_location',function(){
+            $(this).closest('tr').remove();
+        });
+    });
+
+    $(document).on('click','#choiceLocation',function(){
             $('#fee_location tbody').empty();
             var arr_location = [];
             var cb_location = table_location.rows().nodes().to$().find('input[name="cb_location[]"]:checked').each(function(){
@@ -337,15 +425,34 @@ $(document).on('change','#project_code', function(){
                 }
             });
             $.each(arr_location,function(i,item){
-                $('#fee_location tbody').append("<tr><td>"+arr_location[i].location_name+"<input type=\"hidden\" name=\"location_id[]\" data-location_id="+arr_location[i].location_id+" id=\"location_id"+i+"\" value="+arr_location[i].location_id+"></td><td><input type=\"number\" class=\"form-control form-control-sm\" name=\"fee[]\" id=\"fee"+arr_location[i].location_id+"\"></td><td><button class=\"delete_location btn btn-md btn-danger\">Delete</button></td></tr>");
+                var inp_amount_service = "";
+                $.ajax({
+                    headers:{
+                        'X_CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+                    },
+                    url:"/template_area/getDataServicePerLocation",
+                    dataType:"JSON",
+                    type:"POST",
+                    async:false,
+                    data:{
+                        "location_id":arr_location[i].location_id
+                    },
+                    processData:true,
+                    success:function(data){
+                        $.each(data,function(a,item){
+                            // arr_service.push({"service_code":data[i].service_code,"service_name":data[a].service_name});
+                            inp_amount_service += "<div class=\"form-group row\"><label class=\"col-sm-2 col-form-label\">"+data[a].service_name+"</label><div class=\"col-md-2\"><input type=\"number\" name=\"amount[]\" id=\"amount"+a+"\" class=\"form-control form-control-sm mb-3\" data-getter_location_id="+arr_location[i].location_id+"></div></div>";
+                        });
+                    }
+                });
+                var fee = "<tr><td>"+arr_location[i].location_name+"<input type=\"hidden\" name=\"location_id[]\" data-location_id="+arr_location[i].location_id+" id=\"location_id"+i+"\" value="+arr_location[i].location_id+"></td><td>"+inp_amount_service+"</td>"+
+                    "<td><button class=\"delete_location btn btn-md btn-danger\">Delete</button></td></tr>";
+                $('#fee_location tbody').append(fee);
             });
         });
-
-        $(document).on('click','.delete_location',function(){
-            $(this).closest('tr').remove();
-        });
-    });
 })
+
+
 
 $(document).ready(function(){
     $('#form').validate({

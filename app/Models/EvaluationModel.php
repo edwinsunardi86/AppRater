@@ -13,7 +13,7 @@ class EvaluationModel extends Model
         $query = DB::table('template_sub_area')
         ->join('template_area','template_area.id','=','template_sub_area.id_area')
         ->join('header_template','header_template.id','=','template_area.id_header')
-        ->join('m_service','m_service.service_code','=','template_area.service_code1')
+        ->join('m_service','m_service.service_code','=','template_area.service_code')
         ->where('location_id',$location_id)
         ->where('start_date','<=',$date)
         ->where('finish_date','>=',$date)

@@ -85,4 +85,15 @@ class TemplateAreaModel extends Model
         ->where('a.id',$id)->get();
         return $query;
     }
+
+    static function getDataServicePerLocation($location_id){
+        $query = DB::table('template_area AS a')
+        ->join("header_template AS b","a.id_header","=","b.id")
+        ->join("setup_location AS c","c.id","=","b.location_id")
+        ->join("m_service AS d","d.service_code","=","a.service_code")
+        ->select('d.service_code','service_name')
+        ->where('location_id',$location_id)
+        ->groupBy('service_code')->get();
+        return $query;
+    }
 }

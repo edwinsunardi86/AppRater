@@ -107,9 +107,9 @@ class ReportController extends Controller
             // return response()->download(public_path('storage/report/'.$getAlreadySignReport->filename));
             $path = 'public/report/'.$getAlreadySignReport->filename;
             foreach($getUser as $row){
-                Mail::to([$row->email,Auth::id()])->send(new NotificationSignReport($row->fullname,$detail['location_name'],$detail['period'],$subject,$detail,$getAlreadySignReport->filename,$path));
+                Mail::to([$row->email,Auth::user()->email])->send(new NotificationSignReport($row->email,$row->fullname,$detail['location_name'],$detail['period'],$subject,$detail,$getAlreadySignReport->filename,$path));
             }
-            $confirmation = ['title'=>'Warning!','message' => 'You have already sign', 'icon' => 'success'];
+            $confirmation = ['title'=>'Warning!','message' => 'You have already sign', 'icon' => 'error'];
         }else{
             // $pdf->setOption(['dpi' => 150, 'defaultFont' => 'sans-serif']);
             // $pdf = public_path($filename);
@@ -119,7 +119,7 @@ class ReportController extends Controller
             $pdf->save(public_path().'/'.$filename);
             $path = 'public/report/'.$filename.".pdf";
             foreach($getUser as $row){
-                Mail::to($row->email)->send(new NotificationSignReport($row->email,$row->fullname,$detail['location_name'],$detail['period'],$subject,$detail,$filename.".pdf",$path));
+                Mail::to([$row->email,Auth::user()->email])->send(new NotificationSignReport($row->email,$row->fullname,$detail['location_name'],$detail['period'],$subject,$detail,$filename.".pdf",$path));
             }
             $post_sign = array(
                 'location_id'   =>  $request->location_id,

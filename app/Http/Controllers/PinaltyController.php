@@ -11,7 +11,7 @@ class PinaltyController extends Controller
     public function index(){
         return view('project.pinalty.index',[
             'title' => 'Setup Pinalty',
-            'active_gm' => 'Setup Project',
+            'active_gm' => 'Fee',
             'active_m'=>'pinalty'
         ]);
     }
@@ -30,7 +30,7 @@ class PinaltyController extends Controller
     public function create(){
         return view('project.pinalty.create',[
             'title' => 'Setup Pinalty',
-            'active_gm' => 'Setup Project',
+            'active_gm' => 'Fee',
             'active_m'=>'pinalty'
         ]);
     }
@@ -68,7 +68,7 @@ class PinaltyController extends Controller
         // $getDataDetail = DatabaseModel::getData('detail_pinalty',array('id_header'=>$id_header))->get();
         return view('project.pinalty.edit',[
             'title' => 'Setup Pinalty',
-            'active_gm' => 'Setup Project',
+            'active_gm' => 'Fee',
             'active_m'=>'pinalty',
             'header_pinalty' => $getDataHeader
         ]);
