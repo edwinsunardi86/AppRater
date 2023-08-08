@@ -25,7 +25,7 @@
                             <a href="management_fee/create" class="btn btn-block bg-gradient-primary col-md-2"><i class="fas fa-user-plus"></i>Add Fee Location</a>
                         </div>
                         <div class="card-body">
-                            <table id="table_fee_location" class="display table table-bordered table-striped" style="width:80%">
+                            <table id="table_fee_location" class="display table table-bordered table-striped" style="width:100%">
                                 <thead>
                                     <tr>
                                         <th>No</th>
@@ -61,7 +61,7 @@ $(document).ready(function(){
                 return meta.row + meta.settings._iDisplayStart + 1;
             }},
             { data: 'location_name', name: 'location_name' },
-            { data: 'fee', name: 'fee' },
+            { data: 'amount_service', name: 'amount_service' },
             { data: 'start_date', name: 'start_date' },
             { data: 'finish_date', name: 'finish_date' },
             { data: 'description_pinalty', name: 'description_pinalty' },

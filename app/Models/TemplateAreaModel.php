@@ -96,4 +96,17 @@ class TemplateAreaModel extends Model
         ->groupBy('service_code')->get();
         return $query;
     }
+    
+    static function getAreaByTemplateArea($project_code){
+        $query = DB::table('header_template AS a')
+        ->join('template_area AS b','a.id','=','b.id_header')
+        ->join('setup_location AS c','c.id','=','a.location_id')
+        ->join('setup_region AS d','d.id','=','c.region_id')
+        ->join('setup_project AS e','e.project_code','=','d.project_code')
+        ->select(DB::Raw('a.id AS id_header_template'),'region_name','c.location_name','start_date','finish_date',DB::Raw("GROUP_CONCAT(b.area_name) AS area"),'start_date','finish_date')
+        ->where('e.project_code',$project_code)
+        ->groupBy('a.id')
+        ->get();
+        return $query;
+    }
 }

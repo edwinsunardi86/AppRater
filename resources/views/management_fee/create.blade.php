@@ -420,42 +420,39 @@ $(document).ready(function(){
             var arr_fee_location = [];
             $.each(input_location,function(i,item){
                 var data_location_id = $(this).attr('data-location_id');
-                // alert(data_location_id);
                 var service_code = $("input[name=\"service_code"+data_location_id+"\"]");
-                alert(service_code.length);
                 var arr_service = [];
                 $.each(service_code,function(a,item){
                     arr_service.push({ service_code : $(this).val(), amount : $("input[name=\"amount"+data_location_id+"["+a+"]\"]").val() });
                 })
-                // alert(service_code.length);
                 arr_fee_location.push({ location_id : $(this).val(), fee_service : arr_service})
             });
             console.log(arr_fee_location);
-            // $.ajax({
-            //     headers:{
-            //         'X_CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
-            //     },
-            //     url:'/management_fee/storeManagementFee',
-            //     type:"POST",
-            //     dataType:"JSON",
-            //     data:{
-            //         'id_pinalty':$('#id_pinalty').val(),
-            //         'start_date':$('#start_date').val(),
-            //         'finish_date':$('#finish_date').val(),
-            //         'arr_fee_location':arr_fee_location
-            //     },
-            //     processData:true,
-            //     success:function(data){
-            //         Swal.fire({
-            //                 title:data.title,
-            //                 html:data.message,
-            //                 icon:data.icon
-            //             });
-            //             setTimeout(() => {
-            //                 window.location.href=data.redirect;
-            //             }, 1500);
-            //     }
-            // });
+            $.ajax({
+                headers:{
+                    'X_CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+                },
+                url:'/management_fee/storeManagementFee',
+                type:"POST",
+                dataType:"JSON",
+                data:{
+                    'id_pinalty':$('#id_pinalty').val(),
+                    'start_date':$('#start_date').val(),
+                    'finish_date':$('#finish_date').val(),
+                    'arr_fee_location':arr_fee_location
+                },
+                processData:true,
+                success:function(data){
+                    Swal.fire({
+                            title:data.title,
+                            html:data.message,
+                            icon:data.icon
+                        });
+                        setTimeout(() => {
+                            window.location.href=data.redirect;
+                        }, 1500);
+                }
+            });
         }
     });
 });

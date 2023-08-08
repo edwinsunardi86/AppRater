@@ -53,10 +53,10 @@
                                     <label for="locationName" class="col-sm-2 col-form-label">Location Name</label>
                                     <div class="col-sm-3">
                                         <input type="text" class="form-control form-control-sm" name="location_name" id="location_name" value="{{ $data->location_name }}">
-                                        <input type="hidden" name="location_id" id="location_id" value="{{ $data->location_id }}">
+                                        <input type="hidden" name="id_header_template" id="id_header_template" value="{{ $data->id_header_template }}">
                                     </div>
                                     <div class="col-sm-2">
-                                        <button type="button" data-toggle="modal" data-target="#modal-location" class="btn btn-sm btn-block bg-gradient-primary mb-5"><i class="fas fa-user-plus"></i>Change Location</button>
+                                        <button type="button" id="btn_ch_location" data-toggle="modal" data-target="#modal-location" class="btn btn-sm btn-block bg-gradient-primary mb-5"><i class="fas fa-user-plus"></i>Change Location</button>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -75,11 +75,17 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-group row">
-                                    <label for="fee" class="col-sm-2 col-form-label">Fee</label>
-                                    <div class="col-sm-3">
-                                        <input type="number" name="fee" id="fee" value="{{ $data->fee }}" class="form-control form-control-sm">
-                                    </div>
+                                <div id="fee_service">
+                                    @php $i = 0; @endphp
+                                    @foreach($data_detail as $row)
+                                        <div class="form-group row">
+                                            <label for="service_code{{ $i }}" class="col-sm-2 col-form-label">{{ $row->service_name }}</label>
+                                            <input type="hidden" name="service_code[]" id="service_code" value="{{ $row->service_code }}">
+                                            <div class="col-sm-3">
+                                                <input type="number" class="form-control form-control-sm" name="amount[]" id="amount{{ $i }}" value="{{ $row->amount }}">
+                                            </div>
+                                        </div>
+                                    @endforeach
                                 </div>
                                 <button type="submit" class="btn btn-sm btn-primary">Submit</button>
                             </form>
@@ -169,7 +175,7 @@
             </div>
             <div class="modal-body" style="overflow:scroll">
                 <div class="table-responsive">
-                    <table id="table_location" class="diplay table table-bordered table-striped table-hover" style="width:70%">
+                    <table id="table_location" class="diplay table table-bordered table-striped table-hover" style="width:100%">
                         <thead>
                             <tr>
                                 <th>Location Name</th>
@@ -304,7 +310,7 @@ $(document).on('change','#project_code', function(){
             },
             type:'POST',
             dataType:'JSON',
-            url:'{!! route("data_location_to_selected:dt") !!}',
+            url:'{!! route("data_area_by_template_area_to_selected:dt") !!}',
             processData:true,
             data:{
                 'project_code':$('#project_code').val()
@@ -312,15 +318,15 @@ $(document).on('change','#project_code', function(){
         },
         columns:[
             { data: 'location_name', name: 'location_name' },
-            { data: 'description', name: 'description' },
+            { data: 'area', name: 'area' },
             { data: 'action', width:"5%", name: 'action'}
         ],
     });
 
     $(document).on('click','.btn-choose-location',function(){
-        var location_id = $(this).attr('data-location_id');
+        var id_header_template = $(this).attr('data-id_header_template');
         var location_name = $(this).attr('data-location_name');
-        $('#location_id').val(location_id);
+        $('#id_header_template').val(id_header_template);
         $('#location_name').val(location_name);
     })
 });
@@ -369,12 +375,11 @@ $(document).ready(function(){
                 type:"POST",
                 dataType:"JSON",
                 data:{
-                    'id'        : {{ $data->id }},
+                    'id'        : {{ $data->id_header }},
                     'id_pinalty': $('#id_pinalty').val(),
                     'start_date': $('#start_date').val(),
                     'finish_date': $('#finish_date').val(),
-                    'location_id': $('#location_id').val(),
-                    'fee'        : $('#fee').val() 
+                    'location_id': $('#location_id').val()
                 },
                 processData:true,
                 success:function(data){
@@ -390,6 +395,10 @@ $(document).ready(function(){
             });
         }
     });
+});
+
+$(document).on("click",".btn-choose-location",function(){
+    $("#fee_service").empty();
 });
 </script>
 @endsection

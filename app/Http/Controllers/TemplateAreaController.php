@@ -124,4 +124,11 @@ class TemplateAreaController extends Controller
         $getData = TemplateAreaModel::getDataServicePerLocation($request->location_id);
         return response()->json($getData);
     }
+    function getDataTableAreaByTemplateAreaToSelected(Request $request){
+        $getData = TemplateAreaModel::getAreaByTemplateArea($request->project_code);
+        return DataTables::of($getData)->addColumn('action',function($row){
+            $btn = "<button type=\"button\" data-dismiss=\"modal\" class=\"btn-choose-location btn btn-sm bg-green\" data-id_header_template=\"$row->id_header_template\" data-location_name=\"$row->location_name\">choose</button>";
+            return $btn;
+        })->make();
+    }
 }

@@ -75,10 +75,11 @@ class ReportController extends Controller
             $rating = ReportModel::getScoreM($request->project_code,$request->month,$request->year,$avg_satisfaction->score);
             $getListCategoryPerPeriod = ReportModel::getListCategoryPerPeriodDate($request->project_code,$request->month,$request->year);
             $service = ReportModel::getDataService(array('service_code'=>$request->service_code))->first();
+        if($data->count() > 0){
             $arr_category = array();
             foreach($getListCategoryPerPeriod as $row){
                 array_push($arr_category,array('score'=>$row->score,'category'=>$row->initial));
-            }
+            } 
             $pdf = PDF::loadView('pdf.documentScoreSatisfaction',[
                 'project_code'      => $request->project_code,
                 'month'             => $request->month,
@@ -95,42 +96,46 @@ class ReportController extends Controller
                 'arr_category'      =>  $arr_category
                 ]
             );
-        $period = $request->month."-".$request->year;
-        $getAlreadySignReport = ReportModel::getAlreadySignReport($request->location_id,$period,$request->service_code);
-        $subject = "Report Bulanan Penilaian SLA ".$avg_satisfaction->location_name." ".$request->month."-".$request->year;
-        $detail['project_name'] = $avg_satisfaction->project_name;
-        $detail['location_name'] = $avg_satisfaction->location_name;
-        $detail['period'] = $request->month." - ".$request->year;
-        $detail['inputer'] = Auth::user()->fullname;
-        $getUser = User::getUser(array('role'=>2))->get();
-        if($getAlreadySignReport){
-            // return response()->download(public_path('storage/report/'.$getAlreadySignReport->filename));
-            $path = 'public/report/'.$getAlreadySignReport->filename;
-            foreach($getUser as $row){
-                Mail::to([$row->email,Auth::user()->email])->send(new NotificationSignReport($row->email,$row->fullname,$detail['location_name'],$detail['period'],$subject,$detail,$getAlreadySignReport->filename,$path));
+            $period = $request->month."-".$request->year;
+            $getAlreadySignReport = ReportModel::getAlreadySignReport($request->location_id,$period,$request->service_code);
+            $subject = "Report Bulanan Penilaian SLA ".$avg_satisfaction->location_name." ".$request->month."-".$request->year;
+            $detail['project_name'] = $avg_satisfaction->project_name;
+            $detail['location_name'] = $avg_satisfaction->location_name;
+            $detail['period'] = $request->month." - ".$request->year;
+            $detail['inputer'] = Auth::user()->fullname;
+            $getUser = User::getUser(array('role'=>2))->get();
+            if($getAlreadySignReport){
+                // return response()->download(public_path('storage/report/'.$getAlreadySignReport->filename));
+                $path = 'public/report/'.$getAlreadySignReport->filename;
+                foreach($getUser as $row){
+                    Mail::to([$row->email,Auth::user()->email])->send(new NotificationSignReport($row->email,$row->fullname,$detail['location_name'],$detail['period'],$subject,$detail,$getAlreadySignReport->filename,$path));
+                }
+                $confirmation = ['title'=>'Warning!','message' => 'You have already sign', 'icon' => 'error'];
+            }else{
+                // $pdf->setOption(['dpi' => 150, 'defaultFont' => 'sans-serif']);
+                // $pdf = public_path($filename);
+                $content = $pdf->download()->getOriginalContent();
+                $filename = "ReportScoreMonthly".$request->month."-".$request->year."_".$avg_satisfaction->location_name."_".$request->service_code;
+                Storage::put('public/report/'.$filename.".pdf",$content);
+                $pdf->save(public_path().'/'.$filename);
+                $path = 'public/report/'.$filename.".pdf";
+                foreach($getUser as $row){
+                    Mail::to([$row->email,Auth::user()->email])->send(new NotificationSignReport($row->email,$row->fullname,$detail['location_name'],$detail['period'],$subject,$detail,$filename.".pdf",$path));
+                    // Mail::to([$row->email])->send(new NotificationSignReport($row->email,$row->fullname,$detail['location_name'],$detail['period'],$subject,$detail,$filename.".pdf",$path));
+                }
+                $post_sign = array(
+                    'location_id'   =>  $request->location_id,
+                    'service_code'  => $request->service_code,
+                    'period'        =>  $request->month."-".$request->year,
+                    'filename'      => $filename.".pdf",
+                    'created_by'    => Auth::id()
+                );
+                ReportModel::insertLogSignReport($post_sign);
+                $confirmation = ['title'=>'Warning!','message' => 'Thanks for your sign, this report will send automaticaly to our email', 'icon' => 'success'];
+                // return response()->download($pdf);
             }
-            $confirmation = ['title'=>'Warning!','message' => 'You have already sign', 'icon' => 'error'];
         }else{
-            // $pdf->setOption(['dpi' => 150, 'defaultFont' => 'sans-serif']);
-            // $pdf = public_path($filename);
-            $content = $pdf->download()->getOriginalContent();
-            $filename = "ReportScoreMonthly".$request->month."-".$request->year."_".$avg_satisfaction->location_name."_".$request->service_code;
-            Storage::put('public/report/'.$filename.".pdf",$content);
-            $pdf->save(public_path().'/'.$filename);
-            $path = 'public/report/'.$filename.".pdf";
-            foreach($getUser as $row){
-                Mail::to([$row->email,Auth::user()->email])->send(new NotificationSignReport($row->email,$row->fullname,$detail['location_name'],$detail['period'],$subject,$detail,$filename.".pdf",$path));
-            }
-            $post_sign = array(
-                'location_id'   =>  $request->location_id,
-                'service_code'  => $request->service_code,
-                'period'        =>  $request->month."-".$request->year,
-                'filename'      => $filename.".pdf",
-                'created_by'    => Auth::id()
-            );
-            ReportModel::insertLogSignReport($post_sign);
-            $confirmation = ['title'=>'Warning!','message' => 'Thanks for your sign, this report will send automaticaly to our email', 'icon' => 'success'];
-            // return response()->download($pdf);
+            $confirmation = ['title'=>'Warning!','message' => 'There are no data input SLA', 'icon' => 'error'];
         }
         return response()->json($confirmation);
     }

@@ -236,3 +236,4 @@ Route::post('/getInputrateMonthlyPercentageByMonth',[ReportController::class,'ge
 Route::post('/getDataTableLocationToSelected',[LocationController::class,'getDataTableLocationToSelected'])->name('data_location_to_selected:dt');
 Route::post('/getDataTableLocationToChecked',[LocationController::class,'getDataTableLocationToChecked'])->name('data_location_to_checked:dt');
 Route::post('/getDataTablePinaltyPerProjectToSelected',[PinaltyController::class,'getDataTablePinaltyPerProjectToSelected'])->name('data_pinalty_per_project_to_selected:dt');
+Route::post('/getDataTableAreaByTemplateAreaToSelected',[TemplateAreaController::class,'getDataTableAreaByTemplateAreaToSelected'])->name('data_area_by_template_area_to_selected:dt')->middleware('auth');
