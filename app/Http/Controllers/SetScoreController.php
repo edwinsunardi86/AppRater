@@ -83,7 +83,7 @@ class SetScoreController extends Controller
     function getDataTableScoreToSelected(Request $request){
         $getData = SetScoreModel::getListScoreByProject($request->project_code);
         return DataTables::of($getData)->addColumn('action',function($row){
-            $btn = "<a class=\"btn btn-md bg-purple choose-template-score\" data-id=".$row->id_header." data-start_date=".$row->start_date." data-finish_date=".$row->finish_date.">Choose</a>";
+            $btn = "<a class=\"btn btn-md bg-purple choose-template-score\" data-id_header_set_score=".$row->id_header." data-start_date=".$row->start_date." data-finish_date=".$row->finish_date.">Choose</a>";
             return $btn;
         })->make();
     }

@@ -120,14 +120,26 @@ class TemplateAreaController extends Controller
         return response()->json($getData);
     }
 
-    function getDataServicePerLocation(Request $request){
-        $getData = TemplateAreaModel::getDataServicePerLocation($request->location_id);
+    function getDataServiceByTemplate(Request $request){
+        $getData = TemplateAreaModel::getDataServiceByTemplate(null,$request->id_header_template);
         return response()->json($getData);
     }
-    function getDataTableAreaByTemplateAreaToSelected(Request $request){
-        $getData = TemplateAreaModel::getAreaByTemplateArea($request->project_code);
+    function getDataTableLocationByTemplateAreaToSelected(Request $request){
+        $getData = TemplateAreaModel::getLocationByTemplate($request->project_code);
         return DataTables::of($getData)->addColumn('action',function($row){
             $btn = "<button type=\"button\" data-dismiss=\"modal\" class=\"btn-choose-location btn btn-sm bg-green\" data-id_header_template=\"$row->id_header_template\" data-location_name=\"$row->location_name\">choose</button>";
+            return $btn;
+        })->make();
+    }
+
+    public function getDataTableLocationByTemplateToChecked(Request $request){
+        $getData = TemplateAreaModel::getLocationByTemplate($request->project_code);
+        return DataTables::of($getData)->addColumn('action',function($row){
+            $btn = "<div class=\"icheck-primary d-inline\">
+            <input type=\"checkbox\" id=\"checkboxPrimary".$row->id_header_template."\" name=\"cb_location[]\" class=\"cb_location\" data-id_header_template=\"$row->id_header_template\" data-location_name=\"$row->location_name\">
+            <label for=\"checkboxPrimary".$row->id_header_template."\">
+            </label>
+          </div>";
             return $btn;
         })->make();
     }

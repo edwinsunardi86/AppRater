@@ -80,11 +80,12 @@
                                     @foreach($data_detail as $row)
                                         <div class="form-group row">
                                             <label for="service_code{{ $i }}" class="col-sm-2 col-form-label">{{ $row->service_name }}</label>
-                                            <input type="hidden" name="service_code[]" id="service_code" value="{{ $row->service_code }}">
+                                            <input type="hidden" name="service_code[]" id="service_code{{ $i }}" value="{{ $row->service_code }}">
                                             <div class="col-sm-3">
                                                 <input type="number" class="form-control form-control-sm" name="amount[]" id="amount{{ $i }}" value="{{ $row->amount }}">
                                             </div>
                                         </div>
+                                        @php $i++; @endphp
                                     @endforeach
                                 </div>
                                 <button type="submit" class="btn btn-sm btn-primary">Submit</button>
@@ -310,7 +311,7 @@ $(document).on('change','#project_code', function(){
             },
             type:'POST',
             dataType:'JSON',
-            url:'{!! route("data_area_by_template_area_to_selected:dt") !!}',
+            url:'{!! route("data_location_by_template_to_selected:dt") !!}',
             processData:true,
             data:{
                 'project_code':$('#project_code').val()
@@ -329,6 +330,37 @@ $(document).on('change','#project_code', function(){
         $('#id_header_template').val(id_header_template);
         $('#location_name').val(location_name);
     })
+});
+
+$(document).on("click",".btn-choose-location",function(){
+    var id_header_template = $(this).attr('data-id_header_template');
+    $("#fee_service").empty();
+    $.ajax({
+        headers:{
+            'X_CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+        },
+        url:"/template_area/getDataServiceByTemplate",
+        dataType:"JSON",
+        type:"POST",
+        async:false,
+        data:{
+            "id_header_template":id_header_template
+        },
+        processData:true,
+        success:function(data){
+            var html_service="";
+            $.each(data,function(a,item){
+                html_service += "<div class=\"form-group row\">"+
+                    "<label class=\"col-sm-2 col-form-label\">"+data[a].service_name+"</label><input type=\"hidden\" name=\"service_code[]\" id=\"service_code"+a+"\" value=\""+data[a].service_code+"\">"+
+                    "<div class=\"col-sm-4\">"+
+                        "<input type=\"number\" class=\"form-control form-control-sm\" name=\"amount[]\" id=\"amount"+a+"\">"+
+                    "</div>"+
+                "</div>";
+            });
+            $("#fee_service").append(html_service);
+            
+        }
+    });
 });
 
 $(document).ready(function(){
@@ -367,6 +399,11 @@ $(document).ready(function(){
             $(element).removeClass('is-invalid');
         },
         submitHandler: function() {
+            var arr_service = [];
+            var service_code = $("input[name=\"service_code[]\"]");
+            for(var i = 0; i < service_code.length; i++){
+                arr_service.push({ service_code : $("#service_code"+i).val(), amount : $("#amount"+i).val() });
+            }
             $.ajax({
                 headers:{
                     'X_CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
@@ -379,7 +416,8 @@ $(document).ready(function(){
                     'id_pinalty': $('#id_pinalty').val(),
                     'start_date': $('#start_date').val(),
                     'finish_date': $('#finish_date').val(),
-                    'location_id': $('#location_id').val()
+                    'id_header_template': $('#id_header_template').val(),
+                    'arr_service' : arr_service
                 },
                 processData:true,
                 success:function(data){
@@ -390,15 +428,14 @@ $(document).ready(function(){
                         });
                         setTimeout(() => {
                             window.location.href=data.redirect;
-                        }, 1500);
+                    }, 1500);
+                    console.log(arr_service);
                 }
             });
         }
     });
 });
 
-$(document).on("click",".btn-choose-location",function(){
-    $("#fee_service").empty();
-});
+
 </script>
 @endsection

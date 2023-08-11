@@ -36,7 +36,7 @@ class ManagementFeeController extends Controller
     }
 
     function storeManagementFee(Request $request){
-        for($i = 0;$i < count($request->arr_fee_location); $i++){
+        for($i = 0;$i < count($request->arr_fee_template); $i++){
             $exp_start_date = explode("/",$request->start_date);
             $exp_finish_date =explode("/",$request->finish_date);
             $start_date = $exp_start_date[2]."-".$exp_start_date[0]."-".$exp_start_date[1];
@@ -48,15 +48,15 @@ class ManagementFeeController extends Controller
                 'id_header_pinalty'=>$request->id_pinalty,
                 'start_date'=>$start_date,
                 'finish_date'=>$finish_date,
-                'location_id'=>$request->arr_fee_location[$i]['location_id']
+                'id_header_template'=>$request->arr_fee_template[$i]['id_header_template']
             );
             $insert = DatabaseModel::insertData('header_management_fee',$post);
-            // echo count($request->arr_fee_location[$i]['fee_service']);
-            for($a = 0; $a < count($request->arr_fee_location[$i]['fee_service']); $a++){
+            // echo count($request->arr_fee_template[$i]['fee_service']);
+            for($a = 0; $a < count($request->arr_fee_template[$i]['fee_service']); $a++){
                 $post = array(
                     'id_header'=>$id_header,
-                    'service_code'=>$request->arr_fee_location[$i]['fee_service'][$a]['service_code'],
-                    'amount'=>$request->arr_fee_location[$i]['fee_service'][$a]['amount']
+                    'service_code'=>$request->arr_fee_template[$i]['fee_service'][$a]['service_code'],
+                    'amount'=>$request->arr_fee_template[$i]['fee_service'][$a]['amount']
                 );
                 $insert = DatabaseModel::insertData('detail_management_fee',$post);
             }
@@ -78,26 +78,44 @@ class ManagementFeeController extends Controller
     }
 
     function updateManagementFee(Request $request){
-            $exp_start_date = explode("/",$request->start_date);
-            $exp_finish_date =explode("/",$request->finish_date);
-            $start_date = $exp_start_date[2]."-".$exp_start_date[0]."-".$exp_start_date[1];
-            $finish_date = $exp_finish_date[2]."-".$exp_finish_date[0]."-".$exp_finish_date[1];
+        $exp_start_date = explode("/",$request->start_date);
+        $exp_finish_date =explode("/",$request->finish_date);
+        $start_date = $exp_start_date[2]."-".$exp_start_date[0]."-".$exp_start_date[1];
+        $finish_date = $exp_finish_date[2]."-".$exp_finish_date[0]."-".$exp_finish_date[1];
+        $post = array(
+            'id_header_pinalty'=>$request->id_pinalty,
+            'start_date'=>$start_date,
+            'finish_date'=>$finish_date,
+            'id_header_template'=>$request->id_header_template,
+        );
+        $update_header = DatabaseModel::updateData('header_management_fee',$post,'id_header',$request->id);
+        $delete = DatabaseModel::deleteData('detail_management_fee','id_header',$request->id);
+        for($i = 0; $i < count($request->arr_service); $i++){
             $post = array(
-                'id_header_pinalty'=>$request->id_pinalty,
-                'start_date'=>$start_date,
-                'finish_date'=>$finish_date,
-                'location_id'=>$request->location_id,
-                'fee'=>$request->fee
+                'id_header'     =>  $request->id,
+                'service_code'  =>  $request->arr_service[$i]['service_code'],
+                'amount'        =>  $request->arr_service[$i]['amount']
             );
-            $update = DatabaseModel::updateData('management_fee',$post,'id',$request->id);
+            $insert_detail = DatabaseModel::insertData('detail_management_fee',$post);
+        }
+        if($update_header || $insert_detail){
+            $confirmation = ['message' => 'Data Management Fee updated','icon' => 'success', 'redirect'=>'/management_fee'];
+        }else{
+            $confirmation = ['message' => 'Data Management Fee failed updated','icon' => 'error', 'redirect'=>'/management_fee'];
+        }
         
-        $confirmation = ['message' => 'Data Management Fee updated','icon' => 'success', 'redirect'=>'/management_fee'];
         return response()->json($confirmation);
     }
 
     public function deleteManagementFee(Request $request){
-            $deleteManagementFee = DatabaseModel::deleteData('management_fee','id',$request->id);
-            $confirmation = ['message' => 'Delete Management Fee','icon' => 'success', 'redirect'=>'/management_fee'];
+            $deleteHeaderManagementFee = DatabaseModel::deleteData('header_management_fee','id_header',$request->id);
+            $deleteDetailManagementFee = DatabaseModel::deleteData('detail_management_fee','id_header',$request->id);
+            if($deleteHeaderManagementFee && $deleteDetailManagementFee){
+                $confirmation = ['message' => 'Delete Management Fee Success','icon' => 'success', 'redirect'=>'/management_fee'];
+            }else{
+                $confirmation = ['message' => 'Delete Management Fee Failed','icon' => 'error', 'redirect'=>'/management_fee'];
+            }
+            
         return response()->json($confirmation);
     }
 }

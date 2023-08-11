@@ -239,7 +239,7 @@ $(document).on('click','#btn-template-score',function(){
 });
 
 $(document).on('click','.choose-template-score',function(){
-    var data_id = $(this).attr('data-id');
+    var data_id_header_set_score = $(this).attr('data-id_header_set_score');
     var data_start_date = $(this).attr('data-start_date');
     var data_finish_date = $().attr('data-finish_date');
     $('#modal-template-score').modal('toggle');
@@ -248,10 +248,10 @@ $(document).on('click','.choose-template-score',function(){
             'X_CSRF-TOKEN':$('meta[name=csrf-token]').attr('content'),
         },
         data:{
-            'id':data_id
+            'id':data_id_header_set_score
         },
         type:'GET',
-        url:'/score/getDataScoreByIdHeader/'+data_id,
+        url:'/score/getDataScoreByIdHeader/'+data_id_header_set_score,
         dataType:'JSON',
         processData:true,
         success:function(data){

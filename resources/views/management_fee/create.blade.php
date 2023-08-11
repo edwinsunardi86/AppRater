@@ -167,7 +167,7 @@
             </div>
             <div class="modal-body" style="overflow:scroll">
                 <div class="table-responsive">
-                    <table id="table_location" class="diplay table table-bordered table-striped table-hover" style="width:70%">
+                    <table id="table_location" class="diplay table table-bordered table-striped table-hover" style="width:100%">
                         <thead>
                             <tr>
                                 <th><div class="icheck-primary d-inline">
@@ -176,7 +176,9 @@
                                     </label>
                                   </div></th>
                                 <th>Location Name</th>
-                                <th>Description</th>
+                                <th>Start Date</th>
+                                <th>Finish Date</th>
+                                <th>Area</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -304,7 +306,7 @@ $(document).on('change','#project_code', function(){
                 },
                 type:'POST',
                 dataType:'JSON',
-                url:'{!! route("data_location_to_checked:dt") !!}',
+                url:'{!! route("data_location_by_template_to_checked:dt") !!}',
                 processData:true,
                 data:{
                     'project_code':$('#project_code').val()
@@ -313,7 +315,9 @@ $(document).on('change','#project_code', function(){
             columns:[
                 { data: 'action', width:"5%", name: 'action'},
                 { data: 'location_name', name: 'location_name' },
-                { data: 'description', name: 'description' }
+                { data: 'start_date', name:'finish_date' },
+                { data: 'finish_date', name: 'finish_date' },
+                { data: 'area', name: 'area' },
             ],
     });
 
@@ -338,34 +342,34 @@ $(document).on('change','#project_code', function(){
 
     $(document).on('click','#choiceLocation',function(){
             $('#fee_location tbody').empty();
-            var arr_location = [];
+            var arr_template = [];
             var cb_location = table_location.rows().nodes().to$().find('input[name="cb_location[]"]:checked').each(function(){
                 if($(this).is(':checked')){
-                    arr_location.push({ location_id:$(this).attr('data-location_id'), location_name:$(this).attr('data-location_name') });
+                    arr_template.push({ id_header_template:$(this).attr('data-id_header_template'), location_name:$(this).attr('data-location_name') });
                 }
             });
-            $.each(arr_location,function(i,item){
+            $.each(arr_template,function(i,item){
                 var inp_amount_service = "";
                 $.ajax({
                     headers:{
                         'X_CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
                     },
-                    url:"/template_area/getDataServicePerLocation",
+                    url:"/template_area/getDataServiceByTemplate",
                     dataType:"JSON",
                     type:"POST",
                     async:false,
                     data:{
-                        "location_id":arr_location[i].location_id
+                        "id_header_template":arr_template[i].id_header_template
                     },
                     processData:true,
                     success:function(data){
                         $.each(data,function(a,item){
                             // arr_service.push({"service_code":data[i].service_code,"service_name":data[a].service_name});
-                            inp_amount_service += "<div class=\"form-group row\"><label class=\"col-sm-4 col-form-label\">"+data[a].service_name+"</label><input type=\"hidden\" name=\"service_code"+arr_location[i].location_id+"\"  value="+data[a].service_code+"><div class=\"col-md-6\"><input type=\"number\" name=\"amount"+arr_location[i].location_id+"["+a+"]\" id=\"amount"+a+"\" class=\"form-control form-control-sm mb-3\"></div></div>";
+                            inp_amount_service += "<div class=\"form-group row\"><label class=\"col-sm-4 col-form-label\">"+data[a].service_name+"</label><input type=\"hidden\" name=\"service_code"+arr_template[i].id_header_template+"\"  value="+data[a].service_code+"><div class=\"col-md-6\"><input type=\"number\" name=\"amount"+arr_template[i].id_header_template+"["+a+"]\" id=\"amount"+a+"\" class=\"form-control form-control-sm mb-3\"></div></div>";
                         });
                     }
                 });
-                var fee = "<tr><td>"+arr_location[i].location_name+"<input type=\"hidden\" name=\"location_id[]\" data-location_id="+arr_location[i].location_id+" id=\"location_id"+i+"\" value="+arr_location[i].location_id+"></td><td>"+inp_amount_service+"</td>"+
+                var fee = "<tr><td>"+arr_template[i].location_name+"<input type=\"hidden\" name=\"id_header_template[]\" data-id_header_template="+arr_template[i].id_header_template+" id=\"id_header_template"+i+"\" value="+arr_template[i].id_header_template+"></td><td>"+inp_amount_service+"</td>"+
                     "<td><button class=\"delete_location btn btn-md btn-danger\">Delete</button></td></tr>";
                 $('#fee_location tbody').append(fee);
             });
@@ -416,18 +420,18 @@ $(document).ready(function(){
             $(element).removeClass('is-invalid');
         },
         submitHandler: function() {
-            var input_location = $('input[name="location_id[]"]');
-            var arr_fee_location = [];
-            $.each(input_location,function(i,item){
-                var data_location_id = $(this).attr('data-location_id');
-                var service_code = $("input[name=\"service_code"+data_location_id+"\"]");
+            var arr_template = $('input[name="id_header_template[]"]');
+            var arr_fee_template = [];
+            $.each(arr_template,function(i,item){
+                var data_id_header_template = $(this).attr('data-id_header_template');
+                var service_code = $("input[name=\"service_code"+data_id_header_template+"\"]");
                 var arr_service = [];
                 $.each(service_code,function(a,item){
-                    arr_service.push({ service_code : $(this).val(), amount : $("input[name=\"amount"+data_location_id+"["+a+"]\"]").val() });
+                    arr_service.push({ service_code : $(this).val(), amount : $("input[name=\"amount"+data_id_header_template+"["+a+"]\"]").val() });
                 })
-                arr_fee_location.push({ location_id : $(this).val(), fee_service : arr_service})
+                arr_fee_template.push({ id_header_template : $(this).val(), fee_service : arr_service})
             });
-            console.log(arr_fee_location);
+            console.log(arr_fee_template);
             $.ajax({
                 headers:{
                     'X_CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
@@ -439,7 +443,7 @@ $(document).ready(function(){
                     'id_pinalty':$('#id_pinalty').val(),
                     'start_date':$('#start_date').val(),
                     'finish_date':$('#finish_date').val(),
-                    'arr_fee_location':arr_fee_location
+                    'arr_fee_template':arr_fee_template
                 },
                 processData:true,
                 success:function(data){

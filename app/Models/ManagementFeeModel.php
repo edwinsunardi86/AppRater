@@ -10,16 +10,18 @@ class ManagementFeeModel extends Model
     use HasFactory;
 
     static function getDataManagementFee(){
-        $query = DB::table(DB::Raw("(SELECT hmf.location_id,hmf.id_header,id_header_pinalty,start_date,finish_date,GROUP_CONCAT(service_name,\" : \",amount) AS amount_service FROM header_management_fee hmf
+        $query = DB::table(DB::Raw("(SELECT hmf.id_header_template,hmf.id_header,id_header_pinalty,hmf.start_date,hmf.finish_date,GROUP_CONCAT(service_name,\" : \",amount) AS amount_service FROM header_management_fee hmf
         INNER JOIN detail_management_fee dmf ON hmf.id_header = dmf.id_header
         INNER JOIN m_service ms ON ms.service_code = dmf.service_code
         GROUP BY hmf.id_header) AS a"))
-        ->join('setup_location AS b','a.location_id','=','b.id')
-        ->join(DB::Raw("(SELECT hp.id_header,hp.start_date,hp.finish_date,dp.score,category,GROUP_CONCAT(dp.score,\"(\",dsspp.category,\") :\", dp.percent_pinalty,\"%\") AS description_pinalty FROM header_pinalty hp
+        ->join('header_template AS b','a.id_header_template','=','b.id')
+        ->join('template_area AS c','c.id_header','=','b.id')
+        ->join('setup_location AS d','b.location_id','=','d.id')
+        ->join(DB::Raw("(SELECT hp.id_header,hp.start_date,hp.finish_date,dp.score,category,GROUP_CONCAT(dsspp.score,\"(\",dsspp.category,\") :\", dp.percent_pinalty,\"%\") AS description_pinalty FROM header_pinalty hp
         INNER JOIN detail_pinalty dp ON hp.id_header = dp.id_header
         INNER JOIN header_set_score hss ON hss.id_header = hp.id_header_set_score
         INNER JOIN detail_set_score_per_project dsspp ON dsspp.id_header = hss.id_header AND dp.score = dsspp.score
-        GROUP BY hp.id_header) AS c"),"c.id_header","=","a.id_header_pinalty")
+        GROUP BY hp.id_header ORDER BY category DESC) AS e"),"e.id_header","=","a.id_header_pinalty")
         // ->join('header_pinalty AS c','c.id_header','=','a.id_header_pinalty')
         // ->join('detail_pinalty AS d','d.id_header','=','c.id_header')
         // ->join('header_set_score AS e','e.id_header','=','c.id_header_set_score')
@@ -27,10 +29,10 @@ class ManagementFeeModel extends Model
         //     $join->on('f.id_header','=','e.id_header');
         //     $join->on('f.score','=','d.score');
         // })
-        ->join('detail_management_fee AS g','g.id_header','=','a.id_header')
-        ->join('m_service AS h','h.service_code','=','g.service_code');
+        ->join('detail_management_fee AS f','f.id_header','=','a.id_header')
+        ->join('m_service AS g','g.service_code','=','c.service_code');
         
-        $query = $query->select('c.id_header AS id_header_pinalty','a.id_header','a.location_id','b.location_name','amount_service','description_pinalty','a.start_date','a.finish_date')
+        $query = $query->select('e.id_header AS id_header_pinalty','a.id_header','a.id_header_template','d.location_name','amount_service','description_pinalty','a.start_date','a.finish_date')
         ->groupBy('a.id_header')->get();
         return $query;
     }

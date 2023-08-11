@@ -21,6 +21,7 @@ class PinaltyModel extends Model
         ->join('setup_project','setup_project.project_code','=','header_set_score.project_code')
         ->selectRaw("header_pinalty.id_header,setup_project.project_code,project_name, CONCAT(header_pinalty.start_date,\" s/d \",header_pinalty.finish_date) AS 'period',GROUP_CONCAT(\" \", detail_set_score_per_project.category, \"(\",detail_pinalty.score,\")\",\" : \",
         percent_pinalty,\" %\") AS 'pinalty_score'")
+        ->groupBy('id_header')
         ->get();
         return $query;
     }
@@ -60,6 +61,7 @@ class PinaltyModel extends Model
         ->selectRaw("header_pinalty.id_header,setup_project.project_code,project_name, CONCAT(header_pinalty.start_date,\" s/d \",header_pinalty.finish_date) AS 'period',GROUP_CONCAT(\" \", detail_set_score_per_project.category, \"(\",detail_pinalty.score,\")\",\" : \",
         percent_pinalty,\" % \n\") AS 'pinalty_score'")
         ->where("header_set_score.project_code",$project_code)
+        ->groupBy('header_pinalty.id_header')
         ->get();
         return $query;
     }

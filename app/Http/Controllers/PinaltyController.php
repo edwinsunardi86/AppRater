@@ -39,7 +39,7 @@ class PinaltyController extends Controller
         $id_header_set_score = $request->id_header_set_score;
         $arr_percentage = $request->percent_id;
         $idHeader = DatabaseModel::getMaxIdHeader('header_pinalty');
-        $getIdHeader = $idHeader->id_header != 1 ? $idHeader->id_header+1 : 1;
+        $getIdHeader = ($idHeader->id_header) ? $idHeader->id_header+1 : 1;
         $exp_start_date = explode("/",$request->start_date);
         $start_date = $exp_start_date[2]."-".$exp_start_date[0]."-".$exp_start_date[1];
         $exp_finish_date = explode("/",$request->finish_date);
@@ -106,7 +106,7 @@ class PinaltyController extends Controller
     }
 
     public function delete_pinalty(Request $request){
-        $getDataManagementFee = DatabaseModel::getData('management_fee',array('id_header_pinalty',$request->id_header))->get();
+        $getDataManagementFee = DatabaseModel::getData('header_management_fee',array('id_header_pinalty'=>$request->id_header))->get();
         if($getDataManagementFee->count() == 0){
             $deleteDataHeader = DatabaseModel::deleteData('detail_pinalty','id_header',$request->id_header);
             $deleteDataDetail = DatabaseModel::deleteData('header_pinalty','id_header',$request->id_header);
