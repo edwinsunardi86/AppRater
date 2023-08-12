@@ -312,4 +312,12 @@ class ReportController extends Controller
     function getFileNameSignReport($filename){
         return response()->download(storage_path('app/public/report/'.$filename));
     }
+
+    function summary_fee_pinalty(){
+        return view('report.summary_fee_pinalty',[
+            'title' => 'Report ',
+            'active_gm' => 'Report',
+            'active_m'=>'report/summary_fee_pinalty'
+        ]);
+    }
 }
