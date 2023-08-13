@@ -61,18 +61,25 @@ $(document).ready(function(){
                 return meta.row + meta.settings._iDisplayStart + 1;
             }},
             { data: 'location_name', name: 'location_name' },
-            // { data: 'amount_service', name: 'amount_service', render:function(row, type, render){
-            //     var split_service = row.split(",");
-            //     var html ="";
-            //     $.each(split_service,function(i,item){
-            //         html += split_service[i]+"<br/>";
-            //     }); 
-            //     return html;
-            // }},
-            { data: 'amount_service', name: 'amount_service'},
+            { data: 'amount_service', name: 'amount_service', render:function(row, type, render){
+                var split_service = row.split(",");
+                var html ="";
+                $.each(split_service,function(i,item){
+                    html += split_service[i]+"<br/>";
+                }); 
+                return html;
+            }},
+            // { data: 'amount_service', name: 'amount_service'},
             { data: 'start_date', name: 'start_date' },
             { data: 'finish_date', name: 'finish_date' },
-            { data: 'description_pinalty', name: 'description_pinalty' },
+            { data: 'description_pinalty', name: 'description_pinalty', render: function(row, type, render){
+                var split_amount_service = row.split(",");
+                var html ="";
+                $.each(split_amount_service,function(i,item){
+                    html += split_amount_service[i]+"<br/>";
+                }); 
+                return html;
+            }},
             { data: 'action', name: 'action'}
         ],
         "scrollX": true,
