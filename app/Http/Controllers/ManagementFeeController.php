@@ -11,7 +11,7 @@ class ManagementFeeController extends Controller
     function index(){
         return view('management_fee.index',[
             'title' => 'Management Fee',
-            'active_gm' => 'Management Fee',
+            'active_gm' => 'Fee',
             'active_m'=>'management_fee',
         ]);
     }
@@ -30,7 +30,7 @@ class ManagementFeeController extends Controller
     function create(){
         return view('management_fee.create',[
             'title' => 'Management Fee',
-            'active_gm' => 'Management Fee',
+            'active_gm' => 'Fee',
             'active_m'=>'management_fee',
         ]);
     }
@@ -115,7 +115,6 @@ class ManagementFeeController extends Controller
             }else{
                 $confirmation = ['message' => 'Delete Management Fee Failed','icon' => 'error', 'redirect'=>'/management_fee'];
             }
-            
         return response()->json($confirmation);
     }
 }

@@ -129,6 +129,7 @@
                                         <input type="number" name="avg" id="avg" class="form-control" disabled>
                                     </div>
                                 </div>
+                                @if(Auth::user()->role == 3)
                                 <div class="row p-10 col-sm-4">
                                     <canvas id="signature-pad" class="signature-pad">
                                         Your browser does not support the HTML canvas tag.
@@ -156,6 +157,7 @@
                                         <button type="submit" id="submit" class="btn btn-block btn-outline-warning btn-sm">Submit</button>
                                     </div>
                                 </div>
+                                @endif
                             </form>
                         </div>
                     </div>
@@ -585,17 +587,18 @@ $(document).on('change','#year_project,#month_project,#service_name',function(){
 });
 
 
-
-
 $(document).ready(function(){
-    function isCanvasBlank(canvas) {
-        const blank = document.createElement('canvas');
+    
+    @if(Auth::user()->role == 3)
+        function isCanvasBlank(canvas) {
+            const blank = document.createElement('canvas');
 
-        blank.width = canvas.width;
-        blank.height = canvas.height;
+            blank.width = canvas.width;
+            blank.height = canvas.height;
 
-        return canvas.toDataURL() === blank.toDataURL();
-    }
+            return canvas.toDataURL() === blank.toDataURL();
+        }
+    @endif
     
     $(document).on('click','#submit',function(e){
         const blank = isCanvasBlank(document.getElementById('signature-pad'));
@@ -740,10 +743,11 @@ $(document).ready(function(){
         
 @endif
 
+@if(Auth::user()->role == 3)
 document.addEventListener('DOMContentLoaded', function () {
                 resizeCanvas();
             })
-    
+            var canvas = document.getElementById('signature-pad');
             //script ini berfungsi untuk menyesuaikan tanda tangan dengan ukuran canvas
             function resizeCanvas() {
                 var ratio = Math.max(window.devicePixelRatio || 0.5, 0.5);
@@ -751,10 +755,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 canvas.height = canvas.offsetHeight * ratio;
                 canvas.getContext("2d").scale(ratio, ratio);
             }
-    
-    
-            var canvas = document.getElementById('signature-pad');
-    
             //warna dasar signaturepad
             var signaturePad = new SignaturePad(canvas, {
                 backgroundColor: 'rgb(255, 255, 255)'
@@ -774,12 +774,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 signaturePad.fromData(data);
                 }
             });
-$(document).ready(function(){
-    $('#form_signature').submit(function(e){
-        e.preventDefault();
-        var signature = signaturePad.toDataURL();
-        
+    $(document).ready(function(){
+        $('#form_signature').submit(function(e){
+            e.preventDefault();
+            var signature = signaturePad.toDataURL();
+            
+        });
     });
-});
+@endif
 </script>
 @endsection

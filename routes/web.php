@@ -178,6 +178,8 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'report'],functio
     Route::get('/getFileNameSignReport/{id}',[ReportController::class,'getFileNameSignReport'])->name('download');
     Route::post('/getSignReportPeriodYearOfProject',[ReportController::class,'getSignReportPeriodYearOfProject']);
     Route::get('/summary_fee_pinalty',[ReportController::class,'summary_fee_pinalty']);
+    Route::post('/getDataSummaryFeePinalty',[ReportController::class,'getDataSummaryFeePinalty']);
+    Route::post('/exportDataSummaryFeePinalty',[ReportController::class,'exportDataSummaryFeePinalty']);
 });
 
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'sign'],function(){

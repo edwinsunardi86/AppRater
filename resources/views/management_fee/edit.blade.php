@@ -284,7 +284,8 @@ $(document).on('change','#project_code', function(){
             url:'{!! route("data_pinalty_per_project_to_selected:dt") !!}',
             processData:true,
             data:{
-                    'project_code':$('#project_code').val()
+                    'project_code':$('#project_code').val(),
+                    _token: '{{csrf_token()}}',
             },
         },
         columns:[
@@ -314,7 +315,8 @@ $(document).on('change','#project_code', function(){
             url:'{!! route("data_location_by_template_to_selected:dt") !!}',
             processData:true,
             data:{
-                'project_code':$('#project_code').val()
+                'project_code':$('#project_code').val(),
+                _token: '{{csrf_token()}}',
             }
         },
         columns:[
@@ -344,7 +346,8 @@ $(document).on("click",".btn-choose-location",function(){
         type:"POST",
         async:false,
         data:{
-            "id_header_template":id_header_template
+            "id_header_template":id_header_template,
+            _token: '{{csrf_token()}}',
         },
         processData:true,
         success:function(data){
@@ -417,7 +420,8 @@ $(document).ready(function(){
                     'start_date': $('#start_date').val(),
                     'finish_date': $('#finish_date').val(),
                     'id_header_template': $('#id_header_template').val(),
-                    'arr_service' : arr_service
+                    'arr_service' : arr_service,
+                    _token: '{{csrf_token()}}'
                 },
                 processData:true,
                 success:function(data){

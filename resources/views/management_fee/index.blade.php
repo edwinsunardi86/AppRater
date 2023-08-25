@@ -104,7 +104,8 @@ function deleteManagementFee(id){
                     type:"POST",
                     dataType:"JSON",
                     data:{
-                        'id':id
+                        'id':id,
+                        _token: '{{csrf_token()}}'
                     },
                     processData:true,
                     success:function(data){

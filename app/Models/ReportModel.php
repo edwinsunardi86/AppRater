@@ -9,7 +9,6 @@ use Illuminate\Database\Query\JoinClause;
 class ReportModel extends Model
 {
     use HasFactory;
-
     static function getDataScorePerLocation($project_code,$location_id,$month,$year){
         $query = DB::table('evaluation')
         ->join('setup_sub_area','setup_sub_area.id','=','evaluation.sub_area_id')
@@ -266,30 +265,30 @@ class ReportModel extends Model
         ->where('f.project_code',$project_code)
         ->selectRaw("
         a.id AS location_id,location_name,
-        COUNT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"01-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"01-$year\" THEN ta.location_id END) as 'service_jan',
-        (SELECT COUNT(*) FROM log_sign_report lsr WHERE period = \"01-$year\" AND lsr.location_id = a.id) AS 'Jan',
-        COUNT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"02-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"02-$year\" THEN ta.location_id END) as 'service_feb',
-        (SELECT COUNT(*) FROM log_sign_report lsr WHERE period = \"02-$year\" AND lsr.location_id = a.id) AS 'Feb',
-        COUNT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"03-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"03-$year\" THEN ta.location_id END) as 'service_mar',
-        (SELECT COUNT(*) FROM log_sign_report lsr WHERE period = \"03-$year\" AND lsr.location_id = a.id) AS 'Mar',
-        COUNT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"04-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"04-$year\" THEN ta.location_id END) as 'service_apr',
-        (SELECT COUNT(*) FROM log_sign_report lsr WHERE period = \"04-$year\" AND lsr.location_id = a.id) AS 'Apr',
-        COUNT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"05-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"05-$year\" THEN ta.location_id END) as 'service_may',
-        (SELECT COUNT(*) FROM log_sign_report lsr WHERE period = \"05-$year\" AND lsr.location_id = a.id) AS 'May',
-        COUNT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"06-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"06-$year\" THEN ta.location_id END) as 'service_jun',
-        (SELECT COUNT(*) FROM log_sign_report lsr WHERE period = \"06-$year\" AND lsr.location_id = a.id) AS 'Jun',
-        COUNT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"07-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"07-$year\" THEN ta.location_id END) as 'service_jul',
-        (SELECT COUNT(*) FROM log_sign_report lsr WHERE period = \"07-$year\" AND lsr.location_id = a.id) AS 'Jul',
-        COUNT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"08-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"08-$year\" THEN ta.location_id END) as 'service_aug',
-        (SELECT COUNT(*) FROM log_sign_report lsr WHERE period = \"08-$year\" AND lsr.location_id = a.id) AS 'Aug',
-        COUNT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"09-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"09-$year\" THEN ta.location_id END) as 'service_sep',
-        (SELECT COUNT(*) FROM log_sign_report lsr WHERE period = \"09-$year\" AND lsr.location_id = a.id) AS 'Sep',
-        COUNT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"10-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"10-$year\" THEN ta.location_id END) as 'service_oct',
-        (SELECT COUNT(*) FROM log_sign_report lsr WHERE period = \"10-$year\" AND lsr.location_id = a.id) AS 'Oct',
-        COUNT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"11-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"11-$year\" THEN ta.location_id END) as 'service_nov',
-        (SELECT COUNT(*) FROM log_sign_report lsr WHERE period = \"11-$year\" AND lsr.location_id = a.id) AS 'Nov',
-        COUNT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"12-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"12-$year\" THEN ta.location_id END) as 'service_dec',
-        (SELECT COUNT(*) FROM log_sign_report lsr WHERE period = \"12-$year\" AND lsr.location_id = a.id) AS 'Dec'
+        IFNULL(GROUP_CONCAT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"01-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"01-$year\" THEN CONCAT(\"[\",LEFT(UPPER(ta.service_code),1),\"]\") END),\"\") as 'service_jan',
+        IFNULL((SELECT GROUP_CONCAT(CONCAT(\"[\",LEFT(UPPER(service_code),1),\"]\")) FROM log_sign_report lsr WHERE period = \"01-$year\" AND lsr.location_id = a.id),\"\") AS 'Jan',
+        IFNULL(GROUP_CONCAT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"02-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"02-$year\" THEN CONCAT(\"[\",LEFT(UPPER(ta.service_code),1),\"]\") END),\"\") as 'service_feb',
+        IFNULL((SELECT GROUP_CONCAT(CONCAT(\"[\",LEFT(UPPER(service_code),1),\"]\")) FROM log_sign_report lsr WHERE period = \"02-$year\" AND lsr.location_id = a.id),\"\") AS 'Feb',
+        IFNULL(GROUP_CONCAT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"03-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"03-$year\" THEN CONCAT(\"[\",LEFT(UPPER(ta.service_code),1),\"]\") END),\"\") as 'service_mar',
+        IFNULL((SELECT GROUP_CONCAT(CONCAT(\"[\",LEFT(UPPER(service_code),1),\"]\")) FROM log_sign_report lsr WHERE period = \"03-$year\" AND lsr.location_id = a.id),\"\") AS 'Mar',
+        IFNULL(GROUP_CONCAT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"04-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"04-$year\" THEN CONCAT(\"[\",LEFT(UPPER(ta.service_code),1),\"]\") END),\"\") as 'service_apr',
+        IFNULL((SELECT GROUP_CONCAT(CONCAT(\"[\",LEFT(UPPER(service_code),1),\"]\")) FROM log_sign_report lsr WHERE period = \"04-$year\" AND lsr.location_id = a.id),\"\") AS 'Apr',
+        IFNULL(GROUP_CONCAT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"05-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"05-$year\" THEN CONCAT(\"[\",LEFT(UPPER(ta.service_code),1),\"]\") END),\"\") as 'service_may',
+        IFNULL((SELECT GROUP_CONCAT(CONCAT(\"[\",LEFT(UPPER(service_code),1),\"]\")) FROM log_sign_report lsr WHERE period = \"05-$year\" AND lsr.location_id = a.id),\"\") AS 'May',
+        IFNULL(GROUP_CONCAT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"06-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"06-$year\" THEN CONCAT(\"[\",LEFT(UPPER(ta.service_code),1),\"]\") END),\"\") as 'service_jun',
+        IFNULL((SELECT GROUP_CONCAT(CONCAT(\"[\",LEFT(UPPER(service_code),1),\"]\")) FROM log_sign_report lsr WHERE period = \"06-$year\" AND lsr.location_id = a.id),\"\") AS 'Jun',
+        IFNULL(GROUP_CONCAT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"07-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"07-$year\" THEN CONCAT(\"[\",LEFT(UPPER(ta.service_code),1),\"]\") END),\"\") as 'service_jul',
+        IFNULL((SELECT GROUP_CONCAT(CONCAT(\"[\",LEFT(UPPER(service_code),1),\"]\")) FROM log_sign_report lsr WHERE period = \"07-$year\" AND lsr.location_id = a.id),\"\") AS 'Jul',
+        IFNULL(GROUP_CONCAT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"08-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"08-$year\" THEN CONCAT(\"[\",LEFT(UPPER(ta.service_code),1),\"]\") END),\"\") as 'service_aug',
+        IFNULL((SELECT GROUP_CONCAT(CONCAT(\"[\",LEFT(UPPER(service_code),1),\"]\")) FROM log_sign_report lsr WHERE period = \"08-$year\" AND lsr.location_id = a.id),\"\") AS 'Aug',
+        IFNULL(GROUP_CONCAT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"09-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"09-$year\" THEN CONCAT(\"[\",LEFT(UPPER(ta.service_code),1),\"]\") END),\"\") as 'service_sep',
+        IFNULL((SELECT GROUP_CONCAT(CONCAT(\"[\",LEFT(UPPER(service_code),1),\"]\")) FROM log_sign_report lsr WHERE period = \"09-$year\" AND lsr.location_id = a.id),\"\") AS 'Sep',
+        IFNULL(GROUP_CONCAT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"10-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"10-$year\" THEN CONCAT(\"[\",LEFT(UPPER(ta.service_code),1),\"]\") END),\"\") as 'service_oct',
+        IFNULL((SELECT GROUP_CONCAT(CONCAT(\"[\",LEFT(UPPER(service_code),1),\"]\")) FROM log_sign_report lsr WHERE period = \"10-$year\" AND lsr.location_id = a.id),\"\") AS 'Oct',
+        IFNULL(GROUP_CONCAT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"11-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"11-$year\" THEN CONCAT(\"[\",LEFT(UPPER(ta.service_code),1),\"]\") END),\"\") as 'service_nov',
+        IFNULL((SELECT GROUP_CONCAT(CONCAT(\"[\",LEFT(UPPER(service_code),1),\"]\")) FROM log_sign_report lsr WHERE period = \"11-$year\" AND lsr.location_id = a.id),\"\") AS 'Nov',
+        IFNULL(GROUP_CONCAT(CASE WHEN DATE_FORMAT(ta.start_date,\"%m-%Y\") <= \"12-$year\" AND DATE_FORMAT(ta.finish_date,\"%m-%Y\") >= \"12-$year\" THEN CONCAT(\"[\",LEFT(UPPER(ta.service_code),1),\"]\") END),\"\") as 'service_dec',
+        IFNULL((SELECT GROUP_CONCAT(CONCAT(\"[\",LEFT(UPPER(service_code),1),\"]\")) FROM log_sign_report lsr WHERE period = \"12-$year\" AND lsr.location_id = a.id),\"\") AS 'Dec'
         ")
         ->groupBy('a.id')->get();
         return $query;
@@ -303,4 +302,56 @@ class ReportModel extends Model
         ->join('users','users.id','=','log_sign_report.created_by');
         return $query->get();
     }
+
+    public static function getDataSummaryFeePinalty($project_code,$year,$service_code){
+        $month = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+        $str_query = "";
+        $arr_digit = 0;
+        for($i=1;$i<=12;$i++){
+            $comma = $i==12 ? "" : ",";
+            $str_query .= "AVG(CASE WHEN DATE_FORMAT(appraisal_date,\"%c-%Y\") = \"$i-$year\" THEN se.score END) AS score_".$month[$arr_digit].",
+            (SELECT category FROM detail_set_score_per_project WHERE id_header = hss.id_header AND (score+1) > AVG(CASE WHEN DATE_FORMAT(appraisal_date,\"%c-%Y\") = \"$i-$year\" THEN se.score END) ORDER BY score ASC LIMIT 1) AS category_".$month[$arr_digit].",
+            ROUND(((SELECT percent_pinalty FROM detail_pinalty WHERE id_header = hmf.id_header_pinalty AND (score+1) > AVG(CASE WHEN DATE_FORMAT(appraisal_date,\"%c-%Y\") = \"$i-$year\" THEN se.score END) ORDER BY score ASC LIMIT 1)  / 100) * amount,4) AS amount_pinalty_".$month[$arr_digit].$comma;
+            $arr_digit++;
+        }
+        $query = DB::table('header_evaluation AS he')
+        ->join('score_evaluation AS se','se.id_header','=','he.id_header')
+        ->join('setup_location AS sl','sl.id','=','he.location_id')
+        ->join('header_template AS ht','ht.location_id','=','sl.id')
+        ->join('template_area AS ta','ta.id_header','=','ht.id')
+        // ->join('template_sub_area AS tsa','tsa.id_area','=','ta.id')
+        ->join('template_sub_area AS tsa',function(JoinClause $join){
+            $join->on('tsa.id_area','=','ta.id');
+            $join->on('tsa.id','=','se.sub_area_id');
+        })
+        ->join('setup_region AS sr', 'sr.id','=','sl.region_id')
+        ->join('setup_project AS sp', 'sp.project_code','=','sr.project_code')
+        ->join('header_set_score AS hss', function(JoinClause $join){
+            $join->on('hss.project_code','=','sp.project_code');
+            $join->on('hss.start_date','<=','he.appraisal_date');
+            $join->on('hss.finish_date','>=','he.appraisal_date');
+        })
+        ->leftJoin('header_management_fee AS hmf',function(JoinClause $join){
+            $join->on('hmf.id_header_template','=','ht.id');
+            $join->on('hmf.start_date','<=','he.appraisal_date');
+            $join->on('hmf.finish_date','>=','he.appraisal_date');
+        })
+        ->leftJoin('detail_management_fee AS dmf',function(JoinClause $join){
+            $join->on('dmf.id_header','=','hmf.id_header');
+            $join->on('dmf.service_code','=','ta.service_code');
+        })
+        ->leftJoin('header_pinalty AS hp', function(JoinClause $join){
+            $join->on('hp.id_header','=','hmf.id_header_pinalty');
+            $join->on('hp.start_date','<=','he.appraisal_date');
+            $join->on('hp.finish_date','>=','he.appraisal_date');
+        })
+        ->where('sp.project_code',$project_code)
+        ->where("ta.service_code",$service_code)
+        ->select('ht.location_id','location_name','ta.service_code',
+        DB::Raw($str_query))
+        ->groupBy('ht.location_id','ta.service_code')
+        ->get();
+        return $query;
+    }
+
 }

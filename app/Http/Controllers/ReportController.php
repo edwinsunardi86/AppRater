@@ -257,36 +257,40 @@ class ReportController extends Controller
 
         $spreadsheet->createSheet();
         $sheet2 = $spreadsheet->getSheet(1);
-        $sheet2->setCellValue('A1','Report Check Existing Sign report');
-        $sheet2->setCellValue('A4','Location Name')
-                        ->setCellValue('B4','Jan')
-                        ->setCellValue('C4','Feb')
-                        ->setCellValue('D4','Mar')
-                        ->setCellValue('E4','Apr')
-                        ->setCellValue('F4','May')
-                        ->setCellValue('G4','Jun')
-                        ->setCellValue('H4','Jul')
-                        ->setCellValue('I4','Aug')
-                        ->setCellValue('J4','Sep')
-                        ->setCellValue('K4','Oct')
-                        ->setCellValue('L4','Nov')
-                        ->setCellValue('M4','Dec');
+        $sheet2->setCellValue('A1','Report Check Existing Sign report')
+        ->setCellValue('A2','[C] : Cleaning Service')
+        ->setCellValue('A3','[L] : Labour Service')
+        ->setCellValue('A4','[S] : Security Service')
+        ->setCellValue('A5','(Service yang sudah ditandatangani)/(Kelengkapan service yang harus ditandatangani)')
+        ->setCellValue('A7','Location Name')
+        ->setCellValue('B7','Jan')
+        ->setCellValue('C7','Feb')
+        ->setCellValue('D7','Mar')
+        ->setCellValue('E7','Apr')
+        ->setCellValue('F7','May')
+        ->setCellValue('G7','Jun')
+        ->setCellValue('H7','Jul')
+        ->setCellValue('I7','Aug')
+        ->setCellValue('J7','Sep')
+        ->setCellValue('K7','Oct')
+        ->setCellValue('L7','Nov')
+        ->setCellValue('M7','Dec');
         $getData = ReportModel::checkExistingSignRateMonthlyPerLocation($request->project_code,$request->year_project);
-        $i = 5;
+        $i = 8;
         foreach($getData as $row){
             $sheet2->setCellValue('A'.$i,$row->location_name)
-            ->setCellValue('B'.$i,$row->Jan."(".$row->service_jan.")")
-            ->setCellValue('C'.$i,$row->Feb."(".$row->service_feb.")")
-            ->setCellValue('D'.$i,$row->Mar."(".$row->service_mar.")")
-            ->setCellValue('E'.$i,$row->Apr."(".$row->service_apr.")")
-            ->setCellValue('F'.$i,$row->May."(".$row->service_may.")")
-            ->setCellValue('G'.$i,$row->Jun."(".$row->service_jun.")")
-            ->setCellValue('H'.$i,$row->Jul."(".$row->service_jul.")")
-            ->setCellValue('I'.$i,$row->Aug."(".$row->service_aug.")")
-            ->setCellValue('J'.$i,$row->Sep."(".$row->service_sep.")")
-            ->setCellValue('K'.$i,$row->Oct."(".$row->service_oct.")")
-            ->setCellValue('L'.$i,$row->Nov."(".$row->service_nov.")")
-            ->setCellValue('M'.$i,$row->Dec."(".$row->service_dec.")");
+            ->setCellValue('B'.$i,str_replace(","," ",$row->Jan)." / ".str_replace(","," ",$row->service_jan))
+            ->setCellValue('C'.$i,str_replace(","," ",$row->Feb)." / ".str_replace(","," ",$row->service_feb))
+            ->setCellValue('D'.$i,str_replace(","," ",$row->Mar)." / ".str_replace(","," ",$row->service_mar))
+            ->setCellValue('E'.$i,str_replace(","," ",$row->Apr)." / ".str_replace(","," ",$row->service_apr))
+            ->setCellValue('F'.$i,str_replace(","," ",$row->May)." / ".str_replace(","," ",$row->service_may))
+            ->setCellValue('G'.$i,str_replace(","," ",$row->Jun)." / ".str_replace(","," ",$row->service_jun))
+            ->setCellValue('H'.$i,str_replace(","," ",$row->Jul)." / ".str_replace(","," ",$row->service_jul))
+            ->setCellValue('I'.$i,str_replace(","," ",$row->Aug)." / ".str_replace(","," ",$row->service_aug))
+            ->setCellValue('J'.$i,str_replace(","," ",$row->Sep)." / ".str_replace(","," ",$row->service_sep))
+            ->setCellValue('K'.$i,str_replace(","," ",$row->Oct)." / ".str_replace(","," ",$row->service_oct))
+            ->setCellValue('L'.$i,str_replace(","," ",$row->Nov)." / ".str_replace(","," ",$row->service_nov))
+            ->setCellValue('M'.$i,str_replace(","," ",$row->Dec)." / ".str_replace(","," ",$row->service_dec));
             $i++;
         }
     
@@ -314,10 +318,101 @@ class ReportController extends Controller
     }
 
     function summary_fee_pinalty(){
+        $dataService = DatabaseModel::getData('m_service')->get();
         return view('report.summary_fee_pinalty',[
             'title' => 'Report ',
             'active_gm' => 'Report',
-            'active_m'=>'report/summary_fee_pinalty'
+            'active_m'=>'report/summary_fee_pinalty',
+            'service'=>$dataService
         ]);
+    }
+
+    function getDataSummaryFeePinalty(Request $request){
+        $getData = ReportModel::getDataSummaryFeePinalty($request->project_code,$request->year_project,$request->service_code);
+        return response()->json($getData);
+    }
+
+    function exportDataSummaryFeePinalty(Request $request){
+        $spreadsheet = new Spreadsheet();
+        $activeWorksheet = $spreadsheet->getActiveSheet();
+        $activeWorksheet->setCellValue('A1', 'Report Summary Fee Pinalty')
+        ->setCellValue('A3',"Periode")
+        ->setCellValue('B3',$request->year_project)
+        ->setCellValue('A4','Location Name')
+        ->setCellValue('B4','Service')
+        ->setCellValue('C4','Jan')
+        ->setCellValue('D4','Feb')
+        ->setCellValue('E4','Mar')
+        ->setCellValue('F4','Apr')
+        ->setCellValue('G4','May')
+        ->setCellValue('H4','Jun')
+        ->setCellValue('I4','Jul')
+        ->setCellValue('J4','Aug')
+        ->setCellValue('K4','Sep')
+        ->setCellValue('L4','Oct')
+        ->setCellValue('M4','Nov')
+        ->setCellValue('N4','Dec');
+
+        $getData = ReportModel::getDataSummaryFeePinalty($request->project_code,$request->year_project,$request->service);
+        $i = 5;
+        $total_jan = 0;
+        $total_feb = 0;
+        $total_mar = 0;
+        $total_apr = 0;
+        $total_may = 0;
+        $total_jun = 0;
+        $total_jul = 0;
+        $total_aug = 0;
+        $total_sep = 0;
+        $total_oct = 0;
+        $total_nov = 0;
+        $total_dec = 0;
+
+        foreach($getData as $row){
+            $activeWorksheet->setCellValue('A'.$i,$row->location_name)
+            ->setCellValue('B'.$i,$row->service_code)
+            ->setCellValue('C'.$i,$row->amount_pinalty_jan != "" ? number_format($row->amount_pinalty_jan,2,",","."): "")
+            ->setCellValue('D'.$i,$row->amount_pinalty_feb != "" ? number_format($row->amount_pinalty_feb,2,",","."): "")
+            ->setCellValue('E'.$i,$row->amount_pinalty_mar != "" ? number_format($row->amount_pinalty_mar,2,",","."): "")
+            ->setCellValue('F'.$i,$row->amount_pinalty_apr != "" ? number_format($row->amount_pinalty_apr,2,",","."): "")
+            ->setCellValue('G'.$i,$row->amount_pinalty_may != "" ? number_format($row->amount_pinalty_may,2,",","."): "")
+            ->setCellValue('H'.$i,$row->amount_pinalty_jun != "" ? number_format($row->amount_pinalty_jun,2,",","."): "")
+            ->setCellValue('I'.$i,$row->amount_pinalty_jul != "" ? number_format($row->amount_pinalty_jul,2,",","."): "")
+            ->setCellValue('J'.$i,$row->amount_pinalty_aug != "" ? number_format($row->amount_pinalty_aug,2,",","."): "")
+            ->setCellValue('K'.$i,$row->amount_pinalty_sep != "" ? number_format($row->amount_pinalty_sep,2,",","."): "")
+            ->setCellValue('L'.$i,$row->amount_pinalty_oct != "" ? number_format($row->amount_pinalty_oct,2,",","."): "")
+            ->setCellValue('L'.$i,$row->amount_pinalty_nov != "" ? number_format($row->amount_pinalty_nov,2,",","."): "")
+            ->setCellValue('L'.$i,$row->amount_pinalty_dec != "" ? number_format($row->amount_pinalty_dec,2,",","."): "");
+            $total_jan = $total_jan + $row->amount_pinalty_jan;
+            $total_feb = $total_feb + $row->amount_pinalty_feb;
+            $total_mar = $total_mar + $row->amount_pinalty_mar;
+            $total_apr = $total_apr + $row->amount_pinalty_apr;
+            $total_may = $total_may + $row->amount_pinalty_may;
+            $total_jun = $total_jun + $row->amount_pinalty_jun;
+            $total_jul = $total_jul + $row->amount_pinalty_jul;
+            $total_aug = $total_aug + $row->amount_pinalty_aug;
+            $total_sep = $total_sep + $row->amount_pinalty_sep;
+            $total_oct = $total_oct + $row->amount_pinalty_oct;
+            $total_nov = $total_nov + $row->amount_pinalty_nov;
+            $total_dec = $total_dec + $row->amount_pinalty_dec;
+            $i++;
+        }
+        $activeWorksheet->setCellValue('A'.$i,"Total")
+        ->setCellValue('B'.$i,$row->service_code)
+        ->setCellValue('C'.$i,number_format($total_jan,2,".",","))
+        ->setCellValue('D'.$i,number_format($total_feb,2,".",","))
+        ->setCellValue('E'.$i,number_format($total_mar,2,".",","))
+        ->setCellValue('F'.$i,number_format($total_apr,2,".",","))
+        ->setCellValue('G'.$i,number_format($total_may,2,".",","))
+        ->setCellValue('H'.$i,number_format($total_jun,2,".",","))
+        ->setCellValue('I'.$i,number_format($total_jul,2,".",","))
+        ->setCellValue('J'.$i,number_format($total_aug,2,".",","))
+        ->setCellValue('K'.$i,number_format($total_sep,2,".",","))
+        ->setCellValue('L'.$i,number_format($total_oct,2,".",","))
+        ->setCellValue('M'.$i,number_format($total_nov,2,".",","))
+        ->setCellValue('N'.$i,number_format($total_dec,2,".",","));     
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        $writer = new Xlsx($spreadsheet);
+        $writer->save('php://output');
     }
 }

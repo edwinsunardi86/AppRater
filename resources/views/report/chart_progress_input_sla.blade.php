@@ -107,24 +107,31 @@
                                         </table>
                                     </div>
                                     <div class="tab-pane fade" id="content_existing_sign_sla" role="tabpanel" aria-labelledby="existing_sign_sla-tab">
-                                        <table id="table-summary-sign" class="table table-striped table-bordered" style="width:50%">
-                                            <thead>
-                                                <th>Location Name</th>
-                                                <th>Jan</th>
-                                                <th>Feb</th>
-                                                <th>Mar</th>
-                                                <th>Apr</th>
-                                                <th>May</th>
-                                                <th>Jun</th>
-                                                <th>Jul</th>
-                                                <th>Aug</th>
-                                                <th>Sept</th>
-                                                <th>Oct</th>
-                                                <th>Nov</th>
-                                                <th>Dec</th>
-                                            </thead>
-                                            <tbody></tbody>
-                                        </table>
+                                        
+                                            <p>[C] : Cleaning Service</p>
+                                            <p>[L] : Labour Service</p>
+                                            <p>[S] : Security Service</p>
+                                            <p>(Service yang sudah ditandatangani)/(Kelengkapan service yang harus ditandatangani)</p>
+                                        <div class="table-responsive mt-3">
+                                            <table id="table-summary-sign" class="table table-striped table-bordered" style="width:100%">
+                                                <thead>
+                                                    <th>Location Name</th>
+                                                    <th>Jan</th>
+                                                    <th>Feb</th>
+                                                    <th>Mar</th>
+                                                    <th>Apr</th>
+                                                    <th>May</th>
+                                                    <th>Jun</th>
+                                                    <th>Jul</th>
+                                                    <th>Aug</th>
+                                                    <th>Sept</th>
+                                                    <th>Oct</th>
+                                                    <th>Nov</th>
+                                                    <th>Dec</th>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>    
                             </div>
@@ -348,7 +355,7 @@ $(document).on('click','.pilih_client',function(){
                 success:function(data){
                     $('#table-summary-sign tbody').empty();
                     $.each(data,function(i,item){
-                        var row = "<tr><td>"+data[i].location_name+"</td><td>"+data[i].Jan+"("+data[i].service_jan+")</td><td>"+data[i].Feb+"("+data[i].service_feb+")</td><td>"+data[i].Mar+"("+data[i].service_mar+")</td><td>"+data[i].Apr+"("+data[i].service_apr+")</td><td>"+data[i].May+"("+data[i].service_may+")</td><td>"+data[i].Jun+"("+data[i].service_jun+")</td><td>"+data[i].Jul+"("+data[i].service_jul+")</td><td>"+data[i].Aug+"("+data[i].service_aug+")</td><td>"+data[i].Sep+"("+data[i].service_sep+")</td><td>"+data[i].Oct+"("+data[i].service_oct+")</td><td>"+data[i].Nov+"("+data[i].service_nov+")</td><td>"+data[i].Dec+"("+data[i].service_dec+")</td></tr>";
+                        var row = "<tr><td>"+data[i].location_name+"</td><td>"+data[i].Jan.replace(/,/g," ")+" / "+data[i].service_jan.replace(/,/g," ")+"</td><td>"+data[i].Feb.replace(/,/g," ")+" / "+data[i].service_feb.replace(/,/g," ")+"</td><td>"+data[i].Mar.replace(/,/g," ")+" / "+data[i].service_mar.replace(/,/g," ")+"</td><td>"+data[i].Apr.replace(/,/g," ")+" / "+data[i].service_apr.replace(/,/g," ")+"</td><td>"+data[i].May.replace(/,/g," ")+" / "+data[i].service_may.replace(/,/g," ")+"</td><td>"+data[i].Jun.replace(/,/g," ")+" / "+data[i].service_jun.replace(/,/g," ")+"</td><td>"+data[i].Jul.replace(/,/g," ")+" / "+data[i].service_jul.replace(/,/g," ")+"</td><td>"+data[i].Aug.replace(/,/g," ")+" / "+data[i].service_aug.replace(/,/g," ")+"</td><td>"+data[i].Sep.replace(/,/g," ")+" / "+data[i].service_sep.replace(/,/g," ")+"</td><td>"+data[i].Oct.replace(/,/g," ")+" / "+data[i].service_oct.replace(/,/g," ")+"</td><td>"+data[i].Nov.replace(/,/g," ")+" / "+data[i].service_nov.replace(/,/g," ")+"</td><td>"+data[i].Dec.replace(/,/g," ")+" / "+data[i].service_dec.replace(/,/g," ")+"</td></tr>";
                         $("#table-summary-sign > tbody").append(row);
 
                     });
