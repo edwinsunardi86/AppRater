@@ -90,7 +90,7 @@ class TemplateAreaController extends Controller
     function getDataTableTemplateArea(){
         $getData = TemplateAreaModel::getDataTemplateArea2();
         return DataTables::of($getData)->addColumn('action',function($row){
-            $btn = "<a href='/template_area/detail_template_area/$row->id' class='btn btn-primary btn-xs'><i class='fas fa-eye'></i> View</a>";
+            $btn = "<a href='/template_area/detail_template_area/$row->id' class='btn btn-primary btn-xs'><i class='fas fa-eye'></i> View</a><a href='/template_area/clone/$row->id' class='btn ml-3 bg-purple btn-xs'><i class='fas fa-solid fa-clone'></i> Clone</a>";
             return $btn;
         })->make();
     }
@@ -142,5 +142,25 @@ class TemplateAreaController extends Controller
           </div>";
             return $btn;
         })->make();
+    }
+
+    function CloneTemplateArea($id){
+        $getData = TemplateAreaModel::getDataDetailTemplateArea($id);
+        $getDataHeader = DatabaseModel::getData('header_template',array('id'=>$id))->first();
+        $getLocation = LocationModel::getDataLocation(array('id'=>$getDataHeader->location_id))->first();
+        
+        $grouped = $getData->groupBy('service_name');
+        $service = array();
+        foreach($grouped as $row){
+            array_push($service,array('service_name'=>$row[0]->service_name));
+        }
+        return view('project.template_area.clone',[
+            'title'         =>  'Template Area',
+            'active_gm'     =>  'Template Area',
+            'active_m'      =>  'template_area',
+            'location'      =>  $getLocation,
+            'getData'       =>  $getData,
+            'service'       => $service
+        ]);
     }
 }
