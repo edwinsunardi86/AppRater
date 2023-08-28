@@ -163,4 +163,54 @@ class TemplateAreaController extends Controller
             'service'       => $service
         ]);
     }
+
+    function storeCloneTemplateArea(Request $request){
+        $exp_start_date = explode("/",$request->start_date);
+        $exp_finish_date = explode("/",$request->finish_date);
+        $sql_start_date = $exp_start_date[2]."-".$exp_start_date[0]."-".$exp_start_date[1];
+        $sql_finish_date = $exp_finish_date[2]."-".$exp_finish_date[0]."-".$exp_finish_date[1];
+        $checkConflictPeriod = TemplateAreaModel::getConflictPeriodPerlocationId($request->location_id,$sql_start_date);
+        if($checkConflictPeriod->count() > 0){
+            $confirmation = ['message' => 'There is your period conflict', 'icon' => 'error', 'is_valid' => '0'];
+        }else{
+            $max_id_header = TemplateAreaModel::getMaxIdHeaderTemplate();
+            $max_id_header = $max_id_header->max_id == null ? 1 : $max_id_header->max_id+1;
+            $header_post = array(
+                'id'            => $max_id_header,
+                'location_id'   => $request->location_id,
+                'start_date'    => $sql_start_date,
+                'finish_date'   => $sql_finish_date,
+                'created_by'    => Auth::id()
+            );
+            TemplateAreaModel::insert_header_template($header_post);
+            // echo $request->arr_area[1]['sub_area_name'][0];
+            // echo $request->arr_area[1]['area_name'];
+            for($i = 0;$i < count($request->arr_area); $i++){
+                $area_name = $request->arr_area[$i]['area_name'];
+                $service_code = $request->arr_area[$i]['service_code'];
+                $max_id_area = TemplateAreaModel::getMaxIdTemplateArea();
+                    $max_id_area = $max_id_area->max_id == null ? 1 : $max_id_area->max_id+1;
+                    $post_area = array(
+                        'id_header' => $max_id_header,
+                        'id'        => $max_id_area,
+                        'area_name' => $area_name,
+                        'service_code' => $service_code
+                    );
+                    // var_dump($post_area);
+                    TemplateAreaModel::insert_template_area($post_area);
+                $i_sub_area = 0;
+                for($j = 0;$j < count($request->arr_area[$i]['sub_area_name']); $j++){
+                    $sub_area_name = $request->arr_area[$i]['sub_area_name'][$i_sub_area];
+                    $post_sub_area = array(
+                        'sub_area_name' => $sub_area_name,
+                        'id_area' => $max_id_area
+                    );
+                    TemplateAreaModel::insert_template_sub_area($post_sub_area);
+                    $i_sub_area++;
+                }
+            }
+            $confirmation = ['message' => 'Insert Template Area Success', 'icon' => 'success', 'is_valid' => '1','redirect' => '/template_area'];
+        }
+        return response()->json($confirmation);
+    }
 }

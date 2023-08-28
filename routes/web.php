@@ -161,6 +161,7 @@ Route::group(['middleware'=>['auth','authorization'],'prefix'=>'template_area'],
     Route::post('/storeDataTemplateArea',[TemplateAreaController::class,'storeDataTemplateArea']);
     Route::post('/getDataServiceByTemplate',[TemplateAreaController::class,'getDataServiceByTemplate']);
     Route::get('/clone/{id}',[TemplateAreaController::class,'cloneTemplateArea']);
+    Route::post('/storeCloneTemplateArea',[TemplateAreaController::class,'storeCloneTemplateArea']);
 });
 
 Route::group(['middleware'=>['auth','authorization'],'prefix'=>'report'],function(){
