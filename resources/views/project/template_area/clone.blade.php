@@ -519,34 +519,34 @@ $(document).ready(function(){
 
             });
             console.log(arr_area);
-            // $.ajax({
-            //     headers:{
-            //         'X_CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content'),
-            //     },
-            //     url:"/template_area/storeCloneTemplateArea",
-            //     type:"POST",
-            //     dataType:"JSON",
-            //     processing:true,
-            //     data:{
-            //         'location_id':$('#location_name').val(),
-            //         'start_date':$('#start_date').val(),
-            //         'finish_date':$('#finish_date').val(),
-            //         arr_area:arr_area,
-            //         _token: '{{csrf_token()}}'
-            //     },
-            //     success:function(data){
-            //         Swal.fire({
-            //             title:data.title,
-            //             html:data.message,
-            //             icon:data.icon
-            //         });
-            //         if(data.is_valid == 1){
-            //             setTimeout(() => {
-            //                 window.location.href=data.redirect;
-            //             }, 1500);
-            //         }
-            //     }
-            // });
+            $.ajax({
+                headers:{
+                    'X_CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content'),
+                },
+                url:"/template_area/storeCloneTemplateArea",
+                type:"POST",
+                dataType:"JSON",
+                processing:true,
+                data:{
+                    'location_id':$('#location_name').val(),
+                    'start_date':$('#start_date').val(),
+                    'finish_date':$('#finish_date').val(),
+                    arr_area:arr_area,
+                    _token: '{{csrf_token()}}'
+                },
+                success:function(data){
+                    Swal.fire({
+                        title:data.title,
+                        html:data.message,
+                        icon:data.icon
+                    });
+                    if(data.is_valid == 1){
+                        setTimeout(() => {
+                            window.location.href=data.redirect;
+                        }, 1500);
+                    }
+                }
+            });
         }
     });
 });
