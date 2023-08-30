@@ -27,53 +27,64 @@ class EvaluationController extends Controller
         $arr_score = explode(",",$request->score);
         $exp_date_evaluation = explode("/",$request->date_evaluation);
         $format_date_sql = $exp_date_evaluation[2]."-".$exp_date_evaluation[0]."-".$exp_date_evaluation[1];
-        $get_duplicate_evaluation = DB::table('header_evaluation')->
-        where('appraisal_date',$format_date_sql)->
-        where('location_id',$request->location_id)->
-        get();
-        if($get_duplicate_evaluation->count() > 0){
-            $confirmation = ['message' => 'Error : Duplicated Data', 'icon' => 'error', 'redirect' => '/evaluation/form_evaluation']; 
+
+        //lock hard code
+        $arr_lock = array('01','02','03','04','05','06');
+        $date = date_create($format_date_sql);
+        $dateEvaluationFormatMonth = date_format($date,"m");
+        if(in_array($dateEvaluationFormatMonth,$arr_lock)){
+            $confirmation = ['message' => 'Date Evaluation that you choose has been locked', 'icon' => 'error', 'redirect' => '/evaluation/form_evaluation']; 
         }else{
-            $getData = DB::table('header_evaluation')->select(DB::Raw('MAX(id_header) AS id_header'))->first();
-            $idHeader = $getData->id_header > 0 ? $getData->id_header + 1: 1;
-            $post_header = array(
-                'id_header'=>$idHeader,
-                'location_id'=>$request->location_id,
-                'appraisal_date'=>$format_date_sql,
-                'created_by'=>Auth::user()->id
-            );
-            $insert_header = DB::table('header_evaluation')->insert($post_header);
-            if(!$insert_header){
-                echo 'insert table header_evaluation failed'; die();
+            $getExistingDateEvaluation = DB::table('header_evaluation')->
+            where('appraisal_date',$format_date_sql)->
+            where('location_id',$request->location_id)->
+            get();
+            if($getExistingDateEvaluation->count() > 0){
+                $confirmation = ['message' => 'Error : Duplicated Data', 'icon' => 'error', 'redirect' => '/evaluation/form_evaluation']; 
             }else{
-                for($i=0;$i<count($arr_sub_area_id);$i++){
-                    $post = array(
-                        'id_header'         => $idHeader,
-                        'sub_area_id'       => $arr_sub_area_id[$i],
-                        'critic_recommend'  => $arr_recommend[$i],
-                        'score'             => $arr_score[$i],
-                        'created_by'        => Auth::id()
-                    );
-                    $insert_score_evaluation = DB::table('score_evaluation')->insert($post);
-                    if(!$insert_score_evaluation){
-                        echo 'insert table header_evaluation failed'; die();
+                $getData = DB::table('header_evaluation')->select(DB::Raw('MAX(id_header) AS id_header'))->first();
+                $idHeader = $getData->id_header > 0 ? $getData->id_header + 1: 1;
+                $post_header = array(
+                    'id_header'=>$idHeader,
+                    'location_id'=>$request->location_id,
+                    'appraisal_date'=>$format_date_sql,
+                    'created_by'=>Auth::user()->id
+                );
+                $insert_header = DB::table('header_evaluation')->insert($post_header);
+                if(!$insert_header){
+                    echo 'insert table header_evaluation failed'; die();
+                }else{
+                    for($i=0;$i<count($arr_sub_area_id);$i++){
+                        $post = array(
+                            'id_header'         => $idHeader,
+                            'sub_area_id'       => $arr_sub_area_id[$i],
+                            'critic_recommend'  => $arr_recommend[$i],
+                            'score'             => $arr_score[$i],
+                            'created_by'        => Auth::id()
+                        );
+                        $insert_score_evaluation = DB::table('score_evaluation')->insert($post);
+                        if(!$insert_score_evaluation){
+                            echo 'insert table header_evaluation failed'; die();
+                        }
                     }
                 }
-            }
-            
-            if($insert_header && $insert_score_evaluation){
-                $confirmation = ['message' => 'Rating successfully added', 'icon' => 'success', 'redirect' => '/evaluation/form_evaluation'];
-                $getDataClient = EvaluationModel::getDataClientByLocationId($request->location_id);
-                $data['client_name'] = $getDataClient->client_name;
-                $data['location_name'] = $getDataClient->location_name;
-                $data['rater'] = Auth::user()->fullname;
-                $data['date_appraisal'] = $request->date_evaluation;
-                $data['email'] = Auth::user()->email;
-                Mail::to($data['email'])->send(new \App\Mail\FormatEmail($data));
-            }else{
-                $confirmation = ['message' => 'Rating failed added', 'icon' => 'error', 'redirect' => '/evaluation/form_evaluation']; 
+                
+                if($insert_header && $insert_score_evaluation){
+                    $confirmation = ['message' => 'Rating successfully added', 'icon' => 'success', 'redirect' => '/evaluation/form_evaluation'];
+                    $getDataClient = EvaluationModel::getDataClientByLocationId($request->location_id);
+                    $data['client_name'] = $getDataClient->client_name;
+                    $data['location_name'] = $getDataClient->location_name;
+                    $data['rater'] = Auth::user()->fullname;
+                    $data['date_appraisal'] = $request->date_evaluation;
+                    $data['email'] = Auth::user()->email;
+                    Mail::to($data['email'])->send(new \App\Mail\FormatEmail($data));
+                }else{
+                    $confirmation = ['message' => 'Rating failed added', 'icon' => 'error', 'redirect' => '/evaluation/form_evaluation']; 
+                }
             }
         }
+
+        
         return response()->json($confirmation);
     }
 
