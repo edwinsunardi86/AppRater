@@ -592,16 +592,13 @@ $(document).on('change','#year_project,#month_project',function(){
                 //     var kategori = "KB";
                 // }
                 var kategori = summary(Math.ceil(data[i].score));
-                if(typeof kategori === 'undefined'){
-                    kategori = "";
-                }
                 var cardbox = "<div class=\"card card-primary card-outline mr-2\">"+
                         "<div class=\"card-body\">"+
                             "<div class=\"text-center mb-n4\">"+
                                 "<h5>"+substr_yearappraisal+" - WEEK "+substr_weekappraisal+"</h5>"+
                             "</div>"+
                             "<div class=\"text-center\">"+
-                                "<h1 class=\"mb-n2\" style=\"font-size:75px;\">"+kategori+"</h1>"+
+                                "<h1 class=\"mb-n2\" style=\"font-size:75px;\">"+data[i].initial+"</h1>"+
                                 "<h4 class=\"mb-n2\">"+data[i].score+" %</h4>"+
                             "</div>"+
                         "</div>"+

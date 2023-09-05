@@ -23,9 +23,9 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-                    <div class="card card-primary">
+                    <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Template Area</h3>
+                            <a href="template_area/create" class="btn btn-block bg-gradient-primary col-md-2"><i class="fas fa-user-plus"></i>Add</a>
                         </div>
                         <div class="card-body">
                             <table class="table table-striped table-bordered" style="width:100%">

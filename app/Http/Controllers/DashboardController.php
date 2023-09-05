@@ -26,18 +26,21 @@ class DashboardController extends Controller
         $year_project = $request->year_project;
         $project_code = $request->project_code;
         $location_id = $request->location_id;
-        $sql="SELECT e.project_code,YEARWEEK(appraisal_date) AS week_appraisal,ROUND(AVG(score)) AS score,DATE_FORMAT(appraisal_date,\"%Y\") AS YEAR, DATE_FORMAT(appraisal_date,\"%m\") AS MONTH 
+        $sql="SELECT e.project_code,YEARWEEK(appraisal_date) AS week_appraisal,ROUND(AVG(a.score)) AS score,DATE_FORMAT(appraisal_date,\"%Y\") AS YEAR, DATE_FORMAT(appraisal_date,\"%m\") AS MONTH, g.category, (SELECT initial FROM detail_set_score_per_project WHERE id_header = f.id_header AND (score) > ROUND(AVG(a.score)) ORDER BY score ASC LIMIT 1) AS initial
         FROM score_evaluation a
         INNER JOIN header_evaluation b ON a.id_header = b.id_header
         INNER JOIN setup_location c ON b.location_id = c.id
         INNER JOIN setup_region d ON d.id = c.region_id
-        INNER JOIN setup_project e ON e.project_code = d.project_code WHERE e.project_code = \"$project_code\"";
+        INNER JOIN setup_project e ON e.project_code = d.project_code 
+        INNER JOIN header_set_score f ON f.project_code = e.project_code
+        INNER JOIN detail_set_score_per_project g ON g.id_header = f.id_header
+        WHERE e.project_code = \"$project_code\"";
         if($location_id != ""){
             $sql = $sql." AND b.location_id = \"$location_id\"";
         }
 
         if($year_project != ""){
-            $sql = $sql." AND DATE_FORMAT(appraisal_date,\"%m\") = \"$month_project\" AND DATE_FORMAT(appraisal_date,\"%Y\") = \"$year_project\"";
+            $sql = $sql."AND DATE_FORMAT(appraisal_date,\"%m-%Y\") BETWEEN DATE_FORMAT(f.start_date,\"%m-%Y\") AND DATE_FORMAT(f.finish_date,\"%m-%Y\") AND DATE_FORMAT(appraisal_date,\"%m\") = \"$month_project\" AND DATE_FORMAT(appraisal_date,\"%Y\") = \"$year_project\"";
         }
         // WHERE DATE_FORMAT(appraisal_date,\"%m\") = \"$month_project\" AND DATE_FORMAT(appraisal_date,\"%Y\") = \"$year_project\" AND a.project_code = \"$project_code\" AND c.location_id = \"$location_id\"";
 
