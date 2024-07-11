@@ -80,7 +80,7 @@ $(document).ready(function(){
                 }); 
                 return html;
             }},
-            { data: 'action', name: 'action'}
+            { data: 'action', name: 'action' }
         ],
         "scrollX": true,
     });

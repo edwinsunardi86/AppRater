@@ -22,6 +22,7 @@
           <img src="/images/LOGO-PT-SOS.png" alt="AdminLTE Logo" class="brand-image" style="opacity: .8">
           <span class="brand-text font-weight-light">PT SOS Indonesia</span>
         </a>
+      </li>
     </ul>
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">

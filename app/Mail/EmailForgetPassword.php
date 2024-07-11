@@ -30,6 +30,6 @@ class EmailForgetPassword extends Mailable
     public function build()
     {
         // return $this->from('eslip@prohr.co.id','E-SLIP PROHR')->subject('E_SLIP '.date('M'))->view('emails.format_email',$this->details)->attachData($this->pdf->output(), "text.pdf");
-        return $this->from('sos.report@sos.co.id','New Password Login')->subject('New Password Login Apps Penilaian Satisfaction')->view('emails.forget_password',$this->details);
+        return $this->from('sos.report@sos.co.id','New Password Login')->subject('New Password Login')->view('emails.forget_password',$this->details);
     }
 }

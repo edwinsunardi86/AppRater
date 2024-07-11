@@ -28,7 +28,7 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            if ($request->remember == "true") {
+            if ($request->remember == "on") {
                 Cookie::queue(
                     Cookie::make('email', $request->email, 30 * 24 * 60 * 60)
                 );

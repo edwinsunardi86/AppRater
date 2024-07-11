@@ -34,6 +34,19 @@ use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 // Route::get('/', function () {
 //     return view('welcome');
 // });
+
+// Route::group(['scheme'=>'https'],function(){
+//     Route::get('/', [LoginController::class,'index'])->middleware('guest')->name('login');
+//     Route::post('/login', [LoginController::class, 'authentication']);
+//     Route::post('/logout', [LoginController::class, 'signout'])->name('logout');
+//     Route::post('/forgotPassword',[UserController::class,'forgotPassword']);
+//     Route::get('/forgetChangePassword/{token}',[UserController::class,'SessionForgetToPasswordchangePassword'])->middleware('guest');
+
+//     Route::get('/dashboard_v1', [DashboardController::class,'dashboard_v1'])->middleware('auth');
+//     Route::get('/linkstorage', function () {
+//         Artisan::call('storage:link');
+//     });
+// });
 Route::get('/', [LoginController::class,'index'])->middleware('guest')->name('login');
 Route::post('/login', [LoginController::class, 'authentication']);
 Route::post('/logout', [LoginController::class, 'signout'])->name('logout');

@@ -29,7 +29,7 @@ class EvaluationController extends Controller
         $format_date_sql = $exp_date_evaluation[2]."-".$exp_date_evaluation[0]."-".$exp_date_evaluation[1];
 
         //lock hard code
-        $arr_lock = array('01','02','03','04','05','06');
+        $arr_lock = array('01','02','03','04','05','06','07','08','09');
         $date = date_create($format_date_sql);
         $dateEvaluationFormatMonth = date_format($date,"m");
         if(in_array($dateEvaluationFormatMonth,$arr_lock)){

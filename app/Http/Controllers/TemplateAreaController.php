@@ -90,8 +90,12 @@ class TemplateAreaController extends Controller
     function getDataTableTemplateArea(){
         $getData = TemplateAreaModel::getDataTemplateArea2();
         return DataTables::of($getData)->addColumn('action',function($row){
-            $btn = "<a href='/template_area/detail_template_area/$row->id' class='btn btn-primary btn-xs'><i class='fas fa-eye'></i> View</a><a href='/template_area/clone/$row->id' class='btn ml-3 bg-purple btn-xs'><i class='fas fa-solid fa-clone'></i> Clone</a>";
-            return $btn;
+            
+                $btn = "<a href='/template_area/detail_template_area/$row->id' class='btn btn-primary btn-xs'><i class='fas fa-eye'></i> View</a>";
+                if(Auth::user()->role == 1){
+                    $btn .="<a href='/template_area/clone/$row->id' class='btn ml-3 bg-purple btn-xs'><i class='fas fa-solid fa-clone'></i> Clone</a>";
+                }
+                return $btn;
         })->make();
     }
 

@@ -28,7 +28,7 @@ class SignController extends Controller
             $confirmation = ['message' => 'Sign success insert', 'icon' => 'success', 'redirect' => '/sign/signature_digital'];
         }else{
             $confirmation = ['message' => 'Sign success insert', 'icon' => 'success', 'redirect' => '/sign/signature_digital'];
-        }        
+        }
         return response()->json($confirmation);
     }
 }

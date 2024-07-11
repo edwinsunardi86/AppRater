@@ -381,8 +381,8 @@ class ReportController extends Controller
             ->setCellValue('J'.$i,$row->amount_pinalty_aug != "" ? number_format($row->amount_pinalty_aug,2,",","."): "")
             ->setCellValue('K'.$i,$row->amount_pinalty_sep != "" ? number_format($row->amount_pinalty_sep,2,",","."): "")
             ->setCellValue('L'.$i,$row->amount_pinalty_oct != "" ? number_format($row->amount_pinalty_oct,2,",","."): "")
-            ->setCellValue('L'.$i,$row->amount_pinalty_nov != "" ? number_format($row->amount_pinalty_nov,2,",","."): "")
-            ->setCellValue('L'.$i,$row->amount_pinalty_dec != "" ? number_format($row->amount_pinalty_dec,2,",","."): "");
+            ->setCellValue('M'.$i,$row->amount_pinalty_nov != "" ? number_format($row->amount_pinalty_nov,2,",","."): "")
+            ->setCellValue('N'.$i,$row->amount_pinalty_dec != "" ? number_format($row->amount_pinalty_dec,2,",","."): "");
             $total_jan = $total_jan + $row->amount_pinalty_jan;
             $total_feb = $total_feb + $row->amount_pinalty_feb;
             $total_mar = $total_mar + $row->amount_pinalty_mar;
